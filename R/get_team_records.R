@@ -15,6 +15,8 @@ get_team_records <- function(season = as.numeric(format(Sys.Date()+184, "%Y")), 
     stop(glue::glue("The NHL didn't exist in {season}; please enter a season of 1918 or later"))
   } else if (league == "NHL" & season > as.numeric(format(Sys.Date()+184, "%Y"))) {
     stop(glue::glue("Data not available for {season} yet, please check back closer to the start of the {season-1}-{season} season"))
+  } else if (league == "NHL" & season == 2005) {
+    stop(glue::glue("Can't get data for 2005; season cancelled due to lockout"))
   }
 
   team_list <- NULL
