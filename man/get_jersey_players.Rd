@@ -18,9 +18,7 @@ Get the name of every player to wear a specific jersey number in
 the NHL and the season in which they wore it.
 }
 \examples{
-Find all players to ever wear the number 69 in the NHL
 get_jersey_players(69)
 
-Find all players to wear 99 & 66 in the NHL
 get_jersey_players(c(99, 66))
 }

@@ -13,10 +13,8 @@
 #' @export
 #'
 #' @examples
-#' Find all players to ever wear the number 69 in the NHL
 #' get_jersey_players(69)
 #'
-#' Find all players to wear 99 & 66 in the NHL
 #' get_jersey_players(c(99, 66))
 get_jersey_players <- function(jersey){
 
@@ -24,8 +22,8 @@ get_jersey_players <- function(jersey){
 
   for(i in jersey){
 
-    if(!is.integer(type.convert(i, as.is = TRUE)) |
-       !between(i, 0, 99)){
+    if(!is.integer(utils::type.convert(i, as.is = TRUE)) |
+       !dplyr::between(i, 0, 99)){
       next
     }
 
@@ -80,7 +78,7 @@ get_jersey_players <- function(jersey){
         jersey_number = i
       )
 
-    sweaters <- bind_rows(sweaters, final_table)
+    sweaters <- dplyr::bind_rows(sweaters, final_table)
   }
 
   return(sweaters)
