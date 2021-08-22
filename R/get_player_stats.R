@@ -63,7 +63,7 @@ get_player_stats <- function(player_name, season = "career", league = "NHL"){
       dplyr::filter(tm != "TOT" & lg == league) |>
       dplyr::mutate(
         player = links$player[i],
-        season_short = case_when(
+        season_short = dplyr::case_when(
           season == "1999-00" ~ "2000",
           season == "Career" ~ "0",
           season != "Career" & season != "1999-00" ~ as.character(glue::glue("{substr(season,1,2)}{substr(season,6,7)}"))
