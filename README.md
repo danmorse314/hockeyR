@@ -41,16 +41,16 @@ the `get_team_records()` function
 ``` r
 get_team_records(1967) |>
   arrange(desc(w)) |>
-  select(team_name, team_abbr, season, overall, w, l, otl)
-#> # A tibble: 6 x 7
-#>   team_name           team_abbr season  overall      w     l   otl
-#>   <chr>               <chr>     <chr>   <chr>    <int> <int> <int>
-#> 1 Chicago Black Hawks CBH       1966-67 41-17-12    41    17    12
-#> 2 Montreal Canadiens  MTL       1966-67 32-25-13    32    25    13
-#> 3 Toronto Maple Leafs TOR       1966-67 32-27-11    32    27    11
-#> 4 New York Rangers    NYR       1966-67 30-28-12    30    28    12
-#> 5 Detroit Red Wings   DET       1966-67 27-39-4     27    39     4
-#> 6 Boston Bruins       BOS       1966-67 17-43-10    17    43    10
+  select(team_name, team_abbr, season, overall, w, l, otl, st_points)
+#> # A tibble: 6 x 8
+#>   team_name           team_abbr season  overall      w     l   otl st_points
+#>   <chr>               <chr>     <chr>   <chr>    <int> <int> <int>     <dbl>
+#> 1 Chicago Black Hawks CBH       1966-67 41-17-12    41    17    12        94
+#> 2 Montreal Canadiens  MTL       1966-67 32-25-13    32    25    13        77
+#> 3 Toronto Maple Leafs TOR       1966-67 32-27-11    32    27    11        75
+#> 4 New York Rangers    NYR       1966-67 30-28-12    30    28    12        72
+#> 5 Detroit Red Wings   DET       1966-67 27-39-4     27    39     4        58
+#> 6 Boston Bruins       BOS       1966-67 17-43-10    17    43    10        44
 ```
 
 You can also get stats down to the player-level with
@@ -120,6 +120,7 @@ df3 <- df2 |>
   mutate(player_season = glue::glue("{player}\n{season_full}")) |>
   left_join(team_logos_colors, by = c("tm" = "team_abbr"))
 
+# make a bar chart
 df3 |>
   ggplot(aes(reorder(player_season, -pts_gm), pts_gm)) +
   geom_col(fill = df3$team_color1, color = df3$team_color2) +
@@ -144,4 +145,5 @@ df3 |>
        caption = "data pulled from hockey-reference.com using hockeyR")
 ```
 
-<img src="man/figures/README-plot example-1.png" width="100%" />
+<img src="man/figures/README-plot example-1.png" width="100%" /> More to
+come soon!

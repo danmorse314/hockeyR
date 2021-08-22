@@ -48,7 +48,7 @@ Grab every team's win-loss record in any season going back to 1918 with the `get
 ```{r records}
 get_team_records(1967) |>
   arrange(desc(w)) |>
-  select(team_name, team_abbr, season, overall, w, l, otl)
+  select(team_name, team_abbr, season, overall, w, l, otl, st_points)
 ```
 
 You can also get stats down to the player-level with `get_player_stats()`. This function defaults to the player's career statistics, but you can enter a specific season or range of seasons as well. Note that the season references the year the specific season ended (ie the 2021-22 season should be entered as 2022)
@@ -93,6 +93,7 @@ df3 <- df2 |>
   mutate(player_season = glue::glue("{player}\n{season_full}")) |>
   left_join(team_logos_colors, by = c("tm" = "team_abbr"))
 
+# make a bar chart
 df3 |>
   ggplot(aes(reorder(player_season, -pts_gm), pts_gm)) +
   geom_col(fill = df3$team_color1, color = df3$team_color2) +
@@ -116,3 +117,4 @@ df3 |>
        title = "Most productive NHL seasons wearing #98",
        caption = "data pulled from hockey-reference.com using hockeyR")
 ```
+More to come soon!
