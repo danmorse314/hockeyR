@@ -6,6 +6,7 @@
 #' @param jersey An integer or a vector of integers between 0 & 99
 #'
 #' @importFrom utils type.convert
+#' @importFrom rlang .data
 #'
 #' @return A tibble containing each player-season where a player wore
 #' the specified number
@@ -40,11 +41,11 @@ get_jersey_players <- function(jersey){
       janitor::clean_names()
 
     number_table <- dplyr::tibble(
-      player = num_table$player,
-      team_season = stringr::str_split(num_table$team_s, "\\(|\\)")
+      player = .data$num_table$player,
+      team_season = stringr::str_split(.data$num_table$team_s, "\\(|\\)")
     ) |>
       tidyr::unnest(cols = c(team_season)) |>
-      dplyr::filter(team_season != "")
+      dplyr::filter(.data$team_season != "")
 
     names_table <- number_table |>
       dplyr::left_join(
@@ -57,24 +58,24 @@ get_jersey_players <- function(jersey){
 
     final_table <- dplyr::tibble(
       player = rep(
-        names_table$player,
-        names_table$n/2
+        .data$names_table$player,
+        .data$names_table$n/2
       ),
-      team = number_table$team_season[c(TRUE, FALSE)],
-      season = number_table$team_season[c(FALSE, TRUE)]
+      team = .data$number_table$team_season[c(TRUE, FALSE)],
+      season = .data$number_table$team_season[c(FALSE, TRUE)]
     ) |>
-      tidyr::separate_rows(season, sep = ", ") |>
+      tidyr::separate_rows(.data$season, sep = ", ") |>
       dplyr::mutate(
         season = ifelse(
-          substr(season,1,1)=="0" | substr(season,1,1)=="1" | substr(season,1,1)=="2",
-          glue::glue("20{season}"),
-          glue::glue("19{season}")
+          substr(.data$season,1,1)=="0" | substr(.data$season,1,1)=="1" | substr(.data$season,1,1)=="2",
+          glue::glue("20{.data$season}"),
+          glue::glue("19{.data$season}")
         )
       ) |>
       dplyr::mutate(
-        player = gsub("\\*","",player),
-        season = as.numeric(season),
-        team = substr(team, 1, nchar(team)-1),
+        player = gsub("\\*","",.data$player),
+        season = as.numeric(.data$season),
+        team = substr(.data$team, 1, nchar(.data$team)-1),
         jersey_number = i
       )
 
