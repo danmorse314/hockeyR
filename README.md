@@ -28,10 +28,10 @@ devtools::install_github("danmorse314/hockeyR")
 
 ## Usage
 
-Grab every team’s win-loss record in any season going back to 1918 with
-the `get_team_records` function
+Load the package and any others you might want:
 
 ``` r
+library(hockeyR)
 library(tidyverse)
 #> -- Attaching packages --------------------------------------- tidyverse 1.3.1 --
 #> v ggplot2 3.3.3     v purrr   0.3.4
@@ -41,42 +41,51 @@ library(tidyverse)
 #> -- Conflicts ------------------------------------------ tidyverse_conflicts() --
 #> x dplyr::filter() masks stats::filter()
 #> x dplyr::lag()    masks stats::lag()
-library(hockeyR)
-get_team_records(1924)
-#> # A tibble: 4 x 10
-#>   team_name     team_abbr season_short season overall     w     l   otl overtime
-#>   <chr>         <chr>            <dbl> <chr>  <chr>   <int> <int> <int> <chr>   
-#> 1 Hamilton Tig~ HAM               1924 1923-~ 9-15-0      9    15     0 0-0     
-#> 2 Montreal Can~ MTL               1924 1923-~ 13-11-0    13    11     0 0-0     
-#> 3 Ottawa Senat~ OTS               1924 1923-~ 16-8-0     16     8     0 0-0     
-#> 4 Toronto St. ~ TRS               1924 1923-~ 10-14-0    10    14     0 0-0     
-#> # ... with 1 more variable: st_points <dbl>
 ```
 
-You can also get stats down to the player-level with `get_player_stats`.
-This function defaults to the player’s career statistics, but you can
-enter a specific season or range of seasons as well. Note that the
-season references the year the specific season ended (ie the 2021-22
-season should be entered as 2022)
+Grab every team’s win-loss record in any season going back to 1918 with
+the `get_team_records()` function
 
 ``` r
-get_player_stats(player_name = "Wayne Gretzky", season = 1982)
+get_team_records(1967) |>
+  arrange(desc(w)) |>
+  select(team_name, team_abbr, season, overall)
+#> # A tibble: 6 x 4
+#>   team_name           team_abbr season  overall 
+#>   <chr>               <chr>     <chr>   <chr>   
+#> 1 Chicago Black Hawks CBH       1966-67 41-17-12
+#> 2 Montreal Canadiens  MTL       1966-67 32-25-13
+#> 3 Toronto Maple Leafs TOR       1966-67 32-27-11
+#> 4 New York Rangers    NYR       1966-67 30-28-12
+#> 5 Detroit Red Wings   DET       1966-67 27-39-4 
+#> 6 Boston Bruins       BOS       1966-67 17-43-10
+```
+
+You can also get stats down to the player-level with
+`get_player_stats()`. This function defaults to the player’s career
+statistics, but you can enter a specific season or range of seasons as
+well. Note that the season references the year the specific season ended
+(ie the 2021-22 season should be entered as 2022)
+
+``` r
+get_player_stats(player_name = "Wayne Gretzky", season = 1982) |>
+  select(player, age, season_full, tm, gp, g, a, pts, everything())
 #> # A tibble: 1 x 25
-#>   player  link  season_full   age tm    lg       gp     g     a   pts plus_minus
-#>   <chr>   <glu> <chr>       <int> <chr> <chr> <int> <int> <int> <int>      <int>
-#> 1 Wayne ~ http~ 1981-82        21 EDM   NHL      80    92   120   212         80
+#>   player    age season_full tm       gp     g     a   pts link  lg    plus_minus
+#>   <chr>   <int> <chr>       <chr> <int> <int> <int> <int> <glu> <chr>      <int>
+#> 1 Wayne ~    21 1981-82     EDM      80    92   120   212 http~ NHL           80
 #> # ... with 14 more variables: pim <int>, ev <int>, pp <int>, sh <int>,
 #> #   gw <int>, ev_a <int>, pp_a <int>, sh_a <int>, s <int>, s_percent <dbl>,
 #> #   toi <lgl>, atoi <lgl>, awards <chr>, season_short <int>
 ```
 
 Ever wonder who the most prolific goal-scorer was to wear a specific
-number? Use `get_jersey_players` in conjunction with `get_player_stats`
-to find out:
+number? Use `get_jersey_players()` in conjunction with
+`get_player_stats()` to find out:
 
 ``` r
 # get every player to wear the desired number
-df <- get_jersey_players(69)
+df <- get_jersey_players(98)
 
 # get their statistics from the year they wore that sweater
 df2 <- purrr::map2_dfr(
@@ -86,18 +95,22 @@ df2 <- purrr::map2_dfr(
   )
 
 # who had the most goals?
-arrange(df2, desc(g))
-#> # A tibble: 3 x 33
-#>   player  link  season_full   age tm    lg       gp     g     a   pts plus_minus
-#>   <chr>   <glu> <chr>       <int> <chr> <chr> <int> <int> <int> <int>      <int>
-#> 1 Andrew~ http~ 2011-12        25 SJS   NHL      76     4    13    17          4
-#> 2 Andrew~ http~ 2010-11        24 SJS   NHL      17     1     2     3         -1
-#> 3 Mel An~ http~ 2003-04        31 WSH   NHL       2     0     0     0          0
-#> # ... with 22 more variables: pim <int>, ev <int>, pp <int>, sh <int>,
-#> #   gw <int>, ev_a <int>, pp_a <int>, sh_a <int>, s <int>, s_percent <dbl>,
-#> #   toi <int>, atoi <chr>, awards <lgl>, season_short <int>, tsa <int>,
-#> #   fow <int>, fol <int>, fo_percent <dbl>, blk <int>, hit <int>, tk <int>,
-#> #   gv <int>
+arrange(df2, desc(g)) |>
+  select(player, tm, season_full, gp, g, a, pts)
+#> # A tibble: 11 x 7
+#>    player            tm    season_full    gp     g     a   pts
+#>    <chr>             <chr> <chr>       <int> <int> <int> <int>
+#>  1 Jesse Puljujarvi  EDM   2017-18        65    12     8    20
+#>  2 Brian Lawton      MNS   1983-84        58    10    21    31
+#>  3 Mikhail Sergachev TBL   2019-20        70    10    24    34
+#>  4 Mikhail Sergachev TBL   2017-18        79     9    31    40
+#>  5 Mikhail Sergachev TBL   2018-19        75     6    26    32
+#>  6 Brian Lawton      MNS   1984-85        40     5     6    11
+#>  7 Jesse Puljujarvi  EDM   2018-19        46     4     5     9
+#>  8 Mikhail Sergachev TBL   2020-21        56     4    26    30
+#>  9 Victor Mete       OTT   2020-21        14     1     1     2
+#> 10 Jesse Puljujarvi  EDM   2016-17        28     1     7     8
+#> 11 Victor Mete       MTL   2020-21        14     0     3     3
 ```
 
 You can use the data to make plots with actual team colors and logos as

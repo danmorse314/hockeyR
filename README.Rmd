@@ -36,25 +36,33 @@ devtools::install_github("danmorse314/hockeyR")
 ```
 ## Usage
 
-Grab every team's win-loss record in any season going back to 1918 with the `get_team_records` function
+Load the package and any others you might want:
+
+```{r, echo = TRUE, results='hide'}
+library(hockeyR)
+library(tidyverse)
+```
+
+Grab every team's win-loss record in any season going back to 1918 with the `get_team_records()` function
 
 ```{r records}
-library(tidyverse)
-library(hockeyR)
-get_team_records(1924)
+get_team_records(1967) |>
+  arrange(desc(w)) |>
+  select(team_name, team_abbr, season, overall)
 ```
 
-You can also get stats down to the player-level with `get_player_stats`. This function defaults to the player's career statistics, but you can enter a specific season or range of seasons as well. Note that the season references the year the specific season ended (ie the 2021-22 season should be entered as 2022)
+You can also get stats down to the player-level with `get_player_stats()`. This function defaults to the player's career statistics, but you can enter a specific season or range of seasons as well. Note that the season references the year the specific season ended (ie the 2021-22 season should be entered as 2022)
 
 ```{r player stats}
-get_player_stats(player_name = "Wayne Gretzky", season = 1982)
+get_player_stats(player_name = "Wayne Gretzky", season = 1982) |>
+  select(player, age, season_full, tm, gp, g, a, pts, everything())
 ```
 
-Ever wonder who the most prolific goal-scorer was to wear a specific number? Use `get_jersey_players` in conjunction with `get_player_stats` to find out:
+Ever wonder who the most prolific goal-scorer was to wear a specific number? Use `get_jersey_players()` in conjunction with `get_player_stats()` to find out:
 
 ```{r jerseys}
 # get every player to wear the desired number
-df <- get_jersey_players(69)
+df <- get_jersey_players(98)
 
 # get their statistics from the year they wore that sweater
 df2 <- purrr::map2_dfr(
@@ -64,7 +72,8 @@ df2 <- purrr::map2_dfr(
   )
 
 # who had the most goals?
-arrange(df2, desc(g))
+arrange(df2, desc(g)) |>
+  select(player, tm, season_full, gp, g, a, pts)
 ```
 
 You can use the data to make plots with actual team colors and logos as well using the `team_logos_colors` file included with the package.
