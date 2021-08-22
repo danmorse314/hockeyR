@@ -3,6 +3,16 @@
 #' @param team A character vector of team names or abbreviations
 #' @param season An integer value denoting the end year of the season to scrape
 #'
+#' @description Get the latest roster for any team from hockey-reference.com.
+#' You may enter either the team abbreviation or the full team name. Seasons
+#' must be 4-digit integers denoting the end-year of the regular season
+#' desired (ie 2021-22 season should be 2022)\cr\cr
+#' Please note that this uses the hockey-reference.com team abbreviations,
+#' the oddest of which is Vegas being 'VEG' instead of 'VGK'. If you are
+#' unsure of the team abbreviation, enter the full team name instead, or
+#' check the full team abbreviations data and filter to your desired season:\cr\cr
+#' \code{filter(team_abbr_yearly, season_short == {season})}
+#'
 #' @return A tibble containing the latest roster for the specified team(s)
 #' in the specified season
 #' @export
