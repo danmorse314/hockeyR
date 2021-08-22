@@ -33,14 +33,6 @@ Load the package and any others you might want:
 ``` r
 library(hockeyR)
 library(tidyverse)
-#> -- Attaching packages --------------------------------------- tidyverse 1.3.1 --
-#> v ggplot2 3.3.3     v purrr   0.3.4
-#> v tibble  3.1.2     v dplyr   1.0.6
-#> v tidyr   1.1.3     v stringr 1.4.0
-#> v readr   1.4.0     v forcats 0.5.1
-#> -- Conflicts ------------------------------------------ tidyverse_conflicts() --
-#> x dplyr::filter() masks stats::filter()
-#> x dplyr::lag()    masks stats::lag()
 ```
 
 Grab every team’s win-loss record in any season going back to 1918 with
@@ -49,16 +41,16 @@ the `get_team_records()` function
 ``` r
 get_team_records(1967) |>
   arrange(desc(w)) |>
-  select(team_name, team_abbr, season, overall)
-#> # A tibble: 6 x 4
-#>   team_name           team_abbr season  overall 
-#>   <chr>               <chr>     <chr>   <chr>   
-#> 1 Chicago Black Hawks CBH       1966-67 41-17-12
-#> 2 Montreal Canadiens  MTL       1966-67 32-25-13
-#> 3 Toronto Maple Leafs TOR       1966-67 32-27-11
-#> 4 New York Rangers    NYR       1966-67 30-28-12
-#> 5 Detroit Red Wings   DET       1966-67 27-39-4 
-#> 6 Boston Bruins       BOS       1966-67 17-43-10
+  select(team_name, team_abbr, season, overall, w, l, otl)
+#> # A tibble: 6 x 7
+#>   team_name           team_abbr season  overall      w     l   otl
+#>   <chr>               <chr>     <chr>   <chr>    <int> <int> <int>
+#> 1 Chicago Black Hawks CBH       1966-67 41-17-12    41    17    12
+#> 2 Montreal Canadiens  MTL       1966-67 32-25-13    32    25    13
+#> 3 Toronto Maple Leafs TOR       1966-67 32-27-11    32    27    11
+#> 4 New York Rangers    NYR       1966-67 30-28-12    30    28    12
+#> 5 Detroit Red Wings   DET       1966-67 27-39-4     27    39     4
+#> 6 Boston Bruins       BOS       1966-67 17-43-10    17    43    10
 ```
 
 You can also get stats down to the player-level with
@@ -69,14 +61,11 @@ well. Note that the season references the year the specific season ended
 
 ``` r
 get_player_stats(player_name = "Wayne Gretzky", season = 1982) |>
-  select(player, age, season_full, tm, gp, g, a, pts, everything())
-#> # A tibble: 1 x 25
-#>   player    age season_full tm       gp     g     a   pts link  lg    plus_minus
-#>   <chr>   <int> <chr>       <chr> <int> <int> <int> <int> <glu> <chr>      <int>
-#> 1 Wayne ~    21 1981-82     EDM      80    92   120   212 http~ NHL           80
-#> # ... with 14 more variables: pim <int>, ev <int>, pp <int>, sh <int>,
-#> #   gw <int>, ev_a <int>, pp_a <int>, sh_a <int>, s <int>, s_percent <dbl>,
-#> #   toi <lgl>, atoi <lgl>, awards <chr>, season_short <int>
+  select(player, age, season_full, tm, gp, g, a, pts)
+#> # A tibble: 1 x 8
+#>   player          age season_full tm       gp     g     a   pts
+#>   <chr>         <int> <chr>       <chr> <int> <int> <int> <int>
+#> 1 Wayne Gretzky    21 1981-82     EDM      80    92   120   212
 ```
 
 Ever wonder who the most prolific goal-scorer was to wear a specific
@@ -120,7 +109,7 @@ well using the `team_logos_colors` file included with the package.
 # add colors & logos
 df3 <- df2 |>
   group_by(player, season_full) |>
-  # this part is just to get both of Mete's seasons into one row
+  # this part is just to get both of Mete's teams into one row
   summarize(
     gp = sum(gp),
     pts = sum(pts),
@@ -135,11 +124,12 @@ df3 |>
   ggplot(aes(reorder(player_season, -pts_gm), pts_gm)) +
   geom_col(fill = df3$team_color1, color = df3$team_color2) +
   ggimage::geom_image(
-    aes(y = pts_gm + .025, image = team_logo_espn),
-    size = .05, asp = 1.5
+    aes(y = pts_gm + .027, image = team_logo_espn),
+    size = .07, asp = 1.5
   ) +
   geom_text(aes(y = 0.01, label = player_season),
             color = "white", angle = 90, hjust = 0) +
+  scale_y_continuous(breaks = scales::pretty_breaks()) +
   theme(
     panel.background = element_rect(fill = "black"),
     plot.background = element_rect(fill = "black"),

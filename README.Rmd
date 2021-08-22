@@ -38,7 +38,7 @@ devtools::install_github("danmorse314/hockeyR")
 
 Load the package and any others you might want:
 
-```{r, echo = TRUE, results='hide'}
+```{r, echo = TRUE, results='hide', message=FALSE}
 library(hockeyR)
 library(tidyverse)
 ```
@@ -48,14 +48,14 @@ Grab every team's win-loss record in any season going back to 1918 with the `get
 ```{r records}
 get_team_records(1967) |>
   arrange(desc(w)) |>
-  select(team_name, team_abbr, season, overall)
+  select(team_name, team_abbr, season, overall, w, l, otl)
 ```
 
 You can also get stats down to the player-level with `get_player_stats()`. This function defaults to the player's career statistics, but you can enter a specific season or range of seasons as well. Note that the season references the year the specific season ended (ie the 2021-22 season should be entered as 2022)
 
 ```{r player stats}
 get_player_stats(player_name = "Wayne Gretzky", season = 1982) |>
-  select(player, age, season_full, tm, gp, g, a, pts, everything())
+  select(player, age, season_full, tm, gp, g, a, pts)
 ```
 
 Ever wonder who the most prolific goal-scorer was to wear a specific number? Use `get_jersey_players()` in conjunction with `get_player_stats()` to find out:
@@ -82,7 +82,7 @@ You can use the data to make plots with actual team colors and logos as well usi
 # add colors & logos
 df3 <- df2 |>
   group_by(player, season_full) |>
-  # this part is just to get both of Mete's seasons into one row
+  # this part is just to get both of Mete's teams into one row
   summarize(
     gp = sum(gp),
     pts = sum(pts),
@@ -97,11 +97,12 @@ df3 |>
   ggplot(aes(reorder(player_season, -pts_gm), pts_gm)) +
   geom_col(fill = df3$team_color1, color = df3$team_color2) +
   ggimage::geom_image(
-    aes(y = pts_gm + .025, image = team_logo_espn),
-    size = .05, asp = 1.5
+    aes(y = pts_gm + .027, image = team_logo_espn),
+    size = .07, asp = 1.5
   ) +
   geom_text(aes(y = 0.01, label = player_season),
             color = "white", angle = 90, hjust = 0) +
+  scale_y_continuous(breaks = scales::pretty_breaks()) +
   theme(
     panel.background = element_rect(fill = "black"),
     plot.background = element_rect(fill = "black"),
