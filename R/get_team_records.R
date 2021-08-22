@@ -1,3 +1,18 @@
+#' Get team records from hockey-reference.com
+#'
+#' @param season An integer value denoting the end year of the season(s) to
+#' scrape
+#' @param league The league stats to scrape, either 'NHL' or 'WHA' or get both
+#' with c('NHL','WHA')
+#' @param include_records Option to exclude records from the function, used to
+#' gather full team names & abbreviations for every season since 1918
+#'
+#' @return A tibble containing full team names & win-loss records for teams
+#' in all desired seasons
+#' @export
+#'
+#' @examples
+#' get_team_records(2021)
 get_team_records <- function(season = as.numeric(format(Sys.Date()+184, "%Y")), league = "NHL", include_records = TRUE){
 
   # gathers all full team names & abbreviations for specified years

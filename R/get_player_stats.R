@@ -1,7 +1,7 @@
 #' Get player counting stats from hockey-reference.com
 #'
 #' @param player A player name or vector of player names
-#' @param season An integer value denoting the end year of a season
+#' @param season An integer value denoting the end year of the season(s) to scrape
 #' @param league The league stats to scrape, either 'NHL' or 'WHA'
 #'
 #' @importFrom utils type.convert
