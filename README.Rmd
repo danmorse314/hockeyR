@@ -1,0 +1,108 @@
+---
+output: github_document
+---
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "man/figures/README-",
+  out.width = "100%"
+)
+```
+
+# hockeyR
+
+<!-- badges: start -->
+<!-- badges: end -->
+
+This package contains various functions to help scrape hockey data from hockey-reference.com, including standings, player stats, and jersey number history.
+
+## Installation
+
+You can install the released version of hockeyR from [CRAN](https://CRAN.R-project.org) with:
+
+``` r
+install.packages("hockeyR")
+```
+
+And the development version from [GitHub](https://github.com/) with:
+
+``` r
+# install.packages("devtools")
+devtools::install_github("danmorse314/hockeyR")
+```
+## Usage
+
+Grab every team's win-loss record in any season going back to 1918 with the `get_team_records` function
+
+```{r records}
+library(tidyverse)
+library(hockeyR)
+get_team_records(1924)
+```
+
+You can also get stats down to the player-level with `get_player_stats`. This function defaults to the player's career statistics, but you can enter a specific season or range of seasons as well. Note that the season references the year the specific season ended (ie the 2021-22 season should be entered as 2022)
+
+```{r player stats}
+get_player_stats(player_name = "Wayne Gretzky", season = 1982)
+```
+
+Ever wonder who the most prolific goal-scorer was to wear a specific number? Use `get_jersey_players` in conjunction with `get_player_stats` to find out:
+
+```{r jerseys}
+# get every player to wear the desired number
+df <- get_jersey_players(69)
+
+# get their statistics from the year they wore that sweater
+df2 <- purrr::map2_dfr(
+  .x = df$player,
+  .y = df$season,
+  ~get_player_stats(player_name = .x, season = .y)
+  )
+
+# who had the most goals?
+arrange(df2, desc(g))
+```
+
+You can use the data to make plots with actual team colors and logos as well using the `team_logos_colors` file included with the package.
+
+```{r plot example}
+# add colors & logos
+df3 <- df2 |>
+  group_by(player, season_full) |>
+  # this part is just to get both of Mete's seasons into one row
+  summarize(
+    gp = sum(gp),
+    pts = sum(pts),
+    pts_gm = pts/gp,
+    tm = tail(tm, n=1),
+    .groups = "drop"
+  ) |>
+  mutate(player_season = glue::glue("{player}\n{season_full}")) |>
+  left_join(team_logos_colors, by = c("tm" = "team_abbr"))
+
+df3 |>
+  ggplot(aes(reorder(player_season, -pts_gm), pts_gm)) +
+  geom_col(fill = df3$team_color1, color = df3$team_color2) +
+  ggimage::geom_image(
+    aes(y = pts_gm + .025, image = team_logo_espn),
+    size = .05, asp = 1.5
+  ) +
+  geom_text(aes(y = 0.01, label = player_season),
+            color = "white", angle = 90, hjust = 0) +
+  theme(
+    panel.background = element_rect(fill = "black"),
+    plot.background = element_rect(fill = "black"),
+    panel.grid.major.x = element_blank(),
+    axis.text.x = element_blank(),
+    axis.ticks.x = element_blank(),
+    axis.text.y = element_text(color = "white"),
+    title = element_text(color = "white")
+  ) +
+  labs(x = NULL, y = "Points per game",
+       title = "Most productive NHL seasons wearing #98",
+       caption = "data pulled from hockey-reference.com using hockeyR")
+```
