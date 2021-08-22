@@ -22,13 +22,11 @@ get_player_stats <- function(player_name, season = "career", league = "NHL"){
       extra = "merge", remove = FALSE
       ) |>
     dplyr::mutate(
-      #season_short = as.numeric(season),
       last = gsub("\\ ","",last),
       last = tolower(last),
       first = tolower(first),
       link = glue::glue("https://www.hockey-reference.com/players/{substr(last,1,1)}/{substr(last,1,5)}{substr(first,1,2)}01.html")
-    ) #|>
-    #dplyr::select(-season)
+    )
 
   links <- player_table |>
     dplyr::select(player, link) |>
@@ -46,6 +44,19 @@ get_player_stats <- function(player_name, season = "career", league = "NHL"){
       polite::scrape() |>
       rvest::html_element("table") |>
       rvest::html_table() |>
+      janitor::clean_names()
+
+    # avoid duplicate row names warnings
+    if("assists" %in% names(player)){
+      player <- player |>
+        mutate(
+          assists = ifelse(x == "Season", "ev_a", assists),
+          assists_2 = ifelse(x == "Season", "pp_a", assists_2),
+          assists_3 = ifelse(x == "Season", "sh_a", assists_3)
+        )
+    }
+
+    player <- player |>
       janitor::row_to_names(row_number = 1) |>
       janitor::clean_names() |>
       dplyr::filter(stringr::str_detect(season, "yr", negate = TRUE)) |>
@@ -76,12 +87,6 @@ get_player_stats <- function(player_name, season = "career", league = "NHL"){
     if("ev_2" %in% names(player)){
       player <- player |>
         dplyr::rename(
-          ev_g = ev,
-          pp_g = pp,
-          sh_g = sh,
-          ev_a = ev_2,
-          pp_a = pp_2,
-          sh_a = sh_2,
           plus_minus = x
           )
     }
