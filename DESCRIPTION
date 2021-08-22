@@ -26,4 +26,5 @@ Imports:
     utils,
     polite,
     rvest,
-    stringr
+    stringr,
+    rlang
