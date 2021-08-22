@@ -84,7 +84,7 @@ get_player_stats <- function(player_name, season = "career", league = "NHL"){
     }
 
     # change stat names that only show up for skaters, not goalies
-    if("ev_2" %in% names(player)){
+    if("ev_a" %in% names(player)){
       player <- player |>
         dplyr::rename(
           plus_minus = x
