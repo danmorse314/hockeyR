@@ -42,8 +42,23 @@ get_player_stats <- function(player_name, season = "career", league = "NHL"){
 
     # pull player stats table
     player <- session |>
-      polite::scrape() |>
-      rvest::html_element("table") |>
+      polite::scrape()
+
+    # skip failed links
+    if(is.null(player)){
+      next
+    }
+
+    player <- player |>
+      rvest::html_element("table")
+
+    # skip players with no stats
+    # likely linking to wrong player
+    if(length(player) ==0){
+      next
+    }
+
+    player <- player|>
       rvest::html_table() |>
       janitor::clean_names()
 
@@ -94,10 +109,6 @@ get_player_stats <- function(player_name, season = "career", league = "NHL"){
 
     stats <- dplyr::bind_rows(stats, player)
 
-    # rest before pulling more players
-    if(i < nrow(links)){
-      Sys.sleep(2)
-    }
   }
 
   # convert numbers to...well, numbers
