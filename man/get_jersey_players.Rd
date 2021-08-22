@@ -18,7 +18,8 @@ Get the name of every player to wear a specific jersey number in
 the NHL and the season in which they wore it.
 }
 \examples{
-get_jersey_players(69)
-
+\dontrun{
+#' get_jersey_players(69)
 get_jersey_players(c(99, 66))
+}
 }

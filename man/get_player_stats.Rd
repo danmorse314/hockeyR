@@ -21,7 +21,8 @@ the specified player(s) from hockey-reference.com
 Get player counting stats from hockey-reference.com
 }
 \examples{
-get_player_stats("Wayne Gretzky")
-
+\dontrun{
+#' get_player_stats("Wayne Gretzky")
 get_player_stats(c("Wayne Gretzky","Mario Lemieux"))
+}
 }

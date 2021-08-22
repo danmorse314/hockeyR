@@ -12,7 +12,9 @@
 #' @export
 #'
 #' @examples
+#' \dontrun{
 #' get_team_records(2021)
+#' }
 get_team_records <- function(season = as.numeric(format(Sys.Date()+184, "%Y")), league = "NHL", include_records = TRUE){
 
   # gathers all full team names & abbreviations for specified years

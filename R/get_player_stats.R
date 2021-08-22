@@ -11,9 +11,10 @@
 #' @export
 #'
 #' @examples
-#' get_player_stats("Wayne Gretzky")
-#'
+#' \dontrun{
+#' #' get_player_stats("Wayne Gretzky")
 #' get_player_stats(c("Wayne Gretzky","Mario Lemieux"))
+#' }
 get_player_stats <- function(player_name, season = "career", league = "NHL"){
 
   player_table <- dplyr::tibble(player = player_name) |>

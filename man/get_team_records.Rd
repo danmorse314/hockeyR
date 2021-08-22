@@ -28,5 +28,7 @@ in all desired seasons
 Get team records from hockey-reference.com
 }
 \examples{
+\dontrun{
 get_team_records(2021)
+}
 }

@@ -13,9 +13,10 @@
 #' @export
 #'
 #' @examples
-#' get_jersey_players(69)
-#'
+#' \dontrun{
+#' #' get_jersey_players(69)
 #' get_jersey_players(c(99, 66))
+#' }
 get_jersey_players <- function(jersey){
 
   sweaters <- NULL
