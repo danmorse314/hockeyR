@@ -3,5 +3,4 @@
 export(get_jersey_players)
 export(get_player_stats)
 export(get_team_records)
-importFrom(rlang,.data)
 importFrom(utils,type.convert)
