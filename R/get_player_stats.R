@@ -1,6 +1,6 @@
 #' Get player counting stats from hockey-reference.com
 #'
-#' @param player A player name or vector of player names
+#' @param player_name A player name or vector of player names
 #' @param season An integer value denoting the end year of the season(s) to scrape
 #' @param league The league stats to scrape, either 'NHL' or 'WHA'
 #'
@@ -16,7 +16,7 @@
 #' get_player_stats(c("Wayne Gretzky","Mario Lemieux"))
 get_player_stats <- function(player_name, season = "career", league = "NHL"){
 
-  player_table <- tibble(player = player_name) |>
+  player_table <- dplyr::tibble(player = player_name) |>
     tidyr::separate(
       player, into = c("first","last"), sep = " ",
       extra = "merge", remove = FALSE
@@ -49,7 +49,7 @@ get_player_stats <- function(player_name, season = "career", league = "NHL"){
     # avoid duplicate row names warnings
     if("assists" %in% names(player)){
       player <- player |>
-        mutate(
+        dplyr::mutate(
           assists = ifelse(x == "Season", "ev_a", assists),
           assists_2 = ifelse(x == "Season", "pp_a", assists_2),
           assists_3 = ifelse(x == "Season", "sh_a", assists_3)

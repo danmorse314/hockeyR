@@ -7,11 +7,11 @@
 get_player_stats(player_name, season = "career", league = "NHL")
 }
 \arguments{
+\item{player_name}{A player name or vector of player names}
+
 \item{season}{An integer value denoting the end year of the season(s) to scrape}
 
 \item{league}{The league stats to scrape, either 'NHL' or 'WHA'}
-
-\item{player}{A player name or vector of player names}
 }
 \value{
 A tibble containing goals, assists, and various other stats for
