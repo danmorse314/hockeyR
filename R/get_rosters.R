@@ -2,6 +2,7 @@
 #'
 #' @param team A character vector of team names or abbreviations
 #' @param season An integer value denoting the end year of the season to scrape
+#' @param include_stats Set to TRUE to return player counting stats for the season
 #'
 #' @description Get the latest roster for any team from hockey-reference.com.
 #' You may enter either the team abbreviation or the full team name. Seasons
@@ -21,7 +22,11 @@
 #' \dontrun{
 #' get_rosters("SEA", 2022)
 #' }
-get_rosters <- function(team = "all", season = as.numeric(format(Sys.Date()+184, "%Y"))){
+get_rosters <- function(
+  team = "all",
+  season = as.numeric(format(Sys.Date()+184, "%Y")),
+  include_stats = FALSE
+  ){
 
   if(length(team) == 1 & team == "all"){
     to_pull <- team_abbr_yearly |>
@@ -49,7 +54,19 @@ get_rosters <- function(team = "all", season = as.numeric(format(Sys.Date()+184,
 
     team_roster <- session |>
       polite::scrape() |>
-      rvest::html_element("#roster") |>
+      rvest::html_element("#roster")
+
+    urls <- team_roster |>
+      rvest::html_elements("a[href^='/players/']") |>
+      stringr::str_extract_all("/players/.+.html") |>
+      unlist() |>
+      dplyr::as_tibble() |>
+      dplyr::mutate(
+        link = glue::glue("https://www.hockey-reference.com{value}")
+      ) |>
+      dplyr::select(link)
+
+    team_roster <- team_roster |>
       rvest::html_table() |>
       janitor::clean_names() |>
       tidyr::separate(s_c, into = c("shoots","catches"), sep = "/", remove = TRUE) |>
@@ -70,21 +87,54 @@ get_rosters <- function(team = "all", season = as.numeric(format(Sys.Date()+184,
         weight = wt,
         experience = exp
       ) |>
-      # add hockey-ref player page links
-      tidyr::separate(
-        player, into = c("first","last"), sep = " ",
-        extra = "merge", remove = FALSE
-      ) |>
-      dplyr::mutate(
-        last = gsub("\\ ","",last),
-        last = tolower(last),
-        first = tolower(first),
-        link = glue::glue("https://www.hockey-reference.com/players/{substr(last,1,1)}/{substr(last,1,5)}{substr(first,1,2)}01.html")
-      ) |>
-      dplyr::select(-ft, -inches, -first, -last) |>
+      dplyr::bind_cols(urls) |>
+      dplyr::select(-ft, -inches) |>
       dplyr::left_join(team_abbr_yearly, by = c("team_abbr", "season_short")) |>
       dplyr::select(number, player, team_name, team_abbr, season, position,
                     everything())
+
+    if(include_stats == TRUE){
+
+      test <- polite::scrape(session) |>
+        rvest::html_element("#skaters")
+
+      if(length(test) == 0){
+        print(glue::glue("Stats not available for {season} yet, check back later"))
+      } else {
+        skater_stats <- session |>
+          polite::scrape() |>
+          rvest::html_element("#skaters") |>
+          rvest::html_table() |>
+          janitor::clean_names() |>
+          dplyr::mutate(
+            assists = ifelse(x == "Rk", "ev_a", assists),
+            assists_2 = ifelse(x == "Rk", "pp_a", assists_2),
+            assists_3 = ifelse(x == "Rk", "sh_a", assists_3)
+          ) |>
+          janitor::row_to_names(row_number = 1) |>
+          janitor::clean_names() |>
+          dplyr::rename(plus_minus = x) |>
+          dplyr::select(-rk) |>
+          dplyr::filter(player != "Team Total" & pos != "G")
+
+        goalie_stats <- session |>
+          polite::scrape() |>
+          rvest::html_element("#goalies") |>
+          rvest::html_table() |>
+          janitor::clean_names() |>
+          janitor::row_to_names(row_number = 1) |>
+          janitor::clean_names() |>
+          dplyr::select(-rk) |>
+          dplyr::filter(player != "Team Total")
+
+        team_stats <- dplyr::bind_rows(skater_stats, goalie_stats) |>
+          dplyr::select(-age, -pos)
+
+        team_roster <- team_roster |>
+          dplyr::left_join(team_stats, by = "player")
+      }
+
+    }
 
     rosters <- dplyr::bind_rows(rosters, team_roster)
   }

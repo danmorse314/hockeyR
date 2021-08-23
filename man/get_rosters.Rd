@@ -4,12 +4,18 @@
 \alias{get_rosters}
 \title{Get team rosters from hockey-reference.com}
 \usage{
-get_rosters(team = "all", season = as.numeric(format(Sys.Date() + 184, "\%Y")))
+get_rosters(
+  team = "all",
+  season = as.numeric(format(Sys.Date() + 184, "\%Y")),
+  include_stats = FALSE
+)
 }
 \arguments{
 \item{team}{A character vector of team names or abbreviations}
 
 \item{season}{An integer value denoting the end year of the season to scrape}
+
+\item{include_stats}{Set to TRUE to return player counting stats for the season}
 }
 \value{
 A tibble containing the latest roster for the specified team(s)
