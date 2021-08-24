@@ -145,5 +145,60 @@ df3 |>
        caption = "data pulled from hockey-reference.com using hockeyR")
 ```
 
-<img src="man/figures/README-plot example-1.png" width="100%" /> More to
-come soon!
+<img src="man/figures/README-plot example-1.png" width="100%" /> The
+most reliable way to grab player stats is through the `get_rosters()`
+function. The `get_player_stats()` function still has some kinks to be
+worked out, as it works based on the player name (and messes up if you
+want to differentiate the Sebastian Ahos).
+
+With `get_rosters()`, you can look up the current roster for any team in
+the league or the roster at season’s end for any prior season. By
+default, it will only pull basic player info (name, age, height &
+weight, etc), but you can grab all the basic counting stats by setting
+`include_stats` to `TRUE`.
+
+``` r
+player_stats <- get_rosters(c("COL","Detroit red wings"), season = 2001, include_stats = TRUE) |>
+  mutate(
+    g_60 = 60 * g / toi,
+    a_60 = 60 * a /toi,
+    p_60 = 60 * pts / toi
+  ) |>
+  filter(toi >= 300) |>
+  left_join(team_logos_colors, by = "team_abbr")
+
+top_performers <- filter(
+      player_stats,
+      p_60 >= arrange(player_stats, -p_60) |> slice(10) |> pull(p_60)
+      )
+
+player_stats |>
+  ggplot(aes(a_60,g_60)) +
+  geom_hline(yintercept = 60 * sum(player_stats$g) / sum(player_stats$toi),
+             linetype = "dashed", color = "black") +
+  geom_vline(xintercept = 60 * sum(player_stats$a) / sum(player_stats$toi),
+             linetype = "dashed", color = "black") +
+  #geom_point(aes(size = toi), show.legend = FALSE,
+  #           color = player_stats$team_color_alt1, alpha = .8) +
+  ggimage::geom_image(aes(image = team_logo_espn),
+                      size = 0.07, asp = 1.5) +
+  ggrepel::geom_text_repel(
+    data = top_performers,
+    aes(label = player),
+    color = top_performers$team_color_alt1
+  ) +
+  scale_y_continuous(breaks = scales::pretty_breaks()) +
+  scale_x_continuous(breaks = scales::pretty_breaks()) +
+  theme(
+    panel.background = element_rect(fill = "#708090"),
+    plot.background = element_rect(fill = "#708090"),
+    title = element_text(color = "white")
+  ) +
+  labs(x = "Assists/60", y = "Goals/60",
+       title = "2000-01 Wings v Avs, regular season stats",
+       subtitle = "min. 300 minutes",
+       caption = "data pulled from hockey-reference.com using hockeyR")
+```
+
+<img src="man/figures/README-rosters-1.png" width="100%" /> More to come
+soon!

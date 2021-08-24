@@ -28,7 +28,7 @@ get_rosters <- function(
   include_stats = FALSE
   ){
 
-  if(length(team) == 1 & team == "all"){
+  if(length(team) == 1 && team == "all"){
     to_pull <- team_abbr_yearly |>
       dplyr::select(-season) |>
       dplyr::filter(season_short %in% season) |>
@@ -56,15 +56,17 @@ get_rosters <- function(
       polite::scrape() |>
       rvest::html_element("#roster")
 
-    urls <- team_roster |>
-      rvest::html_elements("a[href^='/players/']") |>
-      stringr::str_extract_all("/players/.+.html") |>
-      unlist() |>
-      dplyr::as_tibble() |>
-      dplyr::mutate(
-        link = glue::glue("https://www.hockey-reference.com{value}")
-      ) |>
-      dplyr::select(link)
+    suppressWarnings({
+      urls <- team_roster |>
+        rvest::html_elements("a[href^='/players/']") |>
+        stringr::str_extract_all("/players/.+.html") |>
+        unlist() |>
+        dplyr::as_tibble() |>
+        dplyr::mutate(
+          link = glue::glue("https://www.hockey-reference.com{value}")
+        ) |>
+        dplyr::select(link)
+    })
 
     team_roster <- team_roster |>
       rvest::html_table() |>
@@ -92,6 +94,9 @@ get_rosters <- function(
       dplyr::left_join(team_abbr_yearly, by = c("team_abbr", "season_short")) |>
       dplyr::select(number, player, team_name, team_abbr, season, position,
                     everything())
+
+    team_roster$player <- stringr::str_remove_all(team_roster$player, "\\s\\(C\\)")
+    team_roster$player <- stringr::str_remove_all(team_roster$player, "\\s\\(A\\)")
 
     if(include_stats == TRUE){
 
@@ -130,11 +135,19 @@ get_rosters <- function(
         team_stats <- dplyr::bind_rows(skater_stats, goalie_stats) |>
           dplyr::select(-age, -pos)
 
+        team_stats$player <- stringr::str_remove_all(team_stats$player, "\\*")
+        team_stats$player <- stringr::str_remove_all(team_stats$player, "\\s\\(C\\)")
+        team_stats$player <- stringr::str_remove_all(team_stats$player, "\\s\\(A\\)")
+
         team_roster <- team_roster |>
           dplyr::left_join(team_stats, by = "player")
       }
 
     }
+
+    team_roster <- team_roster |>
+      dplyr::mutate_all(type.convert, as.is = TRUE) |>
+      dplyr::mutate(number = as.character(number))
 
     rosters <- dplyr::bind_rows(rosters, team_roster)
   }
