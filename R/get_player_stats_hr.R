@@ -13,9 +13,9 @@
 #' @examples
 #' \dontrun{
 #' #' get_player_stats("Wayne Gretzky")
-#' get_player_stats(c("Wayne Gretzky","Mario Lemieux"))
+#' get_player_stats_hr(c("Wayne Gretzky","Mario Lemieux"))
 #' }
-get_player_stats <- function(player_name, season = "career", league = "NHL"){
+get_player_stats_hr <- function(player_name, season = "career", league = "NHL"){
 
   player_table <- dplyr::tibble(player = player_name) |>
     tidyr::separate(

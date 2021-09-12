@@ -1,0 +1,31 @@
+utils::globalVariables(
+  c(
+    "abbreviation", "about", "abstractGameState", "age", "assists", "assists_2",
+    "assists_3", "away", "away_final_score", "away_goalie", "away_index",
+    "away_name", "away_on_1", "away_on_2", "away_on_3", "away_on_4", "away_on_5",
+    "away_on_6", "away_on_7", "away_score", "blocker_info", "code", "coordinates",
+    "dateTime", "desc", "description", "detailedState", "duration", "endDateTime",
+    "end_game_seconds", "end_seconds", "end_time", "end_time_ms", "event",
+    "event_code", "event_goalie_name", "event_id", "event_idx", "event_player_1_name",
+    "event_player_1_type", "event_player_2_id", "event_player_2_link",
+    "event_player_2_name", "event_player_2_type", "event_player_3_name",
+    "event_player_3_type", "event_team", "event_team_type", "event_type",
+    "event_type_id", "everything", "extra_attacker", "first", "first_name",
+    "flag", "ft", "fullName", "gamePk", "game_date", "game_end", "game_id",
+    "game_length", "game_seconds", "game_seconds_remaining", "game_start",
+    "game_type", "games", "goals", "height_ft", "home", "home_final_score",
+    "home_goalie", "home_index", "home_name", "home_on_1", "home_on_2", "home_on_3",
+    "home_on_4", "home_on_5", "home_on_6", "home_on_7", "home_score", "ht", "id",
+    "inches", "last", "last_name", "leagueRecord", "lg", "link", "med_x", "name",
+    "no", "num_off", "num_on", "number", "otl", "overall", "overtime", "penalty_severity",
+    "period", "period_seconds", "period_seconds_remaining", "period_time",
+    "period_time_remaining", "pk", "player", "playerType", "player_id", "player_name",
+    "players_off", "players_on", "pos", "position", "primaryPosition", "priority",
+    "result", "rk", "s_c", "score", "season", "seasonTotal", "season_full",
+    "season_short", "season_type", "secondary_type", "shot_angle", "shot_distance",
+    "start_game_seconds", "start_seconds", "start_time", "start_time_ms", "strength",
+    "strength_code", "strength_state", "team", "team_abbr", "team_abbrev", "team_id",
+    "team_name", "team_season", "teams", "tm", "triCode", "type", "w", "wt", "x",
+    "x_fixed", "y", "y_fixed"
+    )
+  )

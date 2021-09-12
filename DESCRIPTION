@@ -6,7 +6,8 @@ Authors@R:
            family = "Morse",
            role = c("aut", "cre"),
            email = "danmorse8642@gmail.com")
-Description: This package contains various functions to help scrape hockey data
+Description: This package contains various functions to scrape hockey play-by-play 
+  data from the NHL API. It also contains functions to scrape data
   from hockey-reference.com, including standings, player stats, and jersey number
   history.
 License: MIT + file LICENSE
@@ -26,4 +27,8 @@ Imports:
     utils,
     polite,
     rvest,
-    stringr
+    stringr,
+    jsonlite,
+    lubridate,
+    purrr,
+    zoo
