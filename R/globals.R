@@ -22,6 +22,7 @@ utils::globalVariables(
     "period_time_remaining", "pk", "player", "playerType", "player_id", "player_name",
     "players_off", "players_on", "pos", "position", "primaryPosition", "priority",
     "result", "rk", "s_c", "score", "season", "seasonTotal", "season_full",
+    "season_hockeyR", "season_half", "season_pbp",
     "season_short", "season_type", "secondary_type", "shot_angle", "shot_distance",
     "start_game_seconds", "start_seconds", "start_time", "start_time_ms", "strength",
     "strength_code", "strength_state", "team", "team_abbr", "team_abbrev", "team_id",
