@@ -9,10 +9,9 @@
 This package contains various functions to scrape and clean play-by-play
 data from NHL.com. Season play-by-play data scraped with these functions
 can be found in the
-(hockeyR-data)\[<https://github.com/danmorse314/hockeyR-data>\]
-repository. It also contains functions to scrape data from
-hockey-reference.com, including standings, player stats, and jersey
-number history.
+[hockeyR-data](https://github.com/danmorse314/hockeyR-data) repository.
+It also contains functions to scrape data from hockey-reference.com,
+including standings, player stats, and jersey number history.
 
 ## Installation
 
@@ -128,7 +127,7 @@ geom_hockey("nhl") +
 ```
 
 <img src="man/figures/README-shot-plot-example-1.png" width="100%" />
-\#\#\# Future Work
+\#\#\#\# Future Work
 
 Getting clean data for games going back to the start of the NHL RTSS era
 (2007-2008 season) is in the works. There are also plans to create a
