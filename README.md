@@ -15,7 +15,17 @@ including standings, player stats, and jersey number history.
 
 ## Installation
 
-You can install the development version from
+Before installing, confirm that your version of R is updated to at least
+4.1.0. This will ensure R can handle R’s native pipe operator (`|>`),
+which was unavailable until 4.1.0. If you don’t know which version of R
+is installed, try `verson$version.string` in your R console.
+
+``` r
+version$version.string
+#> [1] "R version 4.1.0 (2021-05-18)"
+```
+
+You can install the development version of `hockeyR` from
 [GitHub](https://github.com/) with:
 
 ``` r
