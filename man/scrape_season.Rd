@@ -21,6 +21,6 @@ Scrape full season play-by-play
 \examples{
 \dontrun{
 # scrape all regular season & postseason games for the 2016-2017 season
-pbp2_016_2017 <- scrape_season(2017, type = "REG")
+pbp_2016_2017 <- scrape_season(2017, type = "REG")
 }
 }
