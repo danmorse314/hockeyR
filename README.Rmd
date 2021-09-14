@@ -241,3 +241,4 @@ player_stats |>
 
 - Everyone involved in making the [nflverse](https://github.com/nflverse), the premier data source for NFL stats that inspired this whole project
 - The [Evolving Wild](https://twitter.com/EvolvingWild) twins, whose old NHL scraper helped enormously in getting player on-ice data joined to the raw play-by-play data in here.
+- [Tan Ho](https://twitter.com/_TanHo), whose twitch streams on [web scraping](https://www.youtube.com/watch?v=z8yT3E4pz54&t=26s) and [JSON wrangling](https://www.youtube.com/watch?v=fpw4G2-0R-o&t=1195s) quite literally took me from 0 web scraping knowledge to building this package

@@ -127,8 +127,7 @@ geom_hockey("nhl") +
 ```
 
 <img src="man/figures/README-shot-plot-example-1.png" width="100%" />
-
-### Future Work
+\#\#\#\# Future Work
 
 Getting clean data for games going back to the start of the NHL RTSS era
 (2007-2008 season) is in the works. There are also plans to create a
@@ -319,3 +318,9 @@ player_stats |>
 -   The [Evolving Wild](https://twitter.com/EvolvingWild) twins, whose
     old NHL scraper helped enormously in getting player on-ice data
     joined to the raw play-by-play data in here.
+-   [Tan Ho](https://twitter.com/_TanHo), whose twitch streams on [web
+    scraping](https://www.youtube.com/watch?v=z8yT3E4pz54&t=26s) and
+    [JSON
+    wrangling](https://www.youtube.com/watch?v=fpw4G2-0R-o&t=1195s)
+    quite literally took me from 0 web scraping knowledge to building
+    this package
