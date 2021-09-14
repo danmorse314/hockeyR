@@ -16,7 +16,7 @@ including standings, player stats, and jersey number history.
 ## Installation
 
 Before installing, confirm that your version of R is updated to at least
-4.1.0. This will ensure R can handle R’s native pipe operator (`|>`),
+4.1.0. This will ensure R can handle R’s native pipe operator `|>`,
 which was unavailable until 4.1.0. If you don’t know which version of R
 is installed, try `verson$version.string` in your R console.
 
@@ -137,7 +137,8 @@ geom_hockey("nhl") +
 ```
 
 <img src="man/figures/README-shot-plot-example-1.png" width="100%" />
-\#\#\#\# Future Work
+
+#### Future Work
 
 Getting clean data for games going back to the start of the NHL RTSS era
 (2007-2008 season) is in the works. There are also plans to create a
