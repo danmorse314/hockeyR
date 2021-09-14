@@ -44,8 +44,8 @@ The fastest way to load a season’s play-by-play data is through the
 `load_pbp()` also has the advantage of accepting more explicit values
 for the seasons desired. For example, if you want to get the
 play-by-play for the 2020-2021 NHL season, all of
-`load_pbp("2020-2021)`, `load_pbp("2020-21)`, and `load_pbp(2021)` will
-get it for you.
+`load_pbp('2020-2021')`, `load_pbp('2020-21')`, and `load_pbp(2021)`
+will get it for you.
 
 ``` r
 pbp <- load_pbp('2020-21')

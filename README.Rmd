@@ -40,7 +40,7 @@ library(sportyR)
 
 #### Loading season play-by-play
 
-The fastest way to load a season's play-by-play data is through the `load_pbp()` function, which pulls the desired season(s) from [hockeyR-data](https://github.com/danmorse314/hockeyR-data/tree/main/data). `load_pbp()` also has the advantage of accepting more explicit values for the seasons desired. For example, if you want to get the play-by-play for the 2020-2021 NHL season, all of `load_pbp("2020-2021)`, `load_pbp("2020-21)`, and `load_pbp(2021)` will get it for you.
+The fastest way to load a season's play-by-play data is through the `load_pbp()` function, which pulls the desired season(s) from [hockeyR-data](https://github.com/danmorse314/hockeyR-data/tree/main/data). `load_pbp()` also has the advantage of accepting more explicit values for the seasons desired. For example, if you want to get the play-by-play for the 2020-2021 NHL season, all of `load_pbp('2020-2021')`, `load_pbp('2020-21')`, and `load_pbp(2021)` will get it for you.
 
 ```{r load_pbp}
 pbp <- load_pbp('2020-21')
@@ -108,7 +108,7 @@ geom_hockey("nhl") +
     plot.caption = element_text(hjust = .9)
     )
 ```
-####   Future Work
+#### Future Work
 
 Getting clean data for games going back to the start of the NHL RTSS era (2007-2008 season) is in the works. There are also plans to create a basic expected goals model and perhaps a win probability model that would include xG values for each shot and win probabilities for each play, similar to the expected points model found in the [nflfastR](https://github.com/nflverse/nflfastR) package. And of course, scraping the upcoming NHL season and updating the data daily is planned for the 2021-2022 season.
 
