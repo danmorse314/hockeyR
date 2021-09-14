@@ -28,7 +28,7 @@ devtools::install_github("danmorse314/hockeyR")
 
 Load the package (and any others you might need—for plotting an ice
 surface I highly recommend the
-(sportyR)\[<https://github.com/rossdrucker/sportyR>\] package).
+[sportyR](https://github.com/rossdrucker/sportyR) package).
 
 ``` r
 library(hockeyR)
@@ -41,7 +41,7 @@ library(sportyR)
 
 The fastest way to load a season’s play-by-play data is through the
 `load_pbp()` function, which pulls the desired season(s) from
-(hockeyR-data)\[<https://github.com/danmorse314/hockeyR-data/tree/main/data>\].
+[hockeyR-data](https://github.com/danmorse314/hockeyR-data/tree/main/data).
 `load_pbp()` also has the advantage of accepting more explicit values
 for the seasons desired. For example, if you want to get the
 play-by-play for the 2020-2021 NHL season, all of
@@ -66,13 +66,13 @@ are transformations of the `x` and `y` event coordinates such that the
 home team is always shooting to the right and the away team is always
 shooting to the left. For full details on the included variables, see
 the
-(`scrape_game()`)\[<https://github.com/danmorse314/hockeyR/blob/master/R/scrape_game.R>\]
+[`scrape_game()`](https://github.com/danmorse314/hockeyR/blob/master/R/scrape_game.R)
 documentation.
 
 As mentioned above, an easy way to create a shot plot is through the
-(sportyR)\[<https://github.com/rossdrucker/sportyR>\] package. You can
-also use the included `team_colors_logos` data to add color and team
-logos to your plots.
+[sportyR](https://github.com/rossdrucker/sportyR) package. You can also
+use the included `team_colors_logos` data to add color and team logos to
+your plots.
 
 ``` r
 # get single game
@@ -135,14 +135,14 @@ Getting clean data for games going back to the start of the NHL RTSS era
 basic expected goals model and perhaps a win probability model that
 would include xG values for each shot and win probabilities for each
 play, similar to the expected points model found in the
-(nflfastR)\[<https://github.com/nflverse/nflfastR>\] package. And of
-course, scraping the upcoming NHL season and updating the data daily is
-planned for the 2021-2022 season.
+[nflfastR](https://github.com/nflverse/nflfastR) package. And of course,
+scraping the upcoming NHL season and updating the data daily is planned
+for the 2021-2022 season.
 
 ### Hockey-Reference scrapers
 
 There are a few functions also included that will scrape data from
-(hockey-reference.com)\[<https://hockey-reference.com>\].
+[hockey-reference.com](https://hockey-reference.com).
 
 Grab every team’s win-loss record in any season going back to 1918 with
 the `get_team_records()` function
@@ -314,8 +314,8 @@ player_stats |>
 ## Acknowledgements
 
 -   Everyone involved in making the
-    (nflverse)\[<https://github.com/nflverse>\], the premier data source
-    for NFL stats that inspired this whole project
--   The (Evolving Wild)\[<https://twitter.com/EvolvingWild>\] twins,
-    whose old NHL scraper helped enormously in getting player on-ice
-    data joined to the raw play-by-play data in here.
+    [nflverse](https://github.com/nflverse), the premier data source for
+    NFL stats that inspired this whole project
+-   The [Evolving Wild](https://twitter.com/EvolvingWild) twins, whose
+    old NHL scraper helped enormously in getting player on-ice data
+    joined to the raw play-by-play data in here.
