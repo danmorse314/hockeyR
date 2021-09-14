@@ -45,9 +45,11 @@ load_pbp <- function(season = as.numeric(substr(Sys.Date() + 184,1,4))){
 
     pbp_all <- NULL
     for(i in to_pull){
-      pbp <- readRDS(url(glue::glue("https://github.com/danmorse314/hockeyR-data/blob/main/data/play_by_play_{i}.rds")))
+      print(glue::glue("Fetching {i} season play-by-play..."))
+      pbp <- readRDS(url(glue::glue("https://github.com/danmorse314/hockeyR-data/raw/main/data/play_by_play_{i}.rds")))
       pbp_all <- dplyr::bind_rows(pbp_all, pbp)
       rm(pbp,i)
+      print(glue::glue("Done!"))
     }
   }
 
