@@ -17,17 +17,18 @@ scrape_day <- function(day = as.Date(Sys.Date(), "%Y-%m-%d")){
 
   games <- get_game_ids(day = day)
 
-  game_ids <- games |> dplyr::pull(game_id)
+  if(is.null(games)){
+    pbp <- NULL
+  } else {
+    game_ids <- games |> dplyr::pull(game_id)
 
-  scrape_game_safe <- purrr::possibly(scrape_game, otherwise = NULL, quiet = FALSE)
+    scrape_game_safe <- purrr::possibly(scrape_game, otherwise = NULL, quiet = FALSE)
 
-  pbp <- purrr::map_df(
-    game_ids,
-    ~scrape_game_safe(.x)
-  )
-
-  #pbp <- pbp |>
-  #  utils::type.convert(as.is = TRUE)
+    pbp <- purrr::map_df(
+      game_ids,
+      ~scrape_game_safe(.x)
+    )
+  }
 
   return(pbp)
 }

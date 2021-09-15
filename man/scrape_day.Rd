@@ -4,10 +4,10 @@
 \alias{scrape_day}
 \title{Scrape play-by-play for single day's games}
 \usage{
-scrape_day(day)
+scrape_day(day = as.Date(Sys.Date(), "\%Y-\%m-\%d"))
 }
 \arguments{
-\item{day}{A day in the format of 'YYYY-MM-DD'}
+\item{day}{A day in the format of 'YYYY-MM-DD'; defaults to system date.}
 }
 \value{
 A tibble containing all play-by-play data for a given day in
