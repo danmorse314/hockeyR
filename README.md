@@ -61,6 +61,7 @@ will get it for you.
 pbp <- load_pbp('2020-21')
 #> Fetching 2020_21 season play-by-play...
 #> Done!
+#> Loaded 868 regular season games & 84 postseason games for 2020_21
 ```
 
 The available data goes back to the 2010-2011 season as of now, as the

@@ -1,6 +1,6 @@
 #' Scrape play-by-play for single day's games
 #'
-#' @param day A day in the format of 'YYYY-MM-DD'
+#' @param day A day in the format of 'YYYY-MM-DD'; defaults to system date.
 #'
 #' @return A tibble containing all play-by-play data for a given day in
 #' the same format as the output of \code{\link{scrape_game}}
@@ -10,7 +10,7 @@
 #' \dontrun{
 #' pbp_day <- scrape_day(day = "2015-01-06")
 #' }
-scrape_day <- function(day){
+scrape_day <- function(day = as.Date(Sys.Date(), "%Y-%m-%d")){
 
   # for testing
   #day <- "2017-10-17"
