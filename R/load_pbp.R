@@ -63,7 +63,9 @@ load_pbp <- function(season = as.numeric(substr(Sys.Date() + 184,1,4))){
     }
   }
 
-  print(glue::glue("{length(unique(pbp_all$season))} season(s) loaded successfully, containing"))
-  print(glue::glue("{length(unique(dplyr::filter(pbp_all, season_type == 'R')$game_id))} regular season games/{length(unique(dplyr::filter(pbp_all, season_type == 'P')$game_id))} postseason games"))
+  if(!is.null(pbp_all)){
+    print(glue::glue("{length(unique(pbp_all$season))} season(s) loaded successfully, containing"))
+    print(glue::glue("{length(unique(dplyr::filter(pbp_all, season_type == 'R')$game_id))} regular season games/{length(unique(dplyr::filter(pbp_all, season_type == 'P')$game_id))} postseason games"))
+  }
   return(pbp_all)
 }
