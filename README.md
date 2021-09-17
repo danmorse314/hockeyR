@@ -156,7 +156,7 @@ play, similar to the expected points model found in the
 scraping the upcoming NHL season and updating the data daily is planned
 for the 2021-2022 season.
 
-## Acknowledgements
+## Acknowledgments
 
 -   Everyone involved in making the
     [nflverse](https://github.com/nflverse), the premier data source for

@@ -122,7 +122,7 @@ geom_hockey("nhl") +
 
 Getting clean data for games going back to the start of the NHL RTSS era (2007-2008 season) is in the works. There are also plans to create a basic expected goals model and perhaps a win probability model that would include xG values for each shot and win probabilities for each play, similar to the expected points model found in the [nflfastR](https://github.com/nflverse/nflfastR) package. And of course, scraping the upcoming NHL season and updating the data daily is planned for the 2021-2022 season.
 
-##    Acknowledgements
+##    Acknowledgments
 
 * Everyone involved in making the [nflverse](https://github.com/nflverse), the premier data source for NFL stats that inspired this whole project
 * The [Evolving Wild](https://twitter.com/EvolvingWild) twins, whose old NHL scraper helped enormously in getting player on-ice data joined to the raw play-by-play data in here.
