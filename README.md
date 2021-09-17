@@ -70,13 +70,18 @@ NHL JSON source used for this scraper doesn’t include detailed
 play-by-play prior to that.
 
 All variables available in the raw play-by-play data are included, along
-with a few extras added on including: \* shot\_distance \* shot\_angle
-\* x\_fixed \* y\_fixed The `shot_distance` and `shot_angle` are
-measured in feet and degrees, respectively. The variables `x_fixed` and
-`y_fixed` are transformations of the `x` and `y` event coordinates such
-that the home team is always shooting to the right and the away team is
-always shooting to the left. For full details on the included variables,
-see the
+with a few extras added on including:
+
+-   shot\_distance
+-   shot\_angle
+-   x\_fixed
+-   y\_fixed
+
+The `shot_distance` and `shot_angle` are measured in feet and degrees,
+respectively. The variables `x_fixed` and `y_fixed` are transformations
+of the `x` and `y` event coordinates such that the home team is always
+shooting to the right and the away team is always shooting to the left.
+For full details on the included variables, see the
 [`scrape_game()`](https://github.com/danmorse314/hockeyR/blob/master/R/scrape_game.R)
 documentation.
 
