@@ -1,15 +1,14 @@
 Package: hockeyR
 Title: Collect and Clean Hockey Stats
-Version: 0.0.0.9000
+Version: 0.1.0
 Authors@R: 
     person(given = "Daniel",
            family = "Morse",
            role = c("aut", "cre"),
            email = "danmorse8642@gmail.com")
-Description: This package contains various functions to scrape hockey play-by-play 
-  data from the NHL API. It also contains functions to scrape data
-  from hockey-reference.com, including standings, player stats, and jersey number
-  history.
+Description: Various functions to scrape hockey play-by-play data from the
+    NHL API. It also contains functions to scrape data from hockey-reference.com,
+    including standings, player stats, and jersey number history.
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
@@ -18,21 +17,27 @@ RoxygenNote: 7.1.1
 URL: https://github.com/danmorse314/hockeyR
 BugReports: https://github.com/danmorse314/hockeyR/issues
 Depends: 
-    R (>= 2.10)
+    R (>= 4.1.0)
 Imports:
     dplyr,
     glue,
+    httr,
     janitor,
-    tidyr,
-    utils,
-    polite,
-    rvest,
-    stringr,
     jsonlite,
     lubridate,
+    polite,
     purrr,
+    rvest,
+    stringr,
+    tidyr,
+    utils,
     zoo
 Suggests: 
+    ggimage,
+    ggplot2,
+    ggrepel,
+    knitr,
     rmarkdown,
-    knitr
+    scales,
+    sportyR
 VignetteBuilder: knitr
