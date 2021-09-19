@@ -1,5 +1,37 @@
 url: https://hockeyr.netlify.app
 
+template:
+  params:
+    bootswatch: flatly
+
 authors:
   Daniel Morse:
     href: https://twitter.com/danmorse_
+
+development:
+  mode: auto
+
+reference:
+- title: Play-by-play data
+  desc: These are the functions to gather play-by-play data from the NHL API.
+  contents:
+  - "load_pbp"
+  - "scrape_game"
+  - "scrape_season"
+  - "scrape_day"
+  - "get_game_ids"
+  - "get_game_info"
+  - "get_game_rosters"
+  - "get_game_shifts"
+  - "fix_player_columns"
+- title: Hockey-reference.com data
+  desc: Functions to scrape data from hockey-reference.com
+  contents:
+  - "get_team_records"
+  - "get_rosters"
+  - "get_jersey_players"
+  - "get_player_stats_hr"
+- title: Data objects
+  desc: Internal package Data
+  contents:
+  - "team_logos_colors"

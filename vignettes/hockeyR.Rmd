@@ -14,6 +14,47 @@ knitr::opts_chunk$set(
 )
 ```
 
+# Getting started
+
 ```{r setup}
 library(hockeyR)
 ```
+
+## `load_pbp()`
+
+As mentioned on the [home](https://hockeyr.netlify.app/index.html) page, the main function of the `hockeyR` package is to load raw NHL play-by-play data without having to scrape it and clean it yourself. The `load_pbp()` function will do that for you. The `season` argument in `load_pbp()` is very accepting. You may use any of the following syntax when loading play-by-play data for the 2020-21 NHL season:
+
+* Full season definitions (ie '2020-2021')
+* Short seaosn definitions (ie '2020-21')
+* Single season definitions (ie 2021)
+
+To load more than one season, wrap your desired years in `c()`. That is, to get data for the last two years, one could enter `load_pbp(c(2020,2021))`.
+
+## `get_game_ids()`
+
+If you want to load play-by-play data for a game that isn't in the [data repository](https://github.com/danmorse314/hockeyR-data), or perhaps you just want a single game and don't need to load a full season, you'll first need to find the numeric game ID. The `get_game_ids()` function can find it for you as long as you supply it with the date of the game in `YYY-MM-DD` format. The function defaults to the current date as defined by your operating system.
+
+```{r game_ids}
+# get single day ids
+get_game_ids(day = "2017-10-17")
+```
+
+You can instead supply a season to `get_game_ids()` to grab a full year's worth of IDs as well as final scores, home and road teams, and game dates for each game in the given season.
+
+## `scrape_game()`
+
+This function scrapes a single game with a supplied game ID, which can be retrieved with `get_game_ids()`. Live game scraping has yet to undergo testing.
+
+```{r game}
+scrape_game(game_id = 2020030175)
+```
+
+## `scrape_day()`
+
+This is the backbone function that keeps the [hockeyR-data repository](https://github.com/danmorse314/hockeyR-data) up to date during the season. Supply a date (`YYY-MM-DD`) and it will scrape play-by-play data for all games on that day. Live game scraping is still awaiting testing.
+
+```{r day}
+scrape_day("2015-01-06")
+```
+
+If you can wait until the day after a game, the `load_pbp()` function is the only one you'll need. If you'd like to scrape the data yourself immediately following a game, the other functions discussed here will do the job for you.

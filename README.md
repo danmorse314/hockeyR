@@ -1,7 +1,7 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# hockeyR
+# hockeyR <img src="man/figures/logo.png" align="right" width="25%" min-width="120px"/>
 
 <!-- badges: start -->
 <!-- badges: end -->
