@@ -38,34 +38,25 @@ load_pbp <- function(season = as.numeric(substr(Sys.Date() + 184,1,4))){
 
   if(length(to_pull) == 0){
 
-    print(glue::glue("No season data found for {season}"))
+    message(glue::glue("No season data found for {season}"))
     pbp_all <- NULL
 
   } else {
 
     pbp_all <- NULL
     for(i in to_pull){
-      print(glue::glue("Fetching {i} season play-by-play..."))
       # first check if season data exists (for upcoming seasons)
       season_url <- glue::glue("https://github.com/danmorse314/hockeyR-data/blob/main/data/play_by_play_{i}.rds")
       if(httr::http_status(httr::GET(season_url))$category == "Client error"){
-        print(glue::glue("{i} season not available"))
+        message(glue::glue("{i} season not available"))
         pbp <- NULL
       } else {
         pbp <- readRDS(url(glue::glue("https://github.com/danmorse314/hockeyR-data/raw/main/data/play_by_play_{i}.rds")))
         pbp_all <- dplyr::bind_rows(pbp_all, pbp)
-        games_reg <- length(unique(dplyr::filter(pbp, season_type == "R")$game_id))
-        games_post <- length(unique(dplyr::filter(pbp, season_type == "P")$game_id))
-        print(glue::glue("Done!"))
-        print(glue::glue("Loaded {games_reg} regular season games & {games_post} postseason games for {i}"))
         rm(pbp,i,games_reg,games_post)
       }
     }
   }
 
-  if(!is.null(pbp_all)){
-    print(glue::glue("{length(unique(pbp_all$season))} season(s) loaded successfully, containing"))
-    print(glue::glue("{length(unique(dplyr::filter(pbp_all, season_type == 'R')$game_id))} regular season games/{length(unique(dplyr::filter(pbp_all, season_type == 'P')$game_id))} postseason games"))
-  }
   return(pbp_all)
 }

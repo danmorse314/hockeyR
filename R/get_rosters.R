@@ -104,7 +104,7 @@ get_rosters <- function(
         rvest::html_element("#skaters")
 
       if(length(test) == 0){
-        print(glue::glue("Stats not available for {season} yet, check back later"))
+        message(glue::glue("Stats not available for {season} yet, check back later"))
       } else {
         skater_stats <- session |>
           polite::scrape() |>

@@ -23,7 +23,7 @@ get_game_ids <- function(season = NULL, day = as.Date(Sys.Date(), "%Y-%m-%d")){
     site <- jsonlite::read_json(url)
 
     if(site$totalGames == 0){
-      print(glue::glue("No NHL games found on {day}"))
+      message(glue::glue("No NHL games found on {day}"))
     }
 
   } else {
