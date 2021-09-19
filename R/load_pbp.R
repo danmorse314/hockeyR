@@ -53,7 +53,7 @@ load_pbp <- function(season = as.numeric(substr(Sys.Date() + 184,1,4))){
       } else {
         pbp <- readRDS(url(glue::glue("https://github.com/danmorse314/hockeyR-data/raw/main/data/play_by_play_{i}.rds")))
         pbp_all <- dplyr::bind_rows(pbp_all, pbp)
-        rm(pbp,i,games_reg,games_post)
+        rm(pbp,i)
       }
     }
   }
