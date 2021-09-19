@@ -3,7 +3,7 @@ This is a resubmission. In this version I have:
 
 * Updated the DESCRIPTION with proper links in angle brackets to the data sources
 
-* Removed unneccessary print() messages to the console in get_game_ids.R, get_rosters.R, and load_pbp.R
+* Removed unnecessary print() messages to the console in get_game_ids.R, get_rosters.R, and load_pbp.R
 
 
 ## Previous cran-comments
