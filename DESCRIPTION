@@ -1,6 +1,6 @@
 Package: hockeyR
 Title: Collect and Clean Hockey Stats
-Version: 0.1.0
+Version: 0.1.1
 Authors@R: 
     person(given = "Daniel",
            family = "Morse",
