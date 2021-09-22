@@ -1,6 +1,6 @@
 Package: hockeyR
 Title: Collect and Clean Hockey Stats
-Version: 0.1.0
+Version: 0.1.0.9000
 Authors@R: 
     person(given = "Daniel",
            family = "Morse",
@@ -17,13 +17,14 @@ RoxygenNote: 7.1.1
 URL: https://github.com/danmorse314/hockeyR
 BugReports: https://github.com/danmorse314/hockeyR/issues
 Depends: 
-    R (>= 4.1.0)
+    R (>= 3.5.0)
 Imports:
     dplyr,
     glue,
     httr,
     janitor,
     jsonlite,
+    magrittr,
     lubridate,
     polite,
     purrr,
