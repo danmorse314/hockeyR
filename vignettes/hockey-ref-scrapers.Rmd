@@ -31,15 +31,15 @@ These functions scrape data from [hockey-reference.com](https://www.hockey-refer
 Grab every team's win-loss record in any season going back to 1918 with the `get_team_records()` function
 
 ```{r records}
-get_team_records(1967) |>
-  dplyr::arrange(-w) |>
+get_team_records(1967) %>%
+  dplyr::arrange(-w) %>%
   dplyr::select(team_name, team_abbr, season, overall, w, l, otl, st_points)
 ```
 
 You can also get stats down to the player-level with `get_player_stats_hr()`. This function defaults to the player's career statistics, but you can enter a specific season or range of seasons as well. Note that the season references the year the specific season ended (ie the 2021-22 season should be entered as 2022)
 
 ```{r player stats}
-get_player_stats_hr(player_name = "Wayne Gretzky", season = 1982) |>
+get_player_stats_hr(player_name = "Wayne Gretzky", season = 1982) %>%
   dplyr::select(player, age, season_full, tm, gp, g, a, pts)
 ```
 
@@ -57,7 +57,7 @@ df2 <- purrr::map2_dfr(
   )
 
 # who had the most goals?
-dplyr::arrange(df2, dplyr::desc(g)) |>
+dplyr::arrange(df2, dplyr::desc(g)) %>%
   dplyr::select(player, tm, season_full, gp, g, a, pts)
 ```
 
@@ -65,8 +65,8 @@ You can use the data to make plots with actual team colors and logos as well usi
 
 ```{r plot-example}
 # add colors & logos
-df3 <- df2 |>
-  dplyr::group_by(player, season_full) |>
+df3 <- df2 %>%
+  dplyr::group_by(player, season_full) %>%
   # this part is just to get both of Mete's teams into one row
   dplyr::summarize(
     gp = sum(gp),
@@ -74,12 +74,12 @@ df3 <- df2 |>
     pts_gm = pts/gp,
     tm = utils::tail(tm, n=1),
     .groups = "drop"
-  ) |>
-  dplyr::mutate(player_season = glue::glue("{player}\n{season_full}")) |>
+  ) %>%
+  dplyr::mutate(player_season = glue::glue("{player}\n{season_full}")) %>%
   dplyr::left_join(team_logos_colors, by = c("tm" = "team_abbr"))
 
 # make a bar chart
-df3 |>
+df3 %>%
   ggplot2::ggplot(ggplot2::aes(stats::reorder(player_season, -pts_gm), pts_gm)) +
   ggplot2::geom_col(fill = df3$team_color1, color = df3$team_color2) +
   ggimage::geom_image(
@@ -107,23 +107,23 @@ The most reliable way to grab player stats is through the `get_rosters()` functi
 With `get_rosters()`, you can look up the current roster for any team in the league or the roster at season's end for any prior season. By default, it will only pull basic player info (name, age, height & weight, etc), but you can grab all the basic counting stats by setting `include_stats` to `TRUE`.
 
 ```{r rosters}
-player_stats <- get_rosters(c("COL","Detroit red wings"), season = 2001, include_stats = TRUE) |>
+player_stats <- get_rosters(c("COL","Detroit red wings"), season = 2001, include_stats = TRUE) %>%
   dplyr::mutate(
     g_60 = 60 * g / toi,
     a_60 = 60 * a /toi,
     p_60 = 60 * pts / toi
-  ) |>
-  dplyr::filter(toi >= 300) |>
+  ) %>%
+  dplyr::filter(toi >= 300) %>%
   dplyr::left_join(team_logos_colors, by = "team_abbr")
 
 top_performers <- dplyr::filter(
       player_stats,
-      p_60 >= dplyr::arrange(player_stats, -p_60) |>
-        dplyr::slice(10) |>
+      p_60 >= dplyr::arrange(player_stats, -p_60) %>%
+        dplyr::slice(10) %>%
         dplyr::pull(p_60)
       )
 
-player_stats |>
+player_stats %>%
   ggplot2::ggplot(ggplot2::aes(a_60,g_60)) +
   ggplot2::geom_hline(yintercept = 60 * sum(player_stats$g) / sum(player_stats$toi),
              linetype = "dashed", color = "black") +

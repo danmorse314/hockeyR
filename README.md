@@ -10,7 +10,7 @@ status](https://www.r-pkg.org/badges/version/hockeyR)](https://CRAN.R-project.or
 [![](https://img.shields.io/badge/devel%20version-0.1.0-blue.svg)](https://github.com/hockeyR)
 [![R-CMD-check](https://github.com/danmorse314/hockeyR/workflows/R-CMD-check/badge.svg)](https://github.com/danmorse314/hockeyR/actions)
 [![](https://img.shields.io/github/last-commit/danmorse314/hockeyR.svg)](https://github.com/danmorse314/hockeyR/commits/master)
-[![](http://cranlogs.r-pkg.org/badges/grand-total/hockeyR)](https://cran.r-project.org/package=hockeyR)
+[![](https://cranlogs.r-pkg.org/badges/grand-total/hockeyR)](https://cran.r-project.org/package=hockeyR)
 [![](https://img.shields.io/twitter/follow/danmorse_.svg?style=social)](https://twitter.com/danmorse_)
 <!-- badges: end -->
 
@@ -25,22 +25,26 @@ including standings, player stats, and jersey number history.
 
 Before installing, confirm that your version of R is updated to at least
 4.1.0. This will ensure R can handle R’s native pipe operator `|>`,
-which was unavailable until 4.1.0. If you don’t know which version of R
-is installed, try `verson$version.string` in your R console.
+which was unavailable until 4.1.0. If you do not wish to update to R
+4.1.0, can install the development version from
+[GitHub](https://github.com/danmorse314/hockeyR) instead.
+
+If you don’t know which version of R is installed, try
+`verson$version.string` in your R console.
 
 ``` r
 version$version.string
 #> [1] "R version 4.1.0 (2021-05-18)"
 ```
 
-Install the released version of hockeyR from
+Install the released version of hockeyR (requires R 4.1.0) from
 [CRAN](https://CRAN.R-project.org) with:
 
 ``` r
 install.packages("hockeyR")
 ```
 
-Install the development version of `hockeyR` from
+Install the development version of `hockeyR` (requires R 3.5) from
 [GitHub](https://github.com/) with:
 
 ``` r
@@ -102,12 +106,12 @@ your plots.
 
 ``` r
 # get single game
-game <- pbp |>
+game <- pbp %>%
   filter(game_date == "2019-04-23" & home_abbreviation == "SJS")
 
 # grab team logos & colors
-team_logos <- hockeyR::team_logos_colors |>
-  filter(team_abbr == unique(game$home_abbreviation) | team_abbr == unique(game$away_abbreviation)) |>
+team_logos <- hockeyR::team_logos_colors %>%
+  filter(team_abbr == unique(game$home_abbreviation) | team_abbr == unique(game$away_abbreviation)) %>%
   # add in dummy variables to put logos on the ice
   mutate(x = ifelse(full_team_name == unique(game$home_name), 50, -50),
          y = 0)
@@ -120,7 +124,7 @@ transparent <- function(img) {
 # get only shot events
 fenwick_events <- c("MISSED_SHOT","SHOT","GOAL")
 
-shots <- game |> filter(event_type %in% fenwick_events) |>
+shots <- game %>% filter(event_type %in% fenwick_events) %>%
   # adding team colors
   left_join(team_logos, by = c("event_team_abbr" = "team_abbr"))
 
