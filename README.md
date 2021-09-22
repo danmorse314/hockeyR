@@ -4,6 +4,14 @@
 # hockeyR <img src="man/figures/logo.png" align="right" width="25%" min-width="120px"/>
 
 <!-- badges: start -->
+
+[![CRAN
+status](https://www.r-pkg.org/badges/version/hockeyR)](https://CRAN.R-project.org/package=hockeyR)
+[![](https://img.shields.io/badge/devel%20version-0.1.0-blue.svg)](https://github.com/hockeyR)
+[![R-CMD-check](https://github.com/danmorse314/hockeyR/workflows/R-CMD-check/badge.svg)](https://github.com/danmorse314/hockeyR/actions)
+[![](https://img.shields.io/github/last-commit/danmorse314/hockeyR.svg)](https://github.com/danmorse314/hockeyR/commits/master)
+[![](http://cranlogs.r-pkg.org/badges/grand-total/hockeyR?color=blue)](https://cran.r-project.org/package=hockeyR)
+\[![](https://img.shields.io/twitter/follow/danmorse_.svg?style=social)(<https://twitter.com/danmorse_>)\]
 <!-- badges: end -->
 
 This package contains various functions to scrape and clean play-by-play
@@ -25,7 +33,14 @@ version$version.string
 #> [1] "R version 4.1.0 (2021-05-18)"
 ```
 
-You can install the development version of `hockeyR` from
+Install the released version of hockeyR from
+[CRAN](https://CRAN.R-project.org) with:
+
+``` r
+install.packages("hockeyR")
+```
+
+Install the development version of `hockeyR` from
 [GitHub](https://github.com/) with:
 
 ``` r
@@ -58,11 +73,6 @@ will get it for you.
 
 ``` r
 pbp <- load_pbp('2018-19')
-#> Fetching 2018_19 season play-by-play...
-#> Done!
-#> Loaded 1271 regular season games & 87 postseason games for 2018_19
-#> 1 season(s) loaded successfully, containing
-#> 1271 regular season games/87 postseason games
 ```
 
 The available data goes back to the 2010-2011 season as of now, as the
