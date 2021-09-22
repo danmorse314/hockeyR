@@ -17,11 +17,11 @@
 #' }
 get_player_stats_hr <- function(player_name, season = "career", league = "NHL"){
 
-  player_table <- dplyr::tibble(player = player_name) |>
+  player_table <- dplyr::tibble(player = player_name) %>%
     tidyr::separate(
       player, into = c("first","last"), sep = " ",
       extra = "merge", remove = FALSE
-      ) |>
+      ) %>%
     dplyr::mutate(
       last = gsub("\\ ","",last),
       last = tolower(last),
@@ -29,8 +29,8 @@ get_player_stats_hr <- function(player_name, season = "career", league = "NHL"){
       link = glue::glue("https://www.hockey-reference.com/players/{substr(last,1,1)}/{substr(last,1,5)}{substr(first,1,2)}01.html")
     )
 
-  links <- player_table |>
-    dplyr::select(player, link) |>
+  links <- player_table %>%
+    dplyr::select(player, link) %>%
     dplyr::distinct()
 
   stats <- NULL
@@ -41,7 +41,7 @@ get_player_stats_hr <- function(player_name, season = "career", league = "NHL"){
     session <- polite::nod(session, links$link[i])
 
     # pull player stats table
-    player <- session |>
+    player <- session %>%
       polite::scrape()
 
     # skip failed links
@@ -49,7 +49,7 @@ get_player_stats_hr <- function(player_name, season = "career", league = "NHL"){
       next
     }
 
-    player <- player |>
+    player <- player %>%
       rvest::html_element("table")
 
     # skip players with no stats
@@ -58,13 +58,13 @@ get_player_stats_hr <- function(player_name, season = "career", league = "NHL"){
       next
     }
 
-    player <- player|>
-      rvest::html_table() |>
+    player <- player%>%
+      rvest::html_table() %>%
       janitor::clean_names()
 
     # avoid duplicate row names warnings
     if("assists" %in% names(player)){
-      player <- player |>
+      player <- player %>%
         dplyr::mutate(
           assists = ifelse(x == "Season", "ev_a", assists),
           assists_2 = ifelse(x == "Season", "pp_a", assists_2),
@@ -72,11 +72,11 @@ get_player_stats_hr <- function(player_name, season = "career", league = "NHL"){
         )
     }
 
-    player <- player |>
-      janitor::row_to_names(row_number = 1) |>
-      janitor::clean_names() |>
-      dplyr::filter(stringr::str_detect(season, "yr", negate = TRUE)) |>
-      dplyr::filter(tm != "TOT" & lg == league) |>
+    player <- player %>%
+      janitor::row_to_names(row_number = 1) %>%
+      janitor::clean_names() %>%
+      dplyr::filter(stringr::str_detect(season, "yr", negate = TRUE)) %>%
+      dplyr::filter(tm != "TOT" & lg == league) %>%
       dplyr::mutate(
         player = links$player[i],
         season_short = dplyr::case_when(
@@ -85,23 +85,23 @@ get_player_stats_hr <- function(player_name, season = "career", league = "NHL"){
           season != "Career" & season != "1999-00" ~ as.character(glue::glue("{substr(season,1,2)}{substr(season,6,7)}"))
         ),
         season_short = as.numeric(season_short)
-      ) |>
+      ) %>%
       dplyr::rename(
         season_full = season
         )
 
     # filtering to selected season, or career totals by default
     if(!is.numeric(season)){
-      player <- player |>
+      player <- player %>%
         dplyr::filter(season_short == 0)
     } else {
-      player <- player |>
+      player <- player %>%
         dplyr::filter(season_short %in% season)
     }
 
     # change stat names that only show up for skaters, not goalies
     if("ev_a" %in% names(player)){
-      player <- player |>
+      player <- player %>%
         dplyr::rename(
           plus_minus = x
           )
@@ -112,11 +112,11 @@ get_player_stats_hr <- function(player_name, season = "career", league = "NHL"){
   }
 
   # convert numbers to...well, numbers
-  stats <- stats |>
+  stats <- stats %>%
     dplyr::mutate_all(type.convert, as.is = TRUE)
 
-  new_table <- player_table |>
-    dplyr::select(-first, -last) |>
+  new_table <- player_table %>%
+    dplyr::select(-first, -last) %>%
     dplyr::left_join(
       stats,
       by = "player"

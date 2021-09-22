@@ -33,27 +33,27 @@ get_jersey_players <- function(jersey){
     session <- polite::bow(num_url)
 
     # get the data
-    num_list <- session |>
-      polite::scrape() |>
+    num_list <- session %>%
+      polite::scrape() %>%
       rvest::html_table()
 
-    num_table <- num_list[[1]] |>
+    num_table <- num_list[[1]] %>%
       janitor::clean_names()
 
     number_table <- dplyr::tibble(
       player = num_table$player,
       team_season = stringr::str_split(num_table$team_s, "\\(|\\)")
-    ) |>
-      tidyr::unnest(cols = c(team_season)) |>
+    ) %>%
+      tidyr::unnest(cols = c(team_season)) %>%
       dplyr::filter(team_season != "")
 
-    names_table <- number_table |>
+    names_table <- number_table %>%
       dplyr::left_join(
-        number_table |>
+        number_table %>%
           dplyr::count(player),
         by = "player"
-      ) |>
-      dplyr::select(-team_season) |>
+      ) %>%
+      dplyr::select(-team_season) %>%
       dplyr::distinct()
 
     final_table <- dplyr::tibble(
@@ -63,15 +63,15 @@ get_jersey_players <- function(jersey){
       ),
       team = number_table$team_season[c(TRUE, FALSE)],
       season = number_table$team_season[c(FALSE, TRUE)]
-    ) |>
-      tidyr::separate_rows(season, sep = ", ") |>
+    ) %>%
+      tidyr::separate_rows(season, sep = ", ") %>%
       dplyr::mutate(
         season = ifelse(
           substr(season,1,1)=="0" | substr(season,1,1)=="1" | substr(season,1,1)=="2",
           glue::glue("20{season}"),
           glue::glue("19{season}")
         )
-      ) |>
+      ) %>%
       dplyr::mutate(
         player = gsub("\\*","",player),
         season = as.numeric(season),

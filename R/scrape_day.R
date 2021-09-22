@@ -20,7 +20,7 @@ scrape_day <- function(day = as.Date(Sys.Date(), "%Y-%m-%d")){
   if(is.null(games)){
     pbp <- NULL
   } else {
-    game_ids <- games |> dplyr::pull(game_id)
+    game_ids <- games %>% dplyr::pull(game_id)
 
     scrape_game_safe <- purrr::possibly(scrape_game, otherwise = NULL, quiet = FALSE)
 

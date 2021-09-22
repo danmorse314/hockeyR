@@ -46,29 +46,29 @@ get_game_ids <- function(season = NULL, day = as.Date(Sys.Date(), "%Y-%m-%d")){
   if(site$totalGames == 0) {
     game_id_list <- NULL
   } else {
-    game_id_list <- site$dates |>
-      dplyr::tibble() |>
-      tidyr::unnest_wider(1) |>
-      dplyr::select(date, games) |>
-      tidyr::unnest_longer(games) |>
-      tidyr::unnest_wider(games) |>
-      dplyr::select(date, gamePk, season, teams) |>
-      tidyr::unnest_wider(teams) |>
-      tidyr::unnest_wider(away) |>
-      tidyr::unnest_wider(team) |>
+    game_id_list <- site$dates %>%
+      dplyr::tibble() %>%
+      tidyr::unnest_wider(1) %>%
+      dplyr::select(date, games) %>%
+      tidyr::unnest_longer(games) %>%
+      tidyr::unnest_wider(games) %>%
+      dplyr::select(date, gamePk, season, teams) %>%
+      tidyr::unnest_wider(teams) %>%
+      tidyr::unnest_wider(away) %>%
+      tidyr::unnest_wider(team) %>%
       dplyr::rename(
         game_id = gamePk,
         season_full = season,
         away_name = name,
         away_final_score = score
-      ) |>
-      dplyr::select(-leagueRecord, -id, -link) |>
-      tidyr::unnest_wider(home) |>
-      tidyr::unnest_wider(team) |>
+      ) %>%
+      dplyr::select(-leagueRecord, -id, -link) %>%
+      tidyr::unnest_wider(home) %>%
+      tidyr::unnest_wider(team) %>%
       dplyr::rename(
         home_name = name,
         home_final_score = score
-      ) |>
+      ) %>%
       dplyr::select(game_id, season_full, date, home_name, away_name, home_final_score, away_final_score)
 
     game_id_list$game_type <- dplyr::case_when(
@@ -85,7 +85,7 @@ get_game_ids <- function(season = NULL, day = as.Date(Sys.Date(), "%Y-%m-%d")){
     # the season code in the game_id
 
     if(!is.null(season)) {
-      game_id_list <- game_id_list |>
+      game_id_list <- game_id_list %>%
         dplyr::filter(
           substr(game_id, 1, 4) == (as.numeric(season) - 1)
         )

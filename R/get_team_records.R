@@ -46,18 +46,18 @@ get_team_records <- function(season = as.numeric(format(Sys.Date()+184, "%Y")), 
 
     session <- polite::nod(session, hr_url)
 
-    records <- session |>
-      polite::scrape() |>
-      rvest::html_element("#team_vs_team") |>
+    records <- session %>%
+      polite::scrape() %>%
+      rvest::html_element("#team_vs_team") %>%
       rvest::html_table()
 
     colnames(records) <- c("rk","team_name",names(records)[3:length(records)])
 
     teams <- dplyr::tibble(
       team_name = records$team_name,
-      team_abbr = names(records |> dplyr::select(-team_name, -rk)),
+      team_abbr = names(records %>% dplyr::select(-team_name, -rk)),
       season_short = yr,
-      season = glue::glue("{yr-1}-{substr(season_short,3,4)}") |> as.character()
+      season = glue::glue("{yr-1}-{substr(season_short,3,4)}") %>% as.character()
     )
 
     team_list <- dplyr::bind_rows(team_list, teams)
@@ -73,24 +73,24 @@ get_team_records <- function(season = as.numeric(format(Sys.Date()+184, "%Y")), 
 
       session <- polite::nod(session, hr_url)
 
-      records <- session |>
-        polite::scrape() |>
-        rvest::html_element("#expanded_standings") |>
-        rvest::html_table() |>
+      records <- session %>%
+        polite::scrape() %>%
+        rvest::html_element("#expanded_standings") %>%
+        rvest::html_table() %>%
         janitor::clean_names()
 
       colnames(records) <- c("rk","team_name",names(records)[3:length(records)])
 
-      records <- records |>
-        dplyr::select(team_name:overtime) |>
-        tidyr::separate(overall, into = c("w","l","otl"), remove = FALSE) |>
-        utils::type.convert(as.is = TRUE) |>
+      records <- records %>%
+        dplyr::select(team_name:overtime) %>%
+        tidyr::separate(overall, into = c("w","l","otl"), remove = FALSE) %>%
+        utils::type.convert(as.is = TRUE) %>%
         dplyr::mutate(
           st_points = (2*w)+otl,
           season_short = yr
         )
 
-      team_list <- team_list |>
+      team_list <- team_list %>%
         dplyr::left_join(
           records, by = c("team_name", "season_short")
         )

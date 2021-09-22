@@ -14,15 +14,15 @@ fix_player_columns <- function(players, col){
 
   colt <- "event_player_"
 
-  player <- players |>
-    tidyr::unnest_wider(col) |>
+  player <- players %>%
+    tidyr::unnest_wider(col) %>%
     tidyr::unnest_wider(player)
 
   if("seasonTotal" %in% names(player)) {
-    player <- player |>
+    player <- player %>%
       dplyr::select(id:seasonTotal)
   } else {
-    player <- player |>
+    player <- player %>%
       dplyr::select(id:playerType)
   }
 

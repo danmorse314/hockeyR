@@ -20,8 +20,8 @@ scrape_season <- function(season, type = "all"){
     type <- c("REG","POST")
   }
 
-  games <- games |>
-    dplyr::filter(game_type %in% type) |>
+  games <- games %>%
+    dplyr::filter(game_type %in% type) %>%
     dplyr::arrange(desc(game_type)) #  puts regular season first, helps with column ordering
 
   # for testing
@@ -29,7 +29,7 @@ scrape_season <- function(season, type = "all"){
   scrape_game_safe <- purrr::possibly(scrape_game, otherwise = NULL, quiet = FALSE)
 
   pbp <- purrr::map_df(
-    .x = games |> dplyr::pull(game_id),
+    .x = games %>% dplyr::pull(game_id),
     ~scrape_game_safe(.x)
   )
 

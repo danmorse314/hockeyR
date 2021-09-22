@@ -10,15 +10,15 @@
 #' @export
 get_game_rosters <- function(site){
 
-  rosters <- site$gameData$players |>
-    dplyr::tibble() |>
-    tidyr::unnest_wider(1) |>
-    dplyr::select(id, fullName, primaryPosition) |>
-    tidyr::unnest_wider(3) |>
+  rosters <- site$gameData$players %>%
+    dplyr::tibble() %>%
+    tidyr::unnest_wider(1) %>%
+    dplyr::select(id, fullName, primaryPosition) %>%
+    tidyr::unnest_wider(3) %>%
     dplyr::mutate(
       priority = ifelse(abbreviation == "G", 2, 1)
-    ) |>
-    dplyr::arrange(priority) |>
+    ) %>%
+    dplyr::arrange(priority) %>%
     dplyr::select(
       "player_id" = id,
       "player_name" = fullName,

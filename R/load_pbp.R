@@ -26,13 +26,13 @@ load_pbp <- function(season = as.numeric(substr(Sys.Date() + 184,1,4))){
   )
 
   # define seaosns to pull
-  to_pull <- saved_seasons |>
+  to_pull <- saved_seasons %>%
     dplyr::filter(
       season_hockeyR %in% season |
         season_full %in% season |
         season_half %in% season |
         season_pbp %in% season
-    ) |>
+    ) %>%
     # get season as used in hockeyR-data
     dplyr::pull(season_pbp)
 

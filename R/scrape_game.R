@@ -134,32 +134,32 @@ scrape_game <- function(game_id){
   fenwick_events <- c("MISSED_SHOT","SHOT","GOAL")
 
   # unnest game plays
-  plays <- site$liveData$plays$allPlays |>
-    dplyr::tibble() |>
-    tidyr::unnest_wider(1) |>
-    dplyr::select(-players) |>
-    tidyr::unnest_wider(result) |>
-    tidyr::unnest_wider(strength) |>
-    dplyr::rename(strength_code = code, strength = name) |>
-    tidyr::unnest_wider(about) |>
-    tidyr::unnest_wider(goals) |>
+  plays <- site$liveData$plays$allPlays %>%
+    dplyr::tibble() %>%
+    tidyr::unnest_wider(1) %>%
+    dplyr::select(-players) %>%
+    tidyr::unnest_wider(result) %>%
+    tidyr::unnest_wider(strength) %>%
+    dplyr::rename(strength_code = code, strength = name) %>%
+    tidyr::unnest_wider(about) %>%
+    tidyr::unnest_wider(goals) %>%
     dplyr::rename(home_score = home, away_score = away)
 
   # catch error for seasons that don't include shot locations
   #   (all seasons prior to 2010-11)
   if(!is.null(suppressWarnings(plays$coordinates))){
-    plays <- plays |>
+    plays <- plays %>%
       tidyr::unnest_wider(coordinates)
   }
 
-  plays <- plays |>
+  plays <- plays %>%
     tidyr::unnest_wider(team)
 
   # fixed issue with canadian v american all-stars with no team tricode
   # create our own
 
   if("triCode" %in% names(plays)){
-    plays <- plays |>
+    plays <- plays %>%
       dplyr::rename(
         event_team = name,
         event_team_id = id,
@@ -167,12 +167,12 @@ scrape_game <- function(game_id){
         event_team_abbr = triCode
       )
   } else {
-    plays <- plays |>
+    plays <- plays %>%
       dplyr::rename(
         event_team = name,
         event_team_id = id,
         event_team_link = link
-      ) |>
+      ) %>%
       dplyr::mutate(
         event_team_abbr = ifelse(
           event_team == game_info$home_name,
@@ -182,8 +182,8 @@ scrape_game <- function(game_id){
       )
   }
 
-  plays <- plays |>
-    janitor::clean_names() |>
+  plays <- plays %>%
+    janitor::clean_names() %>%
     dplyr::mutate(
       # clean up the times
       period_seconds = lubridate::period_to_seconds(lubridate::ms(period_time)),
@@ -196,15 +196,15 @@ scrape_game <- function(game_id){
       ),
       home_final = dplyr::last(home_score),
       away_final = dplyr::last(away_score)
-    ) |>
+    ) %>%
     dplyr::rename(event_type = event_type_id)
 
   # add event players
   suppressMessages({
-    players <- site$liveData$plays$allPlays |>
-      dplyr::tibble() |>
-      tidyr::unnest_wider(1) |>
-      dplyr::select(players) |>
+    players <- site$liveData$plays$allPlays %>%
+      dplyr::tibble() %>%
+      tidyr::unnest_wider(1) %>%
+      dplyr::select(players) %>%
       tidyr::unnest_wider(players)
   })
 
@@ -214,8 +214,8 @@ scrape_game <- function(game_id){
   )
 
   # combine it all
-  pbp <- dplyr::bind_cols(plays, players, game_info) |>
-    dplyr::select(1:5,dplyr::all_of(names(players)),everything()) |>
+  pbp <- dplyr::bind_cols(plays, players, game_info) %>%
+    dplyr::select(1:5,dplyr::all_of(names(players)),everything()) %>%
     dplyr::filter(
       # discard redundant rows
       event_type %not_in% c("PERIOD_READY","PERIOD_OFFICIAL","PERIOD_START","GAME_OFFICIAL")
@@ -223,21 +223,21 @@ scrape_game <- function(game_id){
 
   # create dummy secondary_type column for preseason/all-star games without one
   if("secondary_type" %not_in% names(pbp)){
-    pbp <- pbp |>
+    pbp <- pbp %>%
       dplyr::mutate(secondary_type = NA)
   }
 
   # create dummy penalty column for preseason/all-star games without one
   if("penalty_severity" %not_in% names(pbp)){
-    pbp <- pbp |>
+    pbp <- pbp %>%
       dplyr::mutate(penalty_severity = NA)
   }
 
   # swap blocked shot event players so
   # shooter is player_1 & blocker is player_2
   if("BLOCKED_SHOT" %in% pbp$event_type){
-    pbp_blocks <- pbp |>
-      dplyr::filter(event_type == "BLOCKED_SHOT") |>
+    pbp_blocks <- pbp %>%
+      dplyr::filter(event_type == "BLOCKED_SHOT") %>%
       dplyr::mutate(
         # swap event team to match shooting team instead of blocking team
         event_team = ifelse(event_team == home_name, away_name, home_name),
@@ -248,18 +248,18 @@ scrape_game <- function(game_id){
         event_player_1_name = event_player_2_name,
         event_player_1_link = event_player_2_link,
         event_player_1_type = event_player_2_type
-      ) |>
+      ) %>%
       tidyr::separate(
         blocker_info,
         into = c("event_player_2_id","event_player_2_name",
                  "event_player_2_link","event_player_2_type"),
         sep = ",", remove = TRUE
-      ) |>
+      ) %>%
       dplyr::mutate(event_player_2_id = as.integer(event_player_2_id))
 
-    pbp <- pbp |>
-      dplyr::filter(event_type != "BLOCKED_SHOT") |>
-      dplyr::bind_rows(pbp_blocks) |>
+    pbp <- pbp %>%
+      dplyr::filter(event_type != "BLOCKED_SHOT") %>%
+      dplyr::bind_rows(pbp_blocks) %>%
       dplyr::arrange(event_idx)
   }
 
@@ -269,7 +269,7 @@ scrape_game <- function(game_id){
   #   there will only be two event players
 
   if("event_player_4_name" %in% names(pbp)){
-    pbp <- pbp |>
+    pbp <- pbp %>%
       dplyr::mutate(
         event_goalie_id = dplyr::case_when(
           event_player_2_type == "Goalie" ~ event_player_2_id,
@@ -293,7 +293,7 @@ scrape_game <- function(game_id){
         )
       )
   } else if("event_player_3_name" %in% names(pbp) & "event_player_4_name" %not_in% names(pbp)){
-    pbp <- pbp |>
+    pbp <- pbp %>%
       dplyr::mutate(
         event_goalie_id = dplyr::case_when(
           event_player_2_type == "Goalie" ~ event_player_2_id,
@@ -313,7 +313,7 @@ scrape_game <- function(game_id){
         )
       )
   } else if("event_player_3_name" %not_in% names(pbp)){
-    pbp <- pbp |>
+    pbp <- pbp %>%
       dplyr::mutate(
         event_goalie_id = dplyr::case_when(
           event_player_2_type == "Goalie" ~ event_player_2_id
@@ -340,8 +340,8 @@ scrape_game <- function(game_id){
     # WHO MODIFIED ORIGINAL CODE BY MANNY PERRY
 
     # combine shift events with pbp events
-    pbp_full <- pbp |>
-      dplyr::bind_rows(shifts) |>
+    pbp_full <- pbp %>%
+      dplyr::bind_rows(shifts) %>%
       dplyr::mutate(
         # arrange all events so shift changes are in the proper spot
         priority =
@@ -353,14 +353,14 @@ scrape_game <- function(game_id){
           6 * (event_type == "PERIOD_END" & !(period == 5 & season_type == "R")) +
           7 * (event_type == "GAME_END" & !(period == 5 & season_type == "R")) +
           8 * (event_type == "FACEOFF" &  !(period == 5 & season_type == "R"))
-      ) |>
-      dplyr::arrange(period,game_seconds, priority) |>
+      ) %>%
+      dplyr::arrange(period,game_seconds, priority) %>%
       dplyr::mutate(
         home_index = as.numeric(cumsum(event_type == "CHANGE" &
                                          event_team == unique(pbp$home_name))),
         away_index = as.numeric(cumsum(event_type == "CHANGE" &
                                          event_team == unique(pbp$away_name))),
-      ) |>
+      ) %>%
       dplyr::select(-priority)
 
     # construct a matrix of player names as columns & event row as rows
@@ -397,9 +397,9 @@ scrape_game <- function(game_id){
     home_skaters <- data.frame(home_skaters)
 
     # transform into matrix of only players on the ice
-    on_home <- which(home_skaters == 1, arr.ind = TRUE) |>
-      data.frame() |>
-      dplyr::group_by(row) |>
+    on_home <- which(home_skaters == 1, arr.ind = TRUE) %>%
+      data.frame() %>%
+      dplyr::group_by(row) %>%
       dplyr::summarize(
         home_on_1 = colnames(home_skaters)[unique(col)[1]],
         home_on_2 = colnames(home_skaters)[unique(col)[2]],
@@ -443,9 +443,9 @@ scrape_game <- function(game_id){
     away_skaters <- data.frame(away_skaters)
 
     # transform into matrix of only players on the ice
-    on_away <- which(away_skaters == 1, arr.ind = TRUE) |>
-      data.frame() |>
-      dplyr::group_by(row) |>
+    on_away <- which(away_skaters == 1, arr.ind = TRUE) %>%
+      data.frame() %>%
+      dplyr::group_by(row) %>%
       dplyr::summarize(
         away_on_1 = colnames(away_skaters)[unique(col)[1]],
         away_on_2 = colnames(away_skaters)[unique(col)[2]],
@@ -457,21 +457,21 @@ scrape_game <- function(game_id){
       )
 
     # define goalies
-    goalies <- rosters |>
-      dplyr::filter(position == "G") |>
+    goalies <- rosters %>%
+      dplyr::filter(position == "G") %>%
       dplyr::mutate(
         player_name = stringr::str_replace(player_name, " ", ".")
-      ) |>
+      ) %>%
       dplyr::pull(player_name)
 
     non_plays <- c("GAME_SCHEDULED","PERIOD_END","GAME_END")
 
-    pbp_full <- pbp_full |>
-      dplyr::left_join(on_home, by = c("home_index" = "row")) |>
-      dplyr::left_join(on_away, by = c("away_index" = "row")) |>
+    pbp_full <- pbp_full %>%
+      dplyr::left_join(on_home, by = c("home_index" = "row")) %>%
+      dplyr::left_join(on_away, by = c("away_index" = "row")) %>%
       # adding game info to shift change events and moving info to the end
-      dplyr::select(!dplyr::all_of(names(game_info))) |>
-      dplyr::bind_cols(game_info) |>
+      dplyr::select(!dplyr::all_of(names(game_info))) %>%
+      dplyr::bind_cols(game_info) %>%
       dplyr::mutate(
         # create goalie on-ice columns
         home_goalie = dplyr::case_when(
@@ -553,7 +553,7 @@ scrape_game <- function(game_id){
         )
       )
 
-    pbp_full <- pbp_full |>
+    pbp_full <- pbp_full %>%
       dplyr::mutate(
         event_idx = dplyr::row_number()-1,
         home_final = dplyr::last(home_score),
@@ -585,16 +585,16 @@ scrape_game <- function(game_id){
           "Line change",
           secondary_type
         )
-      ) |>
+      ) %>%
       # remove unnecessary columns
       dplyr::select(-event_id,-home_index,-away_index,-event_code)
 
     # add fixed x & y coordinates so home team shoots right, away shoots left
-    pbp_full <- pbp_full |>
-      dplyr::group_by(event_team, period, game_id) |>
+    pbp_full <- pbp_full %>%
+      dplyr::group_by(event_team, period, game_id) %>%
       # find median x shot coordinate to tell us which side teams are shooting on
-      dplyr::mutate(med_x = stats::median(x[event_type %in% fenwick_events], na.rm = TRUE)) |>
-      dplyr::ungroup() |>
+      dplyr::mutate(med_x = stats::median(x[event_type %in% fenwick_events], na.rm = TRUE)) %>%
+      dplyr::ungroup() %>%
       dplyr::mutate(
         x_fixed = dplyr::case_when(
           event_team == home_name & med_x > 0 ~ x,
@@ -632,16 +632,16 @@ scrape_game <- function(game_id){
           event_team == home_name ~ "home",
           event_team == away_name ~ "away"
         )
-      ) |>
+      ) %>%
       dplyr::select(-med_x)
 
     # reorder the columns
     if("event_player_3_name" %in% names(pbp_full)){
-      pbp_full <- pbp_full |>
+      pbp_full <- pbp_full %>%
         # change event player names to match on-ice player name conventions
         dplyr::mutate_at(c("event_player_1_name","event_player_2_name",
                            "event_player_3_name","event_goalie_name"),
-                         ~stringr::str_replace(.x, pattern = " ", replacement = ".")) |>
+                         ~stringr::str_replace(.x, pattern = " ", replacement = ".")) %>%
         dplyr::select(
           event_type, event, secondary_type, event_team, event_team_type,
           description, period, period_seconds, period_seconds_remaining,
@@ -656,10 +656,10 @@ scrape_game <- function(game_id){
           everything()
         )
     } else {
-      pbp_full <- pbp_full |>
+      pbp_full <- pbp_full %>%
         dplyr::mutate_at(c("event_player_1_name","event_player_2_name",
                            "event_goalie_name"),
-                         ~stringr::str_replace(.x, pattern = " ", replacement = ".")) |>
+                         ~stringr::str_replace(.x, pattern = " ", replacement = ".")) %>%
         dplyr::select(
           event_type, event, secondary_type, event_team, event_team_type,
           description, period, period_seconds, period_seconds_remaining,
@@ -685,7 +685,7 @@ scrape_game <- function(game_id){
     pbp_full$away_score <- zoo::na.locf(pbp_full$away_score)
 
     # fix period type for shift events
-    pbp_full <- pbp_full |>
+    pbp_full <- pbp_full %>%
       dplyr::mutate(
         period_type = dplyr::case_when(
           period < 4 ~ "REGULAR",
@@ -706,13 +706,13 @@ scrape_game <- function(game_id){
     # no shift data available but shot location available
     # ie preseason
 
-    pbp_full <- pbp |>
-      dplyr::select(-event_id,-event_code) |>
+    pbp_full <- pbp %>%
+      dplyr::select(-event_id,-event_code) %>%
       # add fixed x & y coordinates so home team shoots right, away shoots left
-      dplyr::group_by(event_team, period, game_id) |>
+      dplyr::group_by(event_team, period, game_id) %>%
       # find median x shot coordinate to tell us which side teams are shooting on
-      dplyr::mutate(med_x = stats::median(x[event_type %in% fenwick_events], na.rm = TRUE)) |>
-      dplyr::ungroup() |>
+      dplyr::mutate(med_x = stats::median(x[event_type %in% fenwick_events], na.rm = TRUE)) %>%
+      dplyr::ungroup() %>%
       dplyr::mutate(
         x_fixed = dplyr::case_when(
           event_team == home_name & med_x > 0 ~ x,
@@ -750,14 +750,14 @@ scrape_game <- function(game_id){
           event_team == home_name ~ "home",
           event_team == away_name ~ "away"
         )
-      ) |>
+      ) %>%
       dplyr::select(-med_x)
 
     if("event_player_3_name" %in% names(pbp_full)) {
-      pbp_full <- pbp_full |>
+      pbp_full <- pbp_full %>%
         dplyr::mutate_at(c("event_player_1_name","event_player_2_name",
                            "event_player_3_name","event_goalie_name"),
-                         ~stringr::str_replace(.x, pattern = " ", replacement = ".")) |>
+                         ~stringr::str_replace(.x, pattern = " ", replacement = ".")) %>%
         dplyr::select(
           event_type, event, secondary_type, event_team, event_team_type,
           description, period, period_seconds, period_seconds_remaining,
@@ -770,10 +770,10 @@ scrape_game <- function(game_id){
           everything()
         )
     } else {
-      pbp_full <- pbp_full |>
+      pbp_full <- pbp_full %>%
         dplyr::mutate_at(c("event_player_1_name","event_player_2_name",
                            "event_goalie_name"),
-                         ~stringr::str_replace(.x, pattern = " ", replacement = ".")) |>
+                         ~stringr::str_replace(.x, pattern = " ", replacement = ".")) %>%
         dplyr::select(
           event_type, event, secondary_type, event_team, event_team_type,
           description, period, period_seconds, period_seconds_remaining,
@@ -790,17 +790,17 @@ scrape_game <- function(game_id){
   } else {
     # no shift data or shot location
     if("event_player_3_name" %in% names(pbp)){
-      pbp_full <- pbp |>
+      pbp_full <- pbp %>%
         dplyr::mutate_at(c("event_player_1_name","event_player_2_name",
                            "event_player_3_name","event_goalie_name"),
-                         ~stringr::str_replace(.x, pattern = " ", replacement = ".")) |>
-        dplyr::select(-event_id,-event_code) |>
+                         ~stringr::str_replace(.x, pattern = " ", replacement = ".")) %>%
+        dplyr::select(-event_id,-event_code) %>%
         dplyr::mutate(
           event_team_type =  dplyr::case_when(
             event_team == home_name ~ "home",
             event_team == away_name ~ "away"
           )
-        ) |>
+        ) %>%
         dplyr::select(
           event_type, event, secondary_type, event_team, event_team_type,
           description, period, period_time, period_time_remaining,
@@ -809,17 +809,17 @@ scrape_game <- function(game_id){
           event_goalie_name, game_id, event_idx, everything()
         )
     } else {
-      pbp_full <- pbp |>
+      pbp_full <- pbp %>%
         dplyr::mutate_at(c("event_player_1_name","event_player_2_name",
                            "event_goalie_name"),
-                         ~stringr::str_replace(.x, pattern = " ", replacement = ".")) |>
-        dplyr::select(-event_id,-event_code) |>
+                         ~stringr::str_replace(.x, pattern = " ", replacement = ".")) %>%
+        dplyr::select(-event_id,-event_code) %>%
         dplyr::mutate(
           event_team_type =  dplyr::case_when(
             event_team == home_name ~ "home",
             event_team == away_name ~ "away"
           )
-        ) |>
+        ) %>%
         dplyr::select(
           event_type, event, secondary_type, event_team, event_team_type,
           description, period, period_time, period_time_remaining,
