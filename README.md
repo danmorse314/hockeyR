@@ -11,7 +11,7 @@ status](https://www.r-pkg.org/badges/version/hockeyR)](https://CRAN.R-project.or
 [![R-CMD-check](https://github.com/danmorse314/hockeyR/workflows/R-CMD-check/badge.svg)](https://github.com/danmorse314/hockeyR/actions)
 [![](https://img.shields.io/github/last-commit/danmorse314/hockeyR.svg)](https://github.com/danmorse314/hockeyR/commits/master)
 [![](http://cranlogs.r-pkg.org/badges/grand-total/hockeyR?color=blue)](https://cran.r-project.org/package=hockeyR)
-\[![](https://img.shields.io/twitter/follow/danmorse_.svg?style=social)(<https://twitter.com/danmorse_>)\]
+[![](https://img.shields.io/twitter/follow/danmorse_.svg?style=social)](https://twitter.com/danmorse_)
 <!-- badges: end -->
 
 This package contains various functions to scrape and clean play-by-play
