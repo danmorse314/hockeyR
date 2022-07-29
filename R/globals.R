@@ -27,6 +27,9 @@ utils::globalVariables(
     "start_game_seconds", "start_seconds", "start_time", "start_time_ms", "strength",
     "strength_code", "strength_state", "team", "team_abbr", "team_abbrev", "team_id",
     "team_name", "team_season", "teams", "tm", "triCode", "type", "w", "wt", "x",
-    "x_fixed", "y", "y_fixed"
+    "x_fixed", "y", "y_fixed","gp","gs","l","t_o","ga","sa","sv","sv_percent",
+    "gaa","so","qs","qs_percent","rbs","gps","ga_percent","gsaa","g","a","pts",
+    "pim","s","fow","fol","atoi","ps","ev","pp","sh",
+    "gw","ev_2","pp_2","sh_2","s_percent","toi","blk","hit","fo_percent"
     )
   )
