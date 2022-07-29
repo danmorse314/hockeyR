@@ -1,8 +1,9 @@
 # hockeyR 0.1.2
 
 * Updated 'get_game_info()' & 'get_game_rosters()' functions to require 'game_id' as the argument rather than raw json data
-* Updated 'scrape_game()' function to accomodate above changes
-* Added 'get_goalie_stats()' function to scrape goalie stats from [hockey-reference.com](https://hockey-reference.com)
+* Updated 'scrape_game()' function to accommodate above changes
+* Added 'get_goalie_stats()' function to scrape season goalie stats from [hockey-reference.com](https://hockey-reference.com)
+* Added 'get_skater_stats()' function to scrape season skater stats from [hockey-reference.com](https://hockey-reference.com)
 
 # hockeyR 0.1.1
 
