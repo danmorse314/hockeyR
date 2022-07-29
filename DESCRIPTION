@@ -31,6 +31,7 @@ Imports:
     rvest,
     stringr,
     tidyr,
+    tidyselect,
     utils,
     zoo
 Suggests: 

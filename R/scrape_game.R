@@ -221,7 +221,7 @@ scrape_game <- function(game_id){
 
   # combine it all
   pbp <- dplyr::bind_cols(plays, players, game_info) %>%
-    dplyr::select(1:5,dplyr::all_of(names(players)),everything()) %>%
+    dplyr::select(1:5,dplyr::all_of(names(players)),tidyselect::everything()) %>%
     dplyr::filter(
       # discard redundant rows
       event_type %not_in% c("PERIOD_READY","PERIOD_OFFICIAL","PERIOD_START","GAME_OFFICIAL")
@@ -659,7 +659,7 @@ scrape_game <- function(game_id){
           x, y, x_fixed, y_fixed, shot_distance, shot_angle,
           home_skaters, away_skaters, home_on_1:away_on_7,
           home_goalie, away_goalie, game_id, event_idx,
-          everything()
+          tidyselect::everything()
         )
     } else {
       pbp_full <- pbp_full %>%
@@ -677,7 +677,7 @@ scrape_game <- function(game_id){
           x, y, x_fixed, y_fixed, shot_distance, shot_angle,
           home_skaters, away_skaters, home_on_1:away_on_7,
           home_goalie, away_goalie, game_id, event_idx,
-          everything()
+          tidyselect::everything()
         )
     }
 
@@ -773,7 +773,7 @@ scrape_game <- function(game_id){
           event_goalie_name, penalty_severity:strength, x, y, x_fixed, y_fixed,
           shot_distance, shot_angle,
           game_id, event_idx,
-          everything()
+          tidyselect::everything()
         )
     } else {
       pbp_full <- pbp_full %>%
@@ -789,7 +789,7 @@ scrape_game <- function(game_id){
           event_goalie_name, penalty_severity:strength, x, y, x_fixed, y_fixed,
           shot_distance, shot_angle,
           game_id, event_idx,
-          everything()
+          tidyselect::everything()
         )
     }
 
@@ -812,7 +812,7 @@ scrape_game <- function(game_id){
           description, period, period_time, period_time_remaining,
           event_player_1_name, event_player_1_type, event_player_2_name,
           event_player_2_type, event_player_3_name, event_player_3_type,
-          event_goalie_name, game_id, event_idx, everything()
+          event_goalie_name, game_id, event_idx, tidyselect::everything()
         )
     } else {
       pbp_full <- pbp %>%
@@ -831,7 +831,7 @@ scrape_game <- function(game_id){
           description, period, period_time, period_time_remaining,
           event_player_1_name, event_player_1_type, event_player_2_name,
           event_player_2_type,
-          event_goalie_name, game_id, event_idx, everything()
+          event_goalie_name, game_id, event_idx, tidyselect::everything()
         )
     }
 
