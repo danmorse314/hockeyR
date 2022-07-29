@@ -115,12 +115,18 @@ get_player_stats_hr <- function(player_name, season = "career", league = "NHL"){
   stats <- stats %>%
     dplyr::mutate_all(type.convert, as.is = TRUE)
 
-  new_table <- player_table %>%
-    dplyr::select(-first, -last) %>%
-    dplyr::left_join(
-      stats,
-      by = "player"
-    )
+  # fix issue where player page exists but no stats yet recorded
+  if(nrow(stats) > 0){
+    new_table <- player_table %>%
+      dplyr::select(-first, -last) %>%
+      dplyr::left_join(
+        stats,
+        by = "player"
+      )
+  } else {
+    new_table <- NULL
+  }
+
 
   return(new_table)
 }

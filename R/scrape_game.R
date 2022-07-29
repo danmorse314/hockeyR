@@ -138,9 +138,15 @@ scrape_game <- function(game_id){
     dplyr::tibble() %>%
     tidyr::unnest_wider(1) %>%
     dplyr::select(-players) %>%
-    tidyr::unnest_wider(result) %>%
-    tidyr::unnest_wider(strength) %>%
-    dplyr::rename(strength_code = code, strength = name) %>%
+    tidyr::unnest_wider(result)
+
+  if("strength" %in% names(plays)){
+    plays <- plays %>%
+      tidyr::unnest_wider(strength) %>%
+      dplyr::rename(strength_code = code, strength = name)
+  }
+
+  plays <- plays  %>%
     tidyr::unnest_wider(about) %>%
     tidyr::unnest_wider(goals) %>%
     dplyr::rename(home_score = home, away_score = away)
