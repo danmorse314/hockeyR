@@ -23,10 +23,11 @@ reference:
   - "get_game_info"
   - "get_game_rosters"
   - "get_game_shifts"
-  - "fix_player_columns"
 - title: Hockey-reference.com data
   desc: Functions to scrape data from hockey-reference.com
   contents:
+  - "get_skater_stats_hr"
+  - "get_goalie_stats_hr"
   - "get_team_records"
   - "get_rosters"
   - "get_jersey_players"
