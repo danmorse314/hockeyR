@@ -4,15 +4,15 @@
 \alias{get_game_info}
 \title{Gather basic game information}
 \usage{
-get_game_info(site)
+get_game_info(game_id)
 }
 \arguments{
-\item{site}{Raw JSON data from NHL API}
+\item{game_id}{Game ID to scrape (Can be found using get_game_ids function)}
 }
 \value{
 A 1xN tibble containing N pieces of information about the specified game
 }
 \description{
-A helper function used in game scraping. Adds columns like date,
-venue, & information about the home and away teams
+Scrapes basic game info like date, venue, & information about
+the home and away teams for a given game
 }

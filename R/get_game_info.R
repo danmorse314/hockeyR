@@ -1,17 +1,20 @@
 #' Gather basic game information
 #'
-#' @param site Raw JSON data from NHL API
+#' @param game_id Game ID to scrape (Can be found using get_game_ids function)
 #'
-#' @description A helper function used in game scraping. Adds columns like date,
-#' venue, & information about the home and away teams
+#' @description Scrapes basic game info like date, venue, & information about
+#' the home and away teams for a given game
 #'
 #' @return A 1xN tibble containing N pieces of information about the specified game
 #' @export
 #'
-get_game_info <- function(site){
+get_game_info <- function(game_id){
 
-  # for testing
-  #site <- jsonlite::read_json(glue::glue("http://statsapi.web.nhl.com/api/v1/game/{game_id}/feed/live"))
+  # get game url
+  url <- glue::glue("http://statsapi.web.nhl.com/api/v1/game/{game_id}/feed/live")
+
+  # get raw json pbp data
+  site <- jsonlite::read_json(url)
 
   gd <- site$gameData
 

@@ -1,14 +1,19 @@
 #' Scrape game day rosters for individual game
 #'
-#' @param site Raw JSON data from NHL API
+#' @param game_id Game ID to scrape (Can be found using get_game_ids function)
 #'
-#' @description A helper function for game scraping. Fetches the game-day rosters
-#' for both teams in the given game.
+#' @description Scrapes the game-day rosters for both teams in the given game ID
 #'
 #' @return A tibble containing player names, ids, and positions for both team rosters
 #' in a given game.
 #' @export
-get_game_rosters <- function(site){
+get_game_rosters <- function(game_id){
+
+  # get game url
+  url <- glue::glue("http://statsapi.web.nhl.com/api/v1/game/{game_id}/feed/live")
+
+  # get raw json pbp data
+  site <- jsonlite::read_json(url)
 
   rosters <- site$gameData$players %>%
     dplyr::tibble() %>%

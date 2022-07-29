@@ -124,9 +124,9 @@ scrape_game <- function(game_id){
   # get raw json pbp data
   site <- jsonlite::read_json(url)
 
-  game_info <- get_game_info(site)
+  game_info <- get_game_info(game_id)
 
-  rosters <- get_game_rosters(site)
+  rosters <- get_game_rosters(game_id)
 
   `%not_in%` <- purrr::negate(`%in%`)
 
