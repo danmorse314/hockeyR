@@ -4,7 +4,7 @@
 \alias{get_goalie_stats_hr}
 \title{Scrape goalie stats}
 \usage{
-get_goalie_stats_hr(season = as.numeric(format(Sys.Date() + 184, "\%Y")))
+get_goalie_stats_hr(season = as.numeric(format(Sys.Date() + 81, "\%Y")))
 }
 \arguments{
 \item{season}{Integer value denoting the end year of the season to scrape}
