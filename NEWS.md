@@ -1,3 +1,5 @@
+# hockeyR 0.1.2
+
 # hockeyR 0.1.1
 
 * Fixed issue in hockey-reference scraper where page exists but no stats recorded throws error (issue was breaking the hockey-ref-scrapers vignette)
