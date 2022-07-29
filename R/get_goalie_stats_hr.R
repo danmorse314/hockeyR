@@ -24,15 +24,36 @@ get_goalie_stats_hr <- function(season = as.numeric(format(Sys.Date()+184, "%Y")
 
   url <- paste0("https://www.hockey-reference.com/leagues/NHL_",season,"_goalies.html")
 
-  df <- rvest::read_html(url) %>%
+  site <- rvest::read_html(url)
+
+  player_links <- dplyr::tibble(
+    link = site %>%
+      rvest::html_element("#stats") %>%
+      rvest::html_elements("a[href^='/players/']") %>%
+      rvest::html_attr("href")
+  ) %>%
+    dplyr::filter(link != "/players/") %>%
+    tidyr::separate(
+      link, into = c("blank","players","letter","player_id"),
+      sep = "/", remove = FALSE
+    ) %>%
+    tidyr::separate(
+      player_id, into = c("player_id","html"), sep = "\\."
+      ) %>%
+    dplyr::select(link, player_id)
+
+  df <- site %>%
     rvest::html_element("#stats") %>%
     rvest::html_table() %>%
     janitor::row_to_names(row_number = 1) %>%
-    janitor::clean_names()
+    janitor::clean_names() %>%
+    # remove rows of column names in middle of data
+    dplyr::filter(rk != "Rk")
 
   df <- df %>%
-    # remove rows of column names in middle of data
-    dplyr::filter(rk != "Rk" & tm != "TOT") %>%
+    dplyr::bind_cols(player_links) %>%
+    # remove total stats from goalies to play for multiple teams
+    dplyr::filter(tm != "TOT") %>%
     dplyr::select(-rk) %>%
     dplyr::mutate(
       season = paste0(season-1,"-",substr(season,3,4))
@@ -70,3 +91,6 @@ get_goalie_stats_hr <- function(season = as.numeric(format(Sys.Date()+184, "%Y")
 
   return(df)
 }
+df |>
+  ggplot2::ggplot(ggplot2::aes(minutes,saves)) +
+  ggimage::geom_image(ggplot2::aes(image = player_headshot),size = .05)
