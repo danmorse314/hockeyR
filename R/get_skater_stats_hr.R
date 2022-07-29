@@ -13,7 +13,7 @@
 #' \dontrun{
 #' get_skater_stats_hr(2022)
 #' }
-get_skater_stats_hr <- function(season = as.numeric(format(Sys.Date()+184, "%Y"))){
+get_skater_stats_hr <- function(season = as.numeric(format(Sys.Date()+81, "%Y"))){
 
   if(season == 2005){
     stop("No stats available for 2004-05; season cancelled by Gary Bettman")

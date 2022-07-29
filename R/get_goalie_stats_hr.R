@@ -13,7 +13,7 @@
 #' \dontrun{
 #' get_goalie_stats_hr(2022)
 #' }
-get_goalie_stats_hr <- function(season = as.numeric(format(Sys.Date()+184, "%Y"))){
+get_goalie_stats_hr <- function(season = as.numeric(format(Sys.Date()+81, "%Y"))){
   # season: end year for hockey season, eg 2022 = 2021-22
 
   if(season == 2005){
