@@ -1,5 +1,9 @@
 # hockeyR 0.1.2
 
+* Updated 'get_game_info()' & 'get_game_rosters()' functions to require 'game_id' as the argument rather than raw json data
+* Updated 'scrape_game()' function to accomodate above changes
+* Added 'get_goalie_stats()' function to scrape goalie stats from [hockey-reference.com](https://hockey-reference.com)
+
 # hockeyR 0.1.1
 
 * Fixed issue in hockey-reference scraper where page exists but no stats recorded throws error (issue was breaking the hockey-ref-scrapers vignette)
