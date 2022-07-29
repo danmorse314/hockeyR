@@ -91,6 +91,3 @@ get_goalie_stats_hr <- function(season = as.numeric(format(Sys.Date()+184, "%Y")
 
   return(df)
 }
-df |>
-  ggplot2::ggplot(ggplot2::aes(minutes,saves)) +
-  ggimage::geom_image(ggplot2::aes(image = player_headshot),size = .05)
