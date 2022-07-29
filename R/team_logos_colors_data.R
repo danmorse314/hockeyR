@@ -1,9 +1,9 @@
 #' Team logos & colors
 #'
 #' A dataset containing the full team names, abbreviations, colors & logos
-#' for all 32 NHL teams.
+#' for all 32 NHL teams (plus some defunct teams)
 #'
-#' @format A data frame with 32 rows and 11 variables:
+#' @format A data frame with 35 rows and 12 variables:
 #' \describe{
 #'   \item{full_team_name}{full team name}
 #'   \item{team_abbr}{NHL.com team abbreviation}
@@ -16,6 +16,7 @@
 #'   \item{team_logo_alternate}{alternate or throwback logo}
 #'   \item{team_color_alt1}{alternate logo primary color}
 #'   \item{team_color_alt2}{alternate logo secondary color}
+#'   \item{status}{active or inactive}
 #' }
 #' @source \url{https://www.espn.com/nhl/teams}
 #' @source \url{https://www.sportslogos.net/teams/list_by_league/1/National_Hockey_League/NHL/logos/}
