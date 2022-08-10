@@ -41,7 +41,8 @@ get_game_shifts <- function(game_id){
         end_game_seconds = end_seconds + (1200 * (period-1)),
         duration = lubridate::ms(duration),
         duration_seconds = lubridate::period_to_seconds(duration)
-      )
+      ) %>%
+      dplyr::filter(duration_seconds > 0)
 
     shifts_on <- shifts_raw %>%
       dplyr::group_by(

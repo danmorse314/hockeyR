@@ -247,6 +247,9 @@ scrape_game <- function(game_id){
       dplyr::mutate(
         # swap event team to match shooting team instead of blocking team
         event_team = ifelse(event_team == home_name, away_name, home_name),
+        event_team_abbr = ifelse(event_team == home_name, home_abbreviation, away_abbreviation),
+        event_team_id = ifelse(event_team == home_name, as.integer(home_id), as.integer(away_id)),
+        event_team_link = glue::glue("/api/v1/teams/{event_team_id}"),
         blocker_info = glue::glue(
           "{event_player_1_id},{event_player_1_name},{event_player_1_link},{event_player_1_type}"
         ),
@@ -467,6 +470,9 @@ scrape_game <- function(game_id){
       dplyr::filter(position == "G") %>%
       dplyr::mutate(
         player_name = stringr::str_replace(player_name, " ", ".")
+      ) %>%
+      dplyr::mutate(
+        player_name = stringr::str_replace(player_name, "-", ".")
       ) %>%
       dplyr::pull(player_name)
 
