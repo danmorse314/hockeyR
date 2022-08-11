@@ -206,13 +206,11 @@ scrape_game <- function(game_id){
     dplyr::rename(event_type = event_type_id)
 
   # add event players
-  suppressMessages({
-    players <- site$liveData$plays$allPlays %>%
-      dplyr::tibble() %>%
-      tidyr::unnest_wider(1) %>%
-      dplyr::select(players) %>%
-      tidyr::unnest_wider(players)
-  })
+  players <- site$liveData$plays$allPlays %>%
+    dplyr::tibble() %>%
+    tidyr::unnest_wider(1) %>%
+    dplyr::select(players) %>%
+    tidyr::unnest_wider(players, names_sep = "_")
 
   players <- purrr::map_dfc(
     .x = 1:length(players),
@@ -653,7 +651,7 @@ scrape_game <- function(game_id){
         # change event player names to match on-ice player name conventions
         dplyr::mutate_at(c("event_player_1_name","event_player_2_name",
                            "event_player_3_name","event_goalie_name"),
-                         ~stringr::str_replace(.x, pattern = " ", replacement = ".")) %>%
+                         ~stringr::str_replace_all(.x, c(" " = ".", "-" = "."))) %>%
         dplyr::select(
           event_type, event, secondary_type, event_team, event_team_type,
           description, period, period_seconds, period_seconds_remaining,
@@ -671,7 +669,7 @@ scrape_game <- function(game_id){
       pbp_full <- pbp_full %>%
         dplyr::mutate_at(c("event_player_1_name","event_player_2_name",
                            "event_goalie_name"),
-                         ~stringr::str_replace(.x, pattern = " ", replacement = ".")) %>%
+                         ~stringr::str_replace_all(.x, c(" " = ".", "-" = "."))) %>%
         dplyr::select(
           event_type, event, secondary_type, event_team, event_team_type,
           description, period, period_seconds, period_seconds_remaining,
@@ -767,9 +765,11 @@ scrape_game <- function(game_id){
 
     if("event_player_3_name" %in% names(pbp_full)) {
       pbp_full <- pbp_full %>%
-        dplyr::mutate_at(c("event_player_1_name","event_player_2_name",
-                           "event_player_3_name","event_goalie_name"),
-                         ~stringr::str_replace(.x, pattern = " ", replacement = ".")) %>%
+        dplyr::mutate_at(
+          c("event_player_1_name","event_player_2_name",
+              "event_player_3_name","event_goalie_name"),
+          ~stringr::str_replace_all(.x, c(" " = ".", "-" = "."))
+          ) %>%
         dplyr::select(
           event_type, event, secondary_type, event_team, event_team_type,
           description, period, period_seconds, period_seconds_remaining,
@@ -783,9 +783,11 @@ scrape_game <- function(game_id){
         )
     } else {
       pbp_full <- pbp_full %>%
-        dplyr::mutate_at(c("event_player_1_name","event_player_2_name",
-                           "event_goalie_name"),
-                         ~stringr::str_replace(.x, pattern = " ", replacement = ".")) %>%
+        dplyr::mutate_at(
+          c("event_player_1_name","event_player_2_name",
+              "event_goalie_name"),
+          ~stringr::str_replace_all(.x, c(" " = ".", "-" = "."))
+          ) %>%
         dplyr::select(
           event_type, event, secondary_type, event_team, event_team_type,
           description, period, period_seconds, period_seconds_remaining,
@@ -803,9 +805,11 @@ scrape_game <- function(game_id){
     # no shift data or shot location
     if("event_player_3_name" %in% names(pbp)){
       pbp_full <- pbp %>%
-        dplyr::mutate_at(c("event_player_1_name","event_player_2_name",
-                           "event_player_3_name","event_goalie_name"),
-                         ~stringr::str_replace(.x, pattern = " ", replacement = ".")) %>%
+        dplyr::mutate_at(
+          c("event_player_1_name","event_player_2_name",
+              "event_player_3_name","event_goalie_name"),
+          ~stringr::str_replace_all(.x, c(" " = ".", "-" = "."))
+        ) %>%
         dplyr::select(-event_id,-event_code) %>%
         dplyr::mutate(
           event_team_type =  dplyr::case_when(
@@ -822,9 +826,11 @@ scrape_game <- function(game_id){
         )
     } else {
       pbp_full <- pbp %>%
-        dplyr::mutate_at(c("event_player_1_name","event_player_2_name",
-                           "event_goalie_name"),
-                         ~stringr::str_replace(.x, pattern = " ", replacement = ".")) %>%
+        dplyr::mutate_at(
+          c("event_player_1_name","event_player_2_name",
+              "event_goalie_name"),
+          ~stringr::str_replace_all(.x, c(" " = ".", "-" = "."))
+        ) %>%
         dplyr::select(-event_id,-event_code) %>%
         dplyr::mutate(
           event_team_type =  dplyr::case_when(
