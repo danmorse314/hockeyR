@@ -33,6 +33,7 @@ utils::globalVariables(
     "gw","ev_2","pp_2","sh_2","s_percent","toi","blk","hit","fo_percent",
     "amateurLeague","amateurTeam","full_name","full_team_name","jersey_number",
     "person","picks","prospect","prospectCategory","ranks","roundNumber",
-    "rounds","shortName","year"
+    "rounds","shortName","year","duration_seconds","home_abbreviation",
+    "away_abbreviation","home_id","away_id"
     )
   )
