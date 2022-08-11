@@ -30,6 +30,9 @@ utils::globalVariables(
     "x_fixed", "y", "y_fixed","gp","gs","l","t_o","ga","sa","sv","sv_percent",
     "gaa","so","qs","qs_percent","rbs","gps","ga_percent","gsaa","g","a","pts",
     "pim","s","fow","fol","atoi","ps","ev","pp","sh",
-    "gw","ev_2","pp_2","sh_2","s_percent","toi","blk","hit","fo_percent"
+    "gw","ev_2","pp_2","sh_2","s_percent","toi","blk","hit","fo_percent",
+    "amateurLeague","amateurTeam","full_name","full_team_name","jersey_number",
+    "person","picks","prospect","prospectCategory","ranks","roundNumber",
+    "rounds","shortName","year"
     )
   )
