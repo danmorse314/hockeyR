@@ -29,20 +29,6 @@ This package contains various functions to scrape and clean play-by-play data fr
 
 ## Installation
 
-Before installing, confirm that your version of R is updated to at least 4.1.0. This will ensure R can handle R's native pipe operator `|>`, which was unavailable until 4.1.0. If you do not wish to update to R 4.1.0, can install the development version from [GitHub](https://github.com/danmorse314/hockeyR) instead.
-
-If you don't know which version of R is installed, try `verson$version.string` in your R console.
-
-```{r version}
-version$version.string
-```
-
-Install the released version of hockeyR (requires R 4.1.0) from [CRAN](https://CRAN.R-project.org) with:
-
-``` r
-install.packages("hockeyR")
-```
-
 Install the development version of `hockeyR` (requires R 3.5) from [GitHub](https://github.com/) with:
 
 ``` r
@@ -61,7 +47,7 @@ library(sportyR)
 
 #### Loading season play-by-play
 
-The fastest way to load a season's play-by-play data is through the `load_pbp()` function, which pulls the desired season(s) from [hockeyR-data](https://github.com/danmorse314/hockeyR-data/tree/main/data). `load_pbp()` also has the advantage of accepting more explicit values for the seasons desired. For example, if you want to get the play-by-play for the 2020-2021 NHL season, all of `load_pbp('2020-2021')`, `load_pbp('2020-21')`, and `load_pbp(2021)` will get it for you.
+The fastest way to load a season's play-by-play data is through the `load_pbp()` function, which pulls the desired season(s) from [hockeyR-data](https://github.com/danmorse314/hockeyR-data/tree/main/data). `load_pbp()` also has the advantage of accepting more explicit values for the seasons desired. For example, if you want to get the play-by-play for the 2020-2021 NHL season, all of `load_pbp('2020-2021')`, `load_pbp('2020-21')`, and `load_pbp(2021)` will get it for you. The option `shift_events` is a logical value indicating whether or not to load the play-by-play data with specific shift change events. The default is to exclude them, which cuts the size of the data in half and still leaves the most important events like shots, penalties, and faceoffs. Data without shift events **does still include** columns for players on the ice at the time of each event.
 
 ```{r load_pbp}
 pbp <- load_pbp('2018-19')

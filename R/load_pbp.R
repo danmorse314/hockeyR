@@ -4,6 +4,8 @@
 #' \code{load_pbp} also accepts character strings with more explicit definitions of the
 #' season to scrape: '2020-2021', '2020-21', '2020_21' are also acceptable.\cr
 #' The default value is the current season, switching to the next year on July 1st when the new league year begins.
+#' @param shift_events Logical value; when set to \code{FALSE} this function
+#' returns a smaller dataset that excludes specifically shift change events
 #'
 #' @return A tibble containing all play-by-play data for a given season(s) in
 #' the same format as the output of \code{\link{scrape_game}}
@@ -13,7 +15,7 @@
 #' \dontrun{
 #' pbp <- load_pbp(2021)
 #' }
-load_pbp <- function(season = as.numeric(substr(Sys.Date() + 184,1,4))){
+load_pbp <- function(season = as.numeric(substr(Sys.Date() + 184,1,4)), shift_events = FALSE){
 
   # Default season switches with new league year on July 1st
 
@@ -51,9 +53,15 @@ load_pbp <- function(season = as.numeric(substr(Sys.Date() + 184,1,4))){
         message(glue::glue("{i} season not available"))
         pbp <- NULL
       } else {
-        pbp <- readRDS(url(glue::glue("https://github.com/danmorse314/hockeyR-data/raw/main/data/play_by_play_{i}.rds")))
-        pbp_all <- dplyr::bind_rows(pbp_all, pbp)
-        rm(pbp,i)
+        if(shift_events == FALSE){
+          pbp <- readRDS(url(glue::glue("https://github.com/danmorse314/hockeyR-data/raw/main/data/play_by_play_{i}_lite.rds")))
+          pbp_all <- dplyr::bind_rows(pbp_all, pbp)
+          rm(pbp,i)
+        } else {
+          pbp <- readRDS(url(glue::glue("https://github.com/danmorse314/hockeyR-data/raw/main/data/play_by_play_{i}.rds")))
+          pbp_all <- dplyr::bind_rows(pbp_all, pbp)
+          rm(pbp,i)
+        }
       }
     }
   }

@@ -23,27 +23,6 @@ including standings, player stats, and jersey number history.
 
 ## Installation
 
-Before installing, confirm that your version of R is updated to at least
-4.1.0. This will ensure R can handle R’s native pipe operator `|>`,
-which was unavailable until 4.1.0. If you do not wish to update to R
-4.1.0, can install the development version from
-[GitHub](https://github.com/danmorse314/hockeyR) instead.
-
-If you don’t know which version of R is installed, try
-`verson$version.string` in your R console.
-
-``` r
-version$version.string
-#> [1] "R version 4.1.0 (2021-05-18)"
-```
-
-Install the released version of hockeyR (requires R 4.1.0) from
-[CRAN](https://CRAN.R-project.org) with:
-
-``` r
-install.packages("hockeyR")
-```
-
 Install the development version of `hockeyR` (requires R 3.5) from
 [GitHub](https://github.com/) with:
 
@@ -73,7 +52,12 @@ The fastest way to load a season’s play-by-play data is through the
 for the seasons desired. For example, if you want to get the
 play-by-play for the 2020-2021 NHL season, all of
 `load_pbp('2020-2021')`, `load_pbp('2020-21')`, and `load_pbp(2021)`
-will get it for you.
+will get it for you. The option `shift_events` is a logical value
+indicating whether or not to load the play-by-play data with specific
+shift change events. The default is to exclude them, which cuts the size
+of the data in half and still leaves the most important events like
+shots, penalties, and faceoffs. Data without shift events **does still
+include** columns for players on the ice at the time of each event.
 
 ``` r
 pbp <- load_pbp('2018-19')
@@ -86,10 +70,10 @@ play-by-play prior to that.
 All variables available in the raw play-by-play data are included, along
 with a few extras added on including:
 
--   shot\_distance
--   shot\_angle
--   x\_fixed
--   y\_fixed
+-   shot_distance
+-   shot_angle
+-   x_fixed
+-   y_fixed
 
 The `shot_distance` and `shot_angle` are measured in feet and degrees,
 respectively. The variables `x_fixed` and `y_fixed` are transformations
