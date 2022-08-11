@@ -1,9 +1,18 @@
+# hockeyR 1.0.0
+* The `scrape_game()` function runs about 4x faster now
+
+Three new functions have been added:
+
+* `get_team_roster()` fetches the current roster for a single team from [nhl.com](https://www.nhl.com/)
+* `get_current_rosters()` fetches current rosters for all 32 teams from [nhl.com](https://www.nhl.com/)
+* `get_draft_class()` fetches all draft selections for a single draft year from [nhl.com](https://www.nhl.com/)
+
 # hockeyR 0.1.2
 
-* Updated 'get_game_info()' & 'get_game_rosters()' functions to require 'game_id' as the argument rather than raw json data
-* Updated 'scrape_game()' function to accommodate above changes
-* Added 'get_goalie_stats()' function to scrape season goalie stats from [hockey-reference.com](https://hockey-reference.com)
-* Added 'get_skater_stats()' function to scrape season skater stats from [hockey-reference.com](https://hockey-reference.com)
+* Updated `get_game_info()` & `get_game_rosters()` functions to require `game_id` as the argument rather than raw json data
+* Updated `scrape_game()` function to accommodate above changes
+* Added `get_goalie_stats()` function to scrape season goalie stats from [hockey-reference.com](https://hockey-reference.com)
+* Added `get_skater_stats()` function to scrape season skater stats from [hockey-reference.com](https://hockey-reference.com)
 
 # hockeyR 0.1.1
 
@@ -17,7 +26,7 @@
 # hockeyR 0.1.0
 
 * Updated DESCRIPTION to include R 4.1.0 dependency (#1)
-* Added httr dependency for 'load_pbp()' function
+* Added httr dependency for `load_pbp()` function
 * Moved hockey-ref examples from README to a vignette
 * Submitted to CRAN
 
