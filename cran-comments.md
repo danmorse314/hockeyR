@@ -2,6 +2,7 @@
 This is a resubmission. In this version I have:
 
 * Fixed an issue with get_player_stats_hr() that was causing an error in the hockey-ref-scrapers.Rmd vignette
+* Added checks to ensure urls work before scraping
 * Switched to the magrittr pipe and lowered the R verison dependency from 4.1 to 3.5
 
 ## Resubmission
