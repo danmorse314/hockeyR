@@ -7,7 +7,6 @@
 #' clean up the column names
 #'
 #' @return A tibble of an individual event player with cleaned column names
-#' @export
 fix_player_columns <- function(players, col){
 
   # for parsing event players in pbp data
