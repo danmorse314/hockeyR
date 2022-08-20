@@ -20,10 +20,23 @@ get_game_ids <- function(season = NULL, day = as.Date(Sys.Date(), "%Y-%m-%d")){
 
     url <- glue::glue("https://statsapi.web.nhl.com/api/v1/schedule?date={day}")
 
-    site <- jsonlite::read_json(url)
+    # check that url isn't broken
+    site <- tryCatch(
+      jsonlite::read_json(url),
+      warning = function(cond){
+        message(paste0("There was a problem fetching games:\n\n",cond))
+        return(NULL)
+      },
+      error = function(cond){
+        message(paste0("There was a problem fetching games:\n\n",cond))
+        return(NULL)
+      }
+    )
 
-    if(site$totalGames == 0){
-      message(glue::glue("No NHL games found on {day}"))
+    if(is.null(site)){
+      stop()
+    } else if(site$totalGames == 0){
+      stop(glue::glue("No NHL games found on {day}"))
     }
 
   } else {
@@ -39,11 +52,23 @@ get_game_ids <- function(season = NULL, day = as.Date(Sys.Date(), "%Y-%m-%d")){
       url <- glue::glue("https://statsapi.web.nhl.com/api/v1/schedule?startDate={season-1}-09-01&endDate={season}-07-05")
     }
 
-    site <- jsonlite::read_json(url)
+    site <- tryCatch(
+      jsonlite::read_json(url),
+      warning = function(cond){
+        message(paste0("There was a problem fetching games:\n\n",cond))
+        return(NULL)
+      },
+      error = function(cond){
+        message(paste0("There was a problem fetching games:\n\n",cond))
+        return(NULL)
+      }
+    )
 
   }
 
-  if(site$totalGames == 0) {
+  if(is.null(site)){
+    stop("check the season or day argument and try again")
+  } else if(site$totalGames == 0) {
     game_id_list <- NULL
   } else {
     game_id_list <- site$dates %>%

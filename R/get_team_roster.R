@@ -31,7 +31,21 @@ get_team_rosters <- function(team){
   # access NHL API
   url <- paste0("https://statsapi.web.nhl.com/api/v1/teams/",team_id,"/roster")
 
-  site <- jsonlite::read_json(url)
+  site <- tryCatch(
+    jsonlite::read_json(url),
+    warning = function(cond){
+      message(paste0("There was a problem fetching rosters\n\n",cond))
+      return(NULL)
+    },
+    error = function(cond){
+      message(paste0("There was a problem fetching rosters\n\n",cond))
+      return(NULL)
+    }
+  )
+
+  if(is.null(site)){
+    stop("Could not get current rosters, please try again later")
+  }
 
   # parse json roster data
   roster <- site$roster %>%

@@ -23,25 +23,33 @@ get_skater_stats_hr <- function(season = as.numeric(format(Sys.Date()+81, "%Y"))
 
   url <- paste0("https://www.hockey-reference.com/leagues/NHL_",season,"_skaters.html")
 
-  site <- rvest::read_html(url)
+  site <- tryCatch(
+    rvest::read_html(url),
+    warning = function(cond){
+      message(paste0("Problem fetching skater stats\n\n",cond))
+      return(NULL)
+    },
+    error = function(cond){
+      message(paste0("Problem fetching skater stats\n\n",cond))
+      return(NULL)
+    }
+  )
 
-  suppressWarnings({
-    player_links <- dplyr::tibble(
-      link = site %>%
-        rvest::html_element("#stats") %>%
-        rvest::html_elements("a[href^='/players/']") %>%
-        rvest::html_attr("href")
+  if(is.null(site)){
+    stop(paste("Could not get skater stats for",season))
+  }
+
+  player_links <- dplyr::tibble(
+    link = site %>%
+      rvest::html_element("#stats") %>%
+      rvest::html_elements("a[href^='/players/']") %>%
+      rvest::html_attr("href")
+  ) %>%
+    dplyr::mutate(
+      player_id = stringr::str_remove_all(link,"/players/[a-z]/"),
+      player_id = stringr::str_remove(player_id, ".html")
     ) %>%
-      dplyr::filter(link != "/players/") %>%
-      tidyr::separate(
-        link, into = c("blank","players","letter","player_id"),
-        sep = "/", remove = FALSE
-      ) %>%
-      tidyr::separate(
-        player_id, into = c("player_id","html"), sep = "\\."
-      ) %>%
-      dplyr::select(link, player_id)
-  })
+    dplyr::select(link, player_id)
 
   suppressWarnings({
     df <- site %>%
@@ -60,40 +68,76 @@ get_skater_stats_hr <- function(season = as.numeric(format(Sys.Date()+81, "%Y"))
     dplyr::select(-rk) %>%
     dplyr::mutate(
       season = paste0(season-1,"-",substr(season,3,4)),
-      s_percent = as.numeric(g) / as.numeric(s),
-      fo_percent = as.numeric(fow) / (as.numeric(fow)+as.numeric(fol)),
-      atoi = lubridate::ms(atoi) %>%
-        lubridate::period_to_seconds()/60
-    ) %>%
-    # clean up names
-    dplyr::rename(
-      team_abbr = tm,
-      position = pos,
-      games_played = gp,
-      goals = g,
-      assists = a,
-      points = pts,
-      plus_minus = x,
-      penalty_minutes = pim,
-      hr_point_shares = ps,
-      goals_even_strength = ev,
-      goals_powerplay = pp,
-      goals_shorthanded = sh,
-      goals_game_winning = gw,
-      assists_even_strength = ev_2,
-      assists_powerplay = pp_2,
-      assists_shorthanded = sh_2,
-      shots_on_goal = s,
-      shooting_percent = s_percent,
-      time_on_ice = toi,
-      mean_time_on_ice = atoi,
-      blocks = blk,
-      hits = hit,
-      faceoff_wins = fow,
-      faceoff_losses = fol,
-      faceoff_win_percent = fo_percent
-    ) %>%
-    dplyr::select(player, team_abbr, season, tidyselect::everything())
+      s_percent = as.numeric(g) / as.numeric(s)
+    )
+
+  if(length(unique(df$atoi)) == 1){
+    # checking to see if atoi is available
+    df <- df %>%
+      dplyr::mutate(
+        atoi = lubridate::ms(atoi) %>%
+          lubridate::period_to_seconds()/60
+      )
+  }
+
+  if("fow" %in% names(df)){
+    df <- df %>%
+      dplyr::mutate(fo_percent = as.numeric(fow) / (as.numeric(fow)+as.numeric(fol))) %>%
+      dplyr::rename(
+        team_abbr = tm,
+        position = pos,
+        games_played = gp,
+        goals = g,
+        assists = a,
+        points = pts,
+        plus_minus = x,
+        penalty_minutes = pim,
+        hr_point_shares = ps,
+        goals_even_strength = ev,
+        goals_powerplay = pp,
+        goals_shorthanded = sh,
+        goals_game_winning = gw,
+        assists_even_strength = ev_2,
+        assists_powerplay = pp_2,
+        assists_shorthanded = sh_2,
+        shots_on_goal = s,
+        shooting_percent = s_percent,
+        time_on_ice = toi,
+        mean_time_on_ice = atoi,
+        blocks = blk,
+        hits = hit,
+        faceoff_wins = fow,
+        faceoff_losses = fol,
+        faceoff_win_percent = fo_percent
+      ) %>%
+      dplyr::select(player, team_abbr, season, tidyselect::everything())
+  } else {
+    df <- df %>%
+      dplyr::rename(
+        team_abbr = tm,
+        position = pos,
+        games_played = gp,
+        goals = g,
+        assists = a,
+        points = pts,
+        plus_minus = x,
+        penalty_minutes = pim,
+        hr_point_shares = ps,
+        goals_even_strength = ev,
+        goals_powerplay = pp,
+        goals_shorthanded = sh,
+        goals_game_winning = gw,
+        assists_even_strength = ev_2,
+        assists_powerplay = pp_2,
+        assists_shorthanded = sh_2,
+        shots_on_goal = s,
+        shooting_percent = s_percent,
+        time_on_ice = toi,
+        mean_time_on_ice = atoi
+      ) %>%
+      dplyr::select(player, team_abbr, season, tidyselect::everything())
+
+  }
 
   # convert numerical columns to numeric
   df <- utils::type.convert(df, as.is = TRUE)

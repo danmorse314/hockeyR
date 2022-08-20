@@ -122,7 +122,21 @@ scrape_game <- function(game_id){
   url <- glue::glue("http://statsapi.web.nhl.com/api/v1/game/{game_id}/feed/live")
 
   # get raw json pbp data
-  site <- jsonlite::read_json(url)
+  site <- tryCatch(
+    jsonlite::read_json(url),
+    warning = function(cond){
+      message(paste0("There was a problem with game ID ",game_id,"\n\n",cond))
+      return(NULL)
+    },
+    error = function(cond){
+      message(paste0("There was a problem with game ID ",game_id,"\n\n",cond))
+      return(NULL)
+    }
+  )
+
+  if(is.null(site)){
+    stop(paste("Could not get play-by-play for game ID",game_id))
+  }
 
   game_info <- get_game_info(game_id)
 

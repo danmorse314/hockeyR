@@ -24,7 +24,21 @@ get_goalie_stats_hr <- function(season = as.numeric(format(Sys.Date()+81, "%Y"))
 
   url <- paste0("https://www.hockey-reference.com/leagues/NHL_",season,"_goalies.html")
 
-  site <- rvest::read_html(url)
+  site <- tryCatch(
+    rvest::read_html(url),
+    warning = function(cond){
+      message(paste0("Problem fetching goalie stats\n\n",cond))
+      return(NULL)
+    },
+    error = function(cond){
+      message(paste0("Problem fetching goalie stats\n\n",cond))
+      return(NULL)
+    }
+  )
+
+  if(is.null(site)){
+    stop(paste("Could not get goalie stats for",season))
+  }
 
   player_links <- dplyr::tibble(
     link = site %>%
@@ -32,14 +46,10 @@ get_goalie_stats_hr <- function(season = as.numeric(format(Sys.Date()+81, "%Y"))
       rvest::html_elements("a[href^='/players/']") %>%
       rvest::html_attr("href")
   ) %>%
-    dplyr::filter(link != "/players/") %>%
-    tidyr::separate(
-      link, into = c("blank","players","letter","player_id"),
-      sep = "/", remove = FALSE
+    dplyr::mutate(
+      player_id = stringr::str_remove_all(link,"/players/[a-z]/"),
+      player_id = stringr::str_remove(player_id, ".html")
     ) %>%
-    tidyr::separate(
-      player_id, into = c("player_id","html"), sep = "\\."
-      ) %>%
     dplyr::select(link, player_id)
 
   df <- site %>%

@@ -19,8 +19,24 @@
 #' }
 get_current_rosters <- function(){
 
+  site <- tryCatch(
+    jsonlite::read_json("https://statsapi.web.nhl.com/api/v1/teams"),
+    warning = function(cond){
+      message(paste0("There was a problem fetching rosters\n\n",cond))
+      return(NULL)
+    },
+    error = function(cond){
+      message(paste0("There was a problem fetching rosters\n\n",cond))
+      return(NULL)
+    }
+  )
+
+  if(is.null(site)){
+    stop("Could not get current rosters, please try again later")
+  }
+
   # get all team ids
-  team_list <- jsonlite::read_json("https://statsapi.web.nhl.com/api/v1/teams")$teams %>%
+  team_list <- site$teams %>%
     dplyr::tibble() %>%
     tidyr::unnest_wider(1) %>%
     dplyr::select(team_id = id, full_team_name = name, team_abbr = abbreviation)

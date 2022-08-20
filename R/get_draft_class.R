@@ -38,8 +38,24 @@ get_draft_class <- function(draft_year = as.numeric(format(Sys.Date()-181, "%Y")
 
   url <- paste0("https://statsapi.web.nhl.com/api/v1/draft/",draft_year)
 
+  site <- tryCatch(
+    jsonlite::read_json(url),
+    warning = function(cond){
+      message(paste0("There was a problem fetching the draft class for ",draft_year,"\n\n",cond))
+      return(NULL)
+    },
+    error = function(cond){
+      message(paste0("There was a problem fetching the draft class for ",draft_year,"\n\n",cond))
+      return(NULL)
+    }
+  )
+
+  if(is.null(site)){
+    stop(paste("Could not get draft class for",draft_year))
+  }
+
   # get selections
-  df <- jsonlite::read_json(url)$drafts %>%
+  df <- site$drafts %>%
     dplyr::tibble() %>%
     tidyr::unnest_wider(1) %>%
     tidyr::unnest_longer(rounds) %>%

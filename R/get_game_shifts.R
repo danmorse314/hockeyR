@@ -18,9 +18,24 @@ get_game_shifts <- function(game_id){
 
   url <- glue::glue("https://api.nhle.com/stats/rest/en/shiftcharts?cayenneExp=gameId={game_id}")
 
-  site <- jsonlite::read_json(url)
+  site <- tryCatch(
+    jsonlite::read_json(url),
+    warning = function(cond){
+      message(paste0("There was a problem with game ID ",game_id,"\n\n",cond))
+      return(NULL)
+    },
+    error = function(cond){
+      message(paste0("There was a problem with game ID ",game_id,"\n\n",cond))
+      return(NULL)
+    }
+  )
+
+  if(is.null(site)){
+    stop(paste("Could not get shift data for game ID",game_id))
+  }
 
   if(length(site$data) < 10){
+    message(paste("No shift data found for game ID",game_id))
     shifts <- NULL
   } else {
 
