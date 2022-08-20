@@ -35,7 +35,7 @@ devtools::install_github("danmorse314/hockeyR")
 
 Load the package (and any others you might need—for plotting an ice
 surface I highly recommend the
-[sportyR](https://github.com/rossdrucker/sportyR) package).
+[sportyR](https://github.com/sportsdataverse/sportyR) package).
 
 ``` r
 library(hockeyR)
