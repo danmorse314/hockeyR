@@ -84,9 +84,9 @@ For full details on the included variables, see the
 documentation.
 
 As mentioned above, an easy way to create a shot plot is through the
-[sportyR](https://github.com/rossdrucker/sportyR) package. You can also
-use the included `team_colors_logos` data to add color and team logos to
-your plots.
+[sportyR](https://github.com/sportsdataverse/sportyR) package. You can
+also use the included `team_colors_logos` data to add color and team
+logos to your plots.
 
 ``` r
 # get single game
