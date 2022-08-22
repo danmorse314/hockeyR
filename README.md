@@ -23,7 +23,14 @@ including standings, player stats, and jersey number history.
 
 ## Installation
 
-Install the development version of `hockeyR` (requires R 3.5) from
+Install the released version of hockeyR from
+[CRAN](https://CRAN.R-project.org) with:
+
+``` r
+install.packages("hockeyR")
+```
+
+Alternatively, you can install the development version of `hockeyR` from
 [GitHub](https://github.com/) with:
 
 ``` r
@@ -152,7 +159,7 @@ would include xG values for each shot and win probabilities for each
 play, similar to the expected points model found in the
 [nflfastR](https://github.com/nflverse/nflfastR) package. And of course,
 scraping the upcoming NHL season and updating the data daily is planned
-for the 2021-2022 season.
+for the 2022-23 season.
 
 ## Acknowledgments
 
