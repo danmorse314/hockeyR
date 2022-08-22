@@ -18,14 +18,14 @@ knitr::opts_chunk$set(
 
 <!-- badges: start -->
 [![CRAN status](https://www.r-pkg.org/badges/version/hockeyR)](https://CRAN.R-project.org/package=hockeyR)
-[![](https://img.shields.io/badge/devel%20version-0.1.0-blue.svg)](https://github.com/hockeyR)
+[![](https://img.shields.io/badge/devel%20version-1.0.0-blue.svg)](https://github.com/hockeyR)
 [![R-CMD-check](https://github.com/danmorse314/hockeyR/workflows/R-CMD-check/badge.svg)](https://github.com/danmorse314/hockeyR/actions)
 [![](https://img.shields.io/github/last-commit/danmorse314/hockeyR.svg)](https://github.com/danmorse314/hockeyR/commits/master)
 [![](https://cranlogs.r-pkg.org/badges/grand-total/hockeyR)](https://cran.r-project.org/package=hockeyR)
 [![](https://img.shields.io/twitter/follow/danmorse_.svg?style=social)](https://twitter.com/danmorse_)
 <!-- badges: end -->
 
-This package contains various functions to scrape and clean play-by-play data from NHL.com. Season play-by-play data scraped with these functions can be found in the [hockeyR-data](https://github.com/danmorse314/hockeyR-data) repository. It also contains functions to scrape data from hockey-reference.com, including standings, player stats, and jersey number history.
+This package contains various functions to scrape and clean play-by-play data from NHL.com. Season play-by-play data scraped with these functions can be found in the [hockeyR-data](https://github.com/danmorse314/hockeyR-data) repository. It also contains functions to scrape data from [hockey-reference.com](https://www.hockey-reference.com/), including standings, player stats, and jersey number history.
 
 ## Installation
 
@@ -54,7 +54,7 @@ library(sportyR)
 
 #### Loading season play-by-play
 
-The fastest way to load a season's play-by-play data is through the `load_pbp()` function, which pulls the desired season(s) from [hockeyR-data](https://github.com/danmorse314/hockeyR-data/tree/main/data). `load_pbp()` also has the advantage of accepting more explicit values for the seasons desired. For example, if you want to get the play-by-play for the 2020-2021 NHL season, all of `load_pbp('2020-2021')`, `load_pbp('2020-21')`, and `load_pbp(2021)` will get it for you. The option `shift_events` is a logical value indicating whether or not to load the play-by-play data with specific shift change events. The default is to exclude them, which cuts the size of the data in half and still leaves the most important events like shots, penalties, and faceoffs. Data without shift events **does still include** columns for players on the ice at the time of each event.
+The fastest way to load a season's play-by-play data is through the `load_pbp` function, which pulls the desired season(s) from [hockeyR-data](https://github.com/danmorse314/hockeyR-data/tree/main/data). `load_pbp` also has the advantage of accepting more explicit values for the seasons desired. For example, if you want to get the play-by-play for the 2020-2021 NHL season, all of `load_pbp('2020-2021')`, `load_pbp('2020-21')`, and `load_pbp(2021)` will get it for you. The option `shift_events` is a logical value indicating whether or not to load the play-by-play data with specific shift change events. The default is to exclude them, which cuts the size of the data in half and still leaves the most important events like shots, penalties, and faceoffs. Data without shift events **does still include** columns for players on the ice at the time of each event.
 
 ```{r load_pbp}
 pbp <- load_pbp('2018-19')
@@ -68,7 +68,7 @@ All variables available in the raw play-by-play data are included, along with a 
 * x_fixed
 * y_fixed
 
-The `shot_distance` and `shot_angle` are measured in feet and degrees, respectively. The variables `x_fixed` and `y_fixed` are transformations of the `x` and `y` event coordinates such that the home team is always shooting to the right and the away team is always shooting to the left. For full details on the included variables, see the [`scrape_game()`](https://github.com/danmorse314/hockeyR/blob/master/R/scrape_game.R) documentation.
+The `shot_distance` and `shot_angle` are measured in feet and degrees, respectively. The variables `x_fixed` and `y_fixed` are transformations of the `x` and `y` event coordinates such that the home team is always shooting to the right and the away team is always shooting to the left. For full details on the included variables, see the [`scrape_game`](https://github.com/danmorse314/hockeyR/blob/master/R/scrape_game.R) documentation.
 
 As mentioned above, an easy way to create a shot plot is through the [sportyR](https://github.com/sportsdataverse/sportyR) package. You can also use the included `team_colors_logos` data to add color and team logos to your plots.
 
@@ -124,6 +124,29 @@ geom_hockey("nhl") +
     plot.caption = element_text(hjust = .9)
     )
 ```
+
+### More scraping functions
+
+In addition to the play-by-play data, `hockeyR` also provides access to a few other endpoints in the NHL's API. You can scrape the current official rosters for all NHL teams using the `get_current_rosters` function. This pulls the rosters directly from the NHL at the time you run the function, and will provide the most up-to-date info on team rosters, including player positions, jersey numbers, and player IDs.
+
+```{r roster-example}
+rosters <- get_current_rosters()
+
+rosters %>%
+  select(player, jersey_number, position, team_abbr, everything()) %>%
+  head()
+```
+
+It's also possible to access the draft selections and order of selections for every NHL Entry Draft back to 1963 (the first year the NHL held an Entry Draft). By default, this function returns only information on the pick number, the team, and the players' names and player IDs -- it runs much faster this way. For more details, including player heights, weights, birthplaces, and amateur teams, set the `player_details` argument to `TRUE`.
+
+```{r draft-example}
+draft <- get_draft_class(draft_year = 2022, player_details = TRUE)
+
+draft %>%
+  select(draft_year, round, pick_overall, full_team_name, player, everything()) %>%
+  head()
+```
+There are also several scrapers designed to pull statistics from [hockey-reference.com](https://www.hockey-reference.com/). For more information on these scrapers and what they can do, please see the [Scraping hockey-reference.com](https://hockeyr.netlify.app/articles/hockey-ref-scrapers.html) vignette.
 
 ### Future Work
 
