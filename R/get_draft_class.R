@@ -70,7 +70,7 @@ get_draft_class <- function(draft_year = as.numeric(format(Sys.Date()-181, "%Y")
     tidyr::unnest_wider(prospect) %>%
     janitor::clean_names() %>%
     dplyr::rename(
-      player_id = id, player = full_name, player_link = link,
+      prospect_id = id, player = full_name, player_link = link,
       full_team_name = name
     )
 
@@ -87,7 +87,7 @@ get_draft_class <- function(draft_year = as.numeric(format(Sys.Date()-181, "%Y")
           dplyr::tibble() %>%
           tidyr::unnest_wider(1) %>%
           dplyr::select(-fullName, -link) %>%
-          dplyr::rename(player_id = id) %>%
+          dplyr::rename(prospect_id = id) %>%
           tidyr::unnest_wider(primaryPosition) %>%
           dplyr::rename(
             position = abbreviation
@@ -119,9 +119,10 @@ get_draft_class <- function(draft_year = as.numeric(format(Sys.Date()-181, "%Y")
       details <- dplyr::bind_rows(details, details_df)
     }
 
-    details <- janitor::clean_names(details)
+    details <- janitor::clean_names(details) %>%
+      dplyr::rename(player_id = nhl_player_id)
 
-    df <- dplyr::left_join(df, details, by = "player_id")
+    df <- dplyr::left_join(df, details, by = "prospect_id")
   }
 
   return(df)

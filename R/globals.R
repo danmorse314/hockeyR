@@ -34,6 +34,6 @@ utils::globalVariables(
     "amateurLeague","amateurTeam","full_name","full_team_name","jersey_number",
     "person","picks","prospect","prospectCategory","ranks","roundNumber",
     "rounds","shortName","year","duration_seconds","home_abbreviation",
-    "away_abbreviation","home_id","away_id"
+    "away_abbreviation","home_id","away_id","prospect_id","nhl_player_id"
     )
   )

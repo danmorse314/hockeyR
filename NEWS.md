@@ -1,3 +1,7 @@
+# hockeyR 1.0.0.1000
+
+* Changed the `player_id` column in `get_draft_class` to `prospect_id` - proper NHL `player_id` column only returns with `player_details` set to `TRUE`
+
 # hockeyR 1.0.0
 * The `scrape_game()` function runs about 4x faster now
 
