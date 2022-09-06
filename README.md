@@ -106,7 +106,8 @@ model.
 ``` r
 pbp %>%
   filter(event_type %in% c("SHOT","MISSED_SHOT","GOAL")) %>%
-  group_by(player = event_player_1_name, id = event_player_1_id) %>%
+  filter(season_type == "R" & period_type != "SHOOTOUT") %>%
+  group_by(player = event_player_1_name, id = event_player_1_id, season) %>%
   summarize(
     team = last(event_team_abbr),
     goals = sum(event_type == "GOAL"),
@@ -116,19 +117,19 @@ pbp %>%
   ) |>
   arrange(-xg) |>
   slice(1:10)
-#> # A tibble: 10 x 6
-#>    player                  id team  goals    xg   gax
-#>    <chr>                <int> <chr> <int> <dbl> <dbl>
-#>  1 Nathan.MacKinnon   8477492 COL      48  45.3  2.70
-#>  2 John.Tavares       8475166 TOR      49  43.8  5.2 
-#>  3 Tyler.Seguin       8475794 DAL      38  43.8 -5.8 
-#>  4 Cam.Atkinson       8474715 CBJ      45  40.1  4.9 
-#>  5 Alex.Ovechkin      8471214 WSH      57  38.5 18.5 
-#>  6 Patrice.Bergeron   8470638 BOS      41  38.3  2.70
-#>  7 Sebastian.Aho      8478427 CAR      35  38.1 -3.1 
-#>  8 Vladimir.Tarasenko 8475765 STL      44  37.9  6.1 
-#>  9 Tomas.Hertl        8476881 SJS      45  36.8  8.2 
-#> 10 Joe.Pavelski       8470794 SJS      42  36.6  5.4
+#> # A tibble: 10 x 7
+#>    player                 id season   team  goals    xg    gax
+#>    <chr>               <int> <chr>    <chr> <int> <dbl>  <dbl>
+#>  1 John.Tavares      8475166 20182019 TOR      47  40    7    
+#>  2 Nathan.MacKinnon  8477492 20182019 COL      41  39.1  1.90 
+#>  3 Tyler.Seguin      8475794 20182019 DAL      33  38.1 -5.1  
+#>  4 Alex.Ovechkin     8471214 20182019 WSH      51  36.3 14.7  
+#>  5 Cam.Atkinson      8474715 20182019 CBJ      41  35.2  5.8  
+#>  6 Connor.McDavid    8478402 20182019 EDM      41  33.9  7.1  
+#>  7 Brendan.Gallagher 8475848 20182019 MTL      33  33.6 -0.600
+#>  8 Patrick.Kane      8474141 20182019 CHI      44  33.5 10.5  
+#>  9 Sean.Monahan      8477497 20182019 CGY      34  33.2  0.800
+#> 10 Sebastian.Aho     8478427 20182019 CAR      30  32.9 -2.9
 ```
 
 #### Shot Plots

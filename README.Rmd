@@ -77,7 +77,8 @@ As of `hockeyR` v1.1.0, a new column has been added to the play-by-play data: Ex
 ```{r xg-example}
 pbp %>%
   filter(event_type %in% c("SHOT","MISSED_SHOT","GOAL")) %>%
-  group_by(player = event_player_1_name, id = event_player_1_id) %>%
+  filter(season_type == "R" & period_type != "SHOOTOUT") %>%
+  group_by(player = event_player_1_name, id = event_player_1_id, season) %>%
   summarize(
     team = last(event_team_abbr),
     goals = sum(event_type == "GOAL"),
