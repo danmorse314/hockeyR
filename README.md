@@ -264,10 +264,9 @@ vignette.
 ### Future Work
 
 Getting clean data for games going back to the start of the NHL RTSS era
-(2007-2008 season) is in the works. There are also plans to create a
-basic expected goals model and perhaps a win probability model that
-would include xG values for each shot and win probabilities for each
-play, similar to the expected points model found in the
+(2007-2008 season) is in the works. There are also plans to create a win
+probability model that would include win probabilities for each play,
+similar to the win probability model found in the
 [nflfastR](https://github.com/nflverse/nflfastR) package. And of course,
 scraping the upcoming NHL season and updating the data daily is planned
 for the 2022-23 season.
