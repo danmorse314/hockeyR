@@ -13,6 +13,7 @@ scrape_game(game_id)
 A tibble containing event-based play-by-play data for an individual
 NHL game. The resulting data will have columns for:
 \describe{
+\item{xg}{Numeric expected goal value for unblocked shot events}
 \item{event}{String defining the event}
 \item{event_type}{String with alternate event definition; in all caps}
 \item{secondary_type}{String defining secondary event type}
@@ -69,6 +70,7 @@ NHL game. The resulting data will have columns for:
 \item{away_goalie}{String name of away goalie on ice}
 \item{game_id}{Integer value of assigned game ID}
 \item{event_idx}{Numeric index for event}
+\item{event_id}{Numeric id for event -- more specified than event_idx}
 \item{event_player_1_id}{Integer value of the player ID for the primary event player}
 \item{event_player_1_link}{String value of the NHL.com player link for the primary event player}
 \item{event_player_1_season_total}{Integer value for the total events for the primary event player this season}

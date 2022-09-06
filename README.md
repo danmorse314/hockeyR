@@ -91,7 +91,49 @@ For full details on the included variables, see the
 [`scrape_game`](https://github.com/danmorse314/hockeyR/blob/master/R/scrape_game.R)
 documentation.
 
-As mentioned above, an easy way to create a shot plot is through the
+#### NEW in hockeyR v1.1.0: Expected Goals
+
+As of `hockeyR` v1.1.0, a new column has been added to the play-by-play
+data: Expected goals! The `hockeyR` package now includes its own public
+expected goals model, and every unblocked shot in the play-by-play data
+now has an `xg` value. A full description of the model, including the
+code used to construct it and the testing results, can be found in the
+[hockeyR-models](https://github.com/danmorse314/hockeyR-models)
+repository. Users can now investigate additional statistics, such as
+player goals above expectation without having to create their own entire
+model.
+
+``` r
+pbp %>%
+  filter(event_type %in% c("SHOT","MISSED_SHOT","GOAL")) %>%
+  group_by(player = event_player_1_name, id = event_player_1_id) %>%
+  summarize(
+    team = last(event_team_abbr),
+    goals = sum(event_type == "GOAL"),
+    xg = round(sum(xg, na.rm = TRUE),1),
+    gax = goals - xg,
+    .groups = "drop"
+  ) |>
+  arrange(-xg) |>
+  slice(1:10)
+#> # A tibble: 10 x 6
+#>    player                  id team  goals    xg   gax
+#>    <chr>                <int> <chr> <int> <dbl> <dbl>
+#>  1 Nathan.MacKinnon   8477492 COL      48  45.3  2.70
+#>  2 John.Tavares       8475166 TOR      49  43.8  5.2 
+#>  3 Tyler.Seguin       8475794 DAL      38  43.8 -5.8 
+#>  4 Cam.Atkinson       8474715 CBJ      45  40.1  4.9 
+#>  5 Alex.Ovechkin      8471214 WSH      57  38.5 18.5 
+#>  6 Patrice.Bergeron   8470638 BOS      41  38.3  2.70
+#>  7 Sebastian.Aho      8478427 CAR      35  38.1 -3.1 
+#>  8 Vladimir.Tarasenko 8475765 STL      44  37.9  6.1 
+#>  9 Tomas.Hertl        8476881 SJS      45  36.8  8.2 
+#> 10 Joe.Pavelski       8470794 SJS      42  36.6  5.4
+```
+
+#### Shot Plots
+
+An easy way to create a shot plot is through the
 [sportyR](https://github.com/sportsdataverse/sportyR) package. You can
 also use the included `team_colors_logos` data to add color and team
 logos to your plots.
@@ -170,11 +212,11 @@ rosters %>%
 #>   player           jersey_number posit~1 team_~2 playe~3 posit~4 team_id full_~5
 #>   <chr>                    <int> <chr>   <chr>     <int> <chr>     <int> <chr>  
 #> 1 Jonathan Bernier            45 G       NJD     8473541 G             1 New Je~
-#> 2 Miles Wood                  44 LW      NJD     8477425 F             1 New Je~
-#> 3 Vitek Vanecek               41 G       NJD     8477970 G             1 New Je~
-#> 4 Jesper Bratt                63 LW      NJD     8479407 F             1 New Je~
-#> 5 Jesper Boqvist              70 C       NJD     8480003 F             1 New Je~
-#> 6 Reilly Walsh                 8 D       NJD     8480054 D             1 New Je~
+#> 2 Brendan Smith                2 D       NJD     8474090 D             1 New Je~
+#> 3 Tomas Tatar                 90 LW      NJD     8475193 F             1 New Je~
+#> 4 Erik Haula                  56 LW      NJD     8475287 F             1 New Je~
+#> 5 Ondrej Palat                18 LW      NJD     8476292 F             1 New Je~
+#> 6 Robbie Russo                39 D       NJD     8476418 D             1 New Je~
 #> # ... with abbreviated variable names 1: position, 2: team_abbr, 3: player_id,
 #> #   4: position_type, 5: full_team_name
 ```

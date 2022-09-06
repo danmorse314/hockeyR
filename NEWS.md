@@ -1,5 +1,14 @@
-# hockeyR 1.0.0.1000
+# hockeyR 1.1.0
 
+## New addition:
+* Play-by-play data loaded through `load_pbp` includes new column for expected goals
+* Details on & code to create the hockeyR expected goals model can be found [here](https://github.com/danmorse314/hockeyR-models)
+* The `scrape_game` function has been adjusted to automatically add expected goals to the output
+
+## New function:
+* `calculate_xg` adds expected goals column to pbp data (used inside `scrape_game`, not necessary to use this to get expected goal values)
+
+## Fixes:
 * Changed the `player_id` column in `get_draft_class` to `prospect_id` - proper NHL `player_id` column only returns with `player_details` set to `TRUE`
 
 # hockeyR 1.0.0

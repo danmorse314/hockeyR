@@ -7,6 +7,7 @@
 #' @return A tibble containing event-based play-by-play data for an individual
 #' NHL game. The resulting data will have columns for:
 #' \describe{
+#' \item{xg}{Numeric expected goal value for unblocked shot events}
 #' \item{event}{String defining the event}
 #' \item{event_type}{String with alternate event definition; in all caps}
 #' \item{secondary_type}{String defining secondary event type}
@@ -63,6 +64,7 @@
 #' \item{away_goalie}{String name of away goalie on ice}
 #' \item{game_id}{Integer value of assigned game ID}
 #' \item{event_idx}{Numeric index for event}
+#' \item{event_id}{Numeric id for event -- more specified than event_idx}
 #' \item{event_player_1_id}{Integer value of the player ID for the primary event player}
 #' \item{event_player_1_link}{String value of the NHL.com player link for the primary event player}
 #' \item{event_player_1_season_total}{Integer value for the total events for the primary event player this season}
@@ -862,6 +864,20 @@ scrape_game <- function(game_id){
     }
 
   }
+
+  # add event_id
+  pbp_full <- pbp_full |>
+    dplyr::mutate(
+      event_idx = stringr::str_pad(event_idx, width = 4, side = "left", pad = 0),
+      event_id = as.numeric(paste0(game_id,event_idx)),
+      secondary_type = ifelse(
+        stringr::str_detect(dplyr::lead(description), "PS -") &
+          event_type %in% c("SHOT","MISSED_SHOT","GOAL"),
+        "Penalty Shot", secondary_type
+      )
+    )
+  # add xg
+  pbp_full <- calculate_xg(pbp_full)
 
   return(pbp_full)
 

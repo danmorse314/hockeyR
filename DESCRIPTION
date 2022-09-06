@@ -1,6 +1,6 @@
 Package: hockeyR
 Title: Collect and Clean Hockey Stats
-Version: 1.0.0
+Version: 1.1.0
 Authors@R: 
     person(given = "Daniel",
            family = "Morse",
@@ -33,7 +33,9 @@ Imports:
     tidyr,
     tidyselect,
     utils,
-    zoo
+    zoo,
+    stats,
+    xgboost
 Suggests: 
     ggimage,
     ggplot2,
