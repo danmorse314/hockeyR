@@ -12,7 +12,19 @@ get_game_ids(season = NULL, day = as.Date(Sys.Date(), "\%Y-\%m-\%d"))
 \item{day}{A day in the format of 'YYYY-MM-DD'}
 }
 \value{
-A tibble containing game IDs for specified time frame
+A tibble containing game IDs and basic info for specified time frame
+
+\describe{
+\item{game_id}{Integer value of NHL game ID used in \code{\link{scrape_game}}}
+\item{season_full}{String defining NHL season}
+\item{date}{Date of game, as a string}
+\item{game_time}{Scheduled start time (US/Eastern) of game, as a string}
+\item{home_name}{Home team name, as a string}
+\item{away_name}{Away team name, as a string}
+\item{home_final_score}{Numeric final score for home team - will return 0 for games that haven't started}
+\item{away_final_score}{Numeric final score for away team - will return 0 for games that haven't started}
+\item{game_type}{String denoting type of game: "REG" or "POST"}
+}
 }
 \description{
 Fetch game IDs for a single day or a full season

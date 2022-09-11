@@ -3,7 +3,19 @@
 #' @param season An integer value denoting the end year of the season to scrape
 #' @param day A day in the format of 'YYYY-MM-DD'
 #'
-#' @return A tibble containing game IDs for specified time frame
+#' @return A tibble containing game IDs and basic info for specified time frame
+#'
+#' \describe{
+#' \item{game_id}{Integer value of NHL game ID used in \code{\link{scrape_game}}}
+#' \item{season_full}{String defining NHL season}
+#' \item{date}{Date of game, as a string}
+#' \item{game_time}{Scheduled start time (US/Eastern) of game, as a string}
+#' \item{home_name}{Home team name, as a string}
+#' \item{away_name}{Away team name, as a string}
+#' \item{home_final_score}{Numeric final score for home team - will return 0 for games that haven't started}
+#' \item{away_final_score}{Numeric final score for away team - will return 0 for games that haven't started}
+#' \item{game_type}{String denoting type of game: "REG" or "POST"}
+#' }
 #'
 #' @export
 #'
@@ -77,7 +89,11 @@ get_game_ids <- function(season = NULL, day = as.Date(Sys.Date(), "%Y-%m-%d")){
       dplyr::select(date, games) %>%
       tidyr::unnest_longer(games) %>%
       tidyr::unnest_wider(games) %>%
-      dplyr::select(date, gamePk, season, teams) %>%
+      dplyr::mutate(
+        gameDate = lubridate::with_tz(lubridate::ymd_hms(gameDate),"US/Eastern"),
+        game_time = format(gameDate, "%I:%M %p")
+      ) %>%
+      dplyr::select(date, gamePk, game_time, season, teams) %>%
       tidyr::unnest_wider(teams) %>%
       tidyr::unnest_wider(away) %>%
       tidyr::unnest_wider(team) %>%
@@ -94,7 +110,8 @@ get_game_ids <- function(season = NULL, day = as.Date(Sys.Date(), "%Y-%m-%d")){
         home_name = name,
         home_final_score = score
       ) %>%
-      dplyr::select(game_id, season_full, date, home_name, away_name, home_final_score, away_final_score)
+      dplyr::select(game_id, season_full, date, game_time,
+                    home_name, away_name, home_final_score, away_final_score)
 
     game_id_list$game_type <- dplyr::case_when(
       substr(game_id_list$game_id, 6, 6) == 1 ~ "PRE",
