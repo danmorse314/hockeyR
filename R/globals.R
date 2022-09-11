@@ -38,6 +38,11 @@ utils::globalVariables(
     "away_skaters","empty_net","event_team_skaters","event_zone",
     "feature","goal","home_skaters","last_event_team","last_event_type",
     "last_event_zone","last_value","last_x","last_y","na","opponent_team_skaters",
-    "period_type","shot_type","time_since_last","type_value","val","value","xg"
+    "period_type","shot_type","time_since_last","type_value","val","value","xg",
+    "assists_primary","assists_secondary","away_on_ice","ca","cf","event_player_1_id",
+    "event_player_3_id","fa","ff","gameDate","game_time","gax","gf","home_on_ice",
+    "icf","iff","isog","ixg","mean_toi","mean_toi_minutes","on_ic","points",
+    "points_primary","sh_perc","toi_minutes","toi_seconds","xg_against","xg_for",
+    "xga","xgf","xgf_perc"
     )
   )
