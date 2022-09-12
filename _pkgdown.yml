@@ -23,6 +23,16 @@ reference:
   - "get_game_info"
   - "get_game_rosters"
   - "get_game_shifts"
+- title: Other NHL.com data
+  desc: Functions to scrape other data from the NHL API.
+  contents:
+  - "get_team_roster"
+  - "get_current_rosters"
+  - "get_draft_class"
+- title: Calculation functions
+  desc: Functions to calculate statistics for supplied data
+  contents:
+  - "calculate_xg"
 - title: Hockey-reference.com data
   desc: Functions to scrape data from hockey-reference.com
   contents:
