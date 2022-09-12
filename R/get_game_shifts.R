@@ -66,6 +66,7 @@ get_game_shifts <- function(game_id){
       dplyr::summarize(
         num_on = dplyr::n(),
         players_on = paste(player_name, collapse = ", "),
+        ids_on = paste(player_id, collapse = ", "),
         .groups = "drop"
       ) %>%
       dplyr::rename(
@@ -81,6 +82,7 @@ get_game_shifts <- function(game_id){
       dplyr::summarize(
         num_off = dplyr::n(),
         players_off = paste(player_name, collapse = ", "),
+        ids_off = paste(player_id, collapse = ", "),
         .groups = "drop"
       ) %>%
       dplyr::rename(
@@ -103,7 +105,9 @@ get_game_shifts <- function(game_id){
       # removing NA values at start and end of periods
       dplyr::mutate(
         players_on = ifelse(is.na(players_on), "None", players_on),
-        players_off = ifelse(is.na(players_off), "None", players_off)
+        players_off = ifelse(is.na(players_off), "None", players_off),
+        ids_on = ifelse(is.na(ids_on), 0, ids_on),
+        ids_off = ifelse(is.na(ids_off), 0, ids_off)
       )
   }
 

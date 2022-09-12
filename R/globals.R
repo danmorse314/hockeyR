@@ -43,6 +43,6 @@ utils::globalVariables(
     "event_player_3_id","fa","ff","gameDate","game_time","gax","gf","home_on_ice",
     "icf","iff","isog","ixg","mean_toi","mean_toi_minutes","on_ic","points",
     "points_primary","sh_perc","toi_minutes","toi_seconds","xg_against","xg_for",
-    "xga","xgf","xgf_perc"
+    "xga","xgf","xgf_perc","on_ice","ids_on","ids_off"
     )
   )
