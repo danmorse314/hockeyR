@@ -29,10 +29,14 @@ reference:
   - "get_team_rosters"
   - "get_current_rosters"
   - "get_draft_class"
+  - "get_standings"
 - title: Calculation functions
   desc: Functions to calculate statistics for supplied data
   contents:
   - "calculate_xg"
+  - "calculate_toi"
+  - "calculate_on_ice"
+  - "calculate_individual"
 - title: Hockey-reference.com data
   desc: Functions to scrape data from hockey-reference.com
   contents:

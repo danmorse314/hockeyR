@@ -1,0 +1,19 @@
+name: Send commits to twitter
+on:
+  push:
+    branches:
+      - master
+jobs:
+  build:
+    name: Trigger twitter bot
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger twitter bot
+        run: |
+          echo "Sending commit to hockeyR-twitter"
+      - uses: convictional/trigger-workflow-and-wait@master
+        with:
+          owner: danmorse314
+          repo: hockeyR-twitter
+          github_token: ${{ secrets.PAT_GITHUB }}
+          workflow_file_name: deploy.yml

@@ -35,7 +35,8 @@ Imports:
     utils,
     zoo,
     stats,
-    xgboost
+    xgboost,
+    padr
 Suggests: 
     ggimage,
     ggplot2,
