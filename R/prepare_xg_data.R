@@ -8,20 +8,20 @@
 #'
 #' @examples
 #' \dontrun{
-#' pbp <- load_pbp(2022) |> dplyr::select(-xg)
+#' pbp <- load_pbp(2022) %>% dplyr::select(-xg)
 #' model_data <- prepare_xg_data(pbp)
 #' }
 prepare_xg_data <- function(x){
 
-  model_df <- x |>
+  model_df <- x %>%
     # filter out shootouts
-    dplyr::filter(period_type != "SHOOTOUT") |>
+    dplyr::filter(period_type != "SHOOTOUT") %>%
     # remove penalty shots
-    dplyr::filter(secondary_type != "Penalty Shot" | is.na(secondary_type)) |>
+    dplyr::filter(secondary_type != "Penalty Shot" | is.na(secondary_type)) %>%
     # remove shift change events, which were excluded from model
-    dplyr::filter(event_type != "CHANGE") |>
+    dplyr::filter(event_type != "CHANGE") %>%
     # add model feature variables
-    dplyr::group_by(game_id) |>
+    dplyr::group_by(game_id) %>%
     dplyr::mutate(
       last_event_type = dplyr::lag(event_type),
       last_event_team = dplyr::lag(event_team),
@@ -37,10 +37,10 @@ prepare_xg_data <- function(x){
           (x_fixed < -25 & event_team == away_name) ~ "OZ"
       ),
       last_event_zone = dplyr::lag(event_zone)
-    ) |>
-    dplyr::ungroup() |>
+    ) %>%
+    dplyr::ungroup() %>%
     # filter to only unblocked shots
-    dplyr::filter(event_type %in% c("SHOT","MISSED_SHOT","GOAL")) |>
+    dplyr::filter(event_type %in% c("SHOT","MISSED_SHOT","GOAL")) %>%
     # get rid off oddball last_events
     #   ie "EARLY_INTERMISSION_START"
     dplyr::filter(
@@ -48,7 +48,7 @@ prepare_xg_data <- function(x){
         "FACEOFF","GIVEAWAY","TAKEAWAY","BLOCKED_SHOT","HIT",
         "MISSED_SHOT","SHOT","STOP","PENALTY","GOAL"
       )
-    ) |>
+    ) %>%
     # add more feature variables
     dplyr::mutate(
       era_2011_2013 = ifelse(
@@ -85,15 +85,15 @@ prepare_xg_data <- function(x){
       empty_net = ifelse(is.na(empty_net) | empty_net == FALSE, FALSE, TRUE),
       shot_type = secondary_type,
       goal = ifelse(event_type == "GOAL", 1, 0)
-    ) |>
-    dplyr::select(season, game_id, event_id, strength_state, shot_distance, shot_angle, empty_net, last_event_type:goal) |>
+    ) %>%
+    dplyr::select(season, game_id, event_id, strength_state, shot_distance, shot_angle, empty_net, last_event_type:goal) %>%
     # one-hot encode some categorical vars
-    dplyr::mutate(type_value = 1, last_value = 1) |>
-    tidyr::pivot_wider(names_from = shot_type, values_from = type_value, values_fill = 0) |>
+    dplyr::mutate(type_value = 1, last_value = 1) %>%
+    tidyr::pivot_wider(names_from = shot_type, values_from = type_value, values_fill = 0) %>%
     tidyr::pivot_wider(
       names_from = last_event_type, values_from = last_value, values_fill = 0, names_prefix = "last_"
-    ) |>
-    janitor::clean_names() |>
+    ) %>%
+    janitor::clean_names() %>%
     dplyr::select(
       -last_event_team, -event_zone, -last_event_zone, -event_team_skaters, -opponent_team_skaters
     )
@@ -106,9 +106,9 @@ prepare_xg_data <- function(x){
 
   missing_feats <- dplyr::tibble(
     feature = xg_model_5v5$feature_names
-  ) |>
-    dplyr::filter(feature %not_in% names(model_df)) |>
-    dplyr::mutate(val = 0) |>
+  ) %>%
+    dplyr::filter(feature %not_in% names(model_df)) %>%
+    dplyr::mutate(val = 0) %>%
     tidyr::pivot_wider(names_from = feature, values_from = val)
 
   if(length(missing_feats) > 0){

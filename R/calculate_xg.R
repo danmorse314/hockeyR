@@ -9,7 +9,7 @@
 #'
 #' @examples
 #' \dontrun{
-#' pbp <- load_pbp(2022) |> dplyr::select(-xg)
+#' pbp <- load_pbp(2022) %>% dplyr::select(-xg)
 #' pbp_preds <- calculate_xg(pbp)
 #' }
 calculate_xg <- function(pbp){
@@ -21,18 +21,18 @@ calculate_xg <- function(pbp){
   preds_5v5 <- stats::predict(
     xg_model_5v5,
     xgboost::xgb.DMatrix(
-      data = model_data |>
-        dplyr::filter(strength_state == "5v5") |>
-        dplyr::select(dplyr::all_of(xg_model_5v5$feature_names)) |>
+      data = model_data %>%
+        dplyr::filter(strength_state == "5v5") %>%
+        dplyr::select(dplyr::all_of(xg_model_5v5$feature_names)) %>%
         data.matrix(),
-      label = model_data |>
-        dplyr::filter(strength_state == "5v5") |>
-        dplyr::select(goal) |>
+      label = model_data %>%
+        dplyr::filter(strength_state == "5v5") %>%
+        dplyr::select(goal) %>%
         data.matrix()
     )
-  ) |>
-    dplyr::as_tibble() |>
-    dplyr::rename(xg = value) |>
+  ) %>%
+    dplyr::as_tibble() %>%
+    dplyr::rename(xg = value) %>%
     dplyr::bind_cols(
       dplyr::select(
         dplyr::filter(model_data, strength_state == "5v5"),
@@ -43,18 +43,18 @@ calculate_xg <- function(pbp){
   preds_st <- stats::predict(
     xg_model_st,
     xgboost::xgb.DMatrix(
-      data = model_data |>
-        dplyr::filter(strength_state != "5v5") |>
-        dplyr::select(dplyr::all_of(xg_model_st$feature_names)) |>
+      data = model_data %>%
+        dplyr::filter(strength_state != "5v5") %>%
+        dplyr::select(dplyr::all_of(xg_model_st$feature_names)) %>%
         data.matrix(),
-      label = model_data |>
-        dplyr::filter(strength_state != "5v5") |>
-        dplyr::select(goal) |>
+      label = model_data %>%
+        dplyr::filter(strength_state != "5v5") %>%
+        dplyr::select(goal) %>%
         data.matrix()
     )
-  ) |>
-    dplyr::as_tibble() |>
-    dplyr::rename(xg = value) |>
+  ) %>%
+    dplyr::as_tibble() %>%
+    dplyr::rename(xg = value) %>%
     dplyr::bind_cols(
       dplyr::select(
         dplyr::filter(model_data, strength_state != "5v5"),
@@ -62,13 +62,13 @@ calculate_xg <- function(pbp){
     )
 
   # combine
-  preds <- dplyr::bind_rows(preds_5v5, preds_st) |>
+  preds <- dplyr::bind_rows(preds_5v5, preds_st) %>%
     # attach xg column to original pbp data
-    dplyr::right_join(pbp, by = "event_id") |>
+    dplyr::right_join(pbp, by = "event_id") %>%
     # fix penalty shots
     dplyr::mutate(xg = ifelse(
       secondary_type != "Penalty Shot" | is.na(secondary_type), xg, xg_model_ps
-    )) |>
+    )) %>%
     dplyr::arrange(event_id)
 
   return(preds)
