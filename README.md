@@ -7,7 +7,7 @@
 
 [![CRAN
 status](https://www.r-pkg.org/badges/version/hockeyR)](https://CRAN.R-project.org/package=hockeyR)
-[![](https://img.shields.io/badge/devel%20version-1.0.0-blue.svg)](https://github.com/hockeyR)
+[![](https://img.shields.io/badge/devel%20version-1.2.0-blue.svg)](https://github.com/hockeyR)
 [![R-CMD-check](https://github.com/danmorse314/hockeyR/workflows/R-CMD-check/badge.svg)](https://github.com/danmorse314/hockeyR/actions)
 [![](https://img.shields.io/github/last-commit/danmorse314/hockeyR.svg)](https://github.com/danmorse314/hockeyR/commits/master)
 [![](https://cranlogs.r-pkg.org/badges/grand-total/hockeyR)](https://cran.r-project.org/package=hockeyR)
@@ -237,7 +237,7 @@ draft %>%
   select(draft_year, round, pick_overall, full_team_name, player, everything()) %>%
   head()
 #> # A tibble: 6 x 24
-#>   draft_y~1 round pick_~2 full_~3 player pick_~4 playe~5 playe~6 first~7 last_~8
+#>   draft_y~1 round pick_~2 full_~3 player pick_~4 prosp~5 playe~6 first~7 last_~8
 #>       <int> <chr>   <int> <chr>   <chr>    <int>   <int> <chr>   <chr>   <chr>  
 #> 1      2022 1           1 Montré~ Juraj~       1   85964 /api/v~ Juraj   Slafko~
 #> 2      2022 1           2 New Je~ Simon~       2   87097 /api/v~ Simon   Nemec  
@@ -247,11 +247,11 @@ draft %>%
 #> 6      2022 1           6 Columb~ David~       6   86009 /api/v~ David   Jiricek
 #> # ... with 14 more variables: birth_date <chr>, birth_city <chr>,
 #> #   birth_country <chr>, height <chr>, weight <int>, shoots_catches <chr>,
-#> #   position <chr>, nhl_player_id <int>, draft_status <chr>,
+#> #   position <chr>, player_id <int>, draft_status <chr>,
 #> #   prospect_category <chr>, amateur_team <chr>, amateur_league <chr>,
 #> #   position_type <chr>, birth_state_province <chr>, and abbreviated variable
 #> #   names 1: draft_year, 2: pick_overall, 3: full_team_name, 4: pick_in_round,
-#> #   5: player_id, 6: player_link, 7: first_name, 8: last_name
+#> #   5: prospect_id, 6: player_link, 7: first_name, 8: last_name
 ```
 
 There are also several scrapers designed to pull statistics from

@@ -1,3 +1,15 @@
+# hockeyR 1.2.0
+
+## New functions added
+* `calculate_toi` calculates the time on ice for all skaters in a supplied play-by-play set
+* `calculate_on_ice` calculates player on-ice statistics for all skaters in a supplied play-by-play set
+* `calculate_individual` calculates player individual statistics for all skaters in a supplied play-by-play set
+* `get_standings` pulls standings and team stats for given seasons from [NHL.com](https://www.nhl.com/)
+
+
+## Function update
+* `get_game_ids` now returns column for scheduled start time for each game
+
 # hockeyR 1.1.0
 
 ## New addition:
