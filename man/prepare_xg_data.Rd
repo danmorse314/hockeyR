@@ -17,7 +17,7 @@ Helper function to prepare hockeyR pbp data for xG calculations
 }
 \examples{
 \dontrun{
-pbp <- load_pbp(2022) |> dplyr::select(-xg)
+pbp <- load_pbp(2022) \%>\% dplyr::select(-xg)
 model_data <- prepare_xg_data(pbp)
 }
 }

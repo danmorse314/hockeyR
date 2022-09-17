@@ -17,7 +17,7 @@ Uses the hockeyR expected goals model to calculate xG for any pbp data frame gen
 }
 \examples{
 \dontrun{
-pbp <- load_pbp(2022) |> dplyr::select(-xg)
+pbp <- load_pbp(2022) \%>\% dplyr::select(-xg)
 pbp_preds <- calculate_xg(pbp)
 }
 }
