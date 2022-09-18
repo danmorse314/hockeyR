@@ -6,6 +6,8 @@
 #'
 #' @return A tibble; pbp data with xG model mutations along with identifiers for game and strength state
 #'
+#' @keywords internal
+#'
 #' @examples
 #' \dontrun{
 #' pbp <- load_pbp(2022) %>% dplyr::select(-xg)
@@ -101,8 +103,6 @@ prepare_xg_data <- function(x){
   if("na" %in% names(model_df)){
     model_df <- dplyr::select(model_df, -na)
   }
-
-  `%not_in%` <- purrr::negate(`%in%`)
 
   missing_feats <- dplyr::tibble(
     feature = xg_model_5v5$feature_names

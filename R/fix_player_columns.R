@@ -5,7 +5,7 @@
 #'
 #' @description Helper function to parse player columns from JSON pbp data &
 #' clean up the column names
-#'
+#' @noRd
 #' @return A tibble of an individual event player with cleaned column names
 fix_player_columns <- function(players, col){
 
