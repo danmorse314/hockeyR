@@ -144,8 +144,6 @@ scrape_game <- function(game_id){
 
   rosters <- get_game_rosters(game_id)
 
-  `%not_in%` <- purrr::negate(`%in%`)
-
   corsi_events <- c("MISSED_SHOT","SHOT","GOAL","BLOCKED_SHOT")
   fenwick_events <- c("MISSED_SHOT","SHOT","GOAL")
 
