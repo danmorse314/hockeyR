@@ -4,15 +4,15 @@
 \alias{\%not_in\%}
 \title{'\%not_in\%' operator}
 \usage{
-lhs \%not_in\% rhs
+x \%not_in\% table
 }
 \arguments{
-\item{lhs}{A vector of values}
+\item{x}{A vector of values}
 
-\item{rhs}{A vector of values to compare to lhs}
+\item{table}{A vector of values to compare to \code{table}}
 }
 \value{
-Returns \code{TRUE} if \code{lhs} is \strong{not} present in \code{rhs}
+Returns \code{TRUE} if \code{x} is \strong{not} present in \code{table}
 }
 \description{
 '\%not_in\%' operator
