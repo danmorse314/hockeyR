@@ -6,9 +6,9 @@
 \alias{hockeyR-package}
 \title{hockeyR: Collect and Clean Hockey Stats}
 \description{
-\if{html}{\figure{logo.png}{options: align='right' alt='logo' width='120'}}
-
-Various functions to scrape hockey play-by-play data from the <https://www.nhl.com/>. It also contains functions to scrape data from <https://www.hockey-reference.com/>, including standings, player stats, and jersey number history.
+Various functions to scrape hockey play-by-play data from the
+\url{https://www.nhl.com/}. It also contains functions to scrape data from \url{https://www.hockey-reference.com/},
+including standings, player stats, and jersey number history.
 }
 \seealso{
 Useful links:
