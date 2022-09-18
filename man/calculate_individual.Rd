@@ -2,7 +2,7 @@
 % Please edit documentation in R/calculate_individual.R
 \name{calculate_individual}
 \alias{calculate_individual}
-\title{Title}
+\title{Calculate individual player stats}
 \usage{
 calculate_individual(pbp, type = c("R", "P"), game_strength = "all")
 }
@@ -59,7 +59,7 @@ the following rate stats will also be calculated:
 }
 }
 \description{
-Title
+Calculate individual player stats
 }
 \examples{
 \dontrun{

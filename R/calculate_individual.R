@@ -1,4 +1,4 @@
-#' Title
+#' Calculate individual player stats
 #'
 #' @param pbp A tibble of play-by-play data, typically returned from either
 #' \code{\link{load_pbp}} or \code{\link{scrape_game}}
