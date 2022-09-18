@@ -7,8 +7,12 @@
 * `get_standings` pulls standings and team stats for given seasons from [NHL.com](https://www.nhl.com/)
 
 
-## Function update
+## Function updates
 * `get_game_ids` now returns column for scheduled start time for each game
+* `%not_in%` operator now defined globally within package
+
+## Bug fixes
+* `get_draft_class` now works for classes prior to 1983 (first year player IDs existed)
 
 # hockeyR 1.1.0
 
