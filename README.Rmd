@@ -14,7 +14,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-# hockeyR <img src="man/figures/logo.png" style="text-align:right; float:right" width="25%" min-width="120px"/>
+# hockeyR <img src="man/figures/logo.png" style="float:right" width="25%" min-width="120px"/>
 
 <!-- badges: start -->
 [![CRAN status](https://www.r-pkg.org/badges/version/hockeyR)](https://CRAN.R-project.org/package=hockeyR)
