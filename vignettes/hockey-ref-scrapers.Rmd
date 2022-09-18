@@ -3,7 +3,7 @@ title: "Scraping hockey-reference.com"
 author: "Daniel Morse"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{hockey-ref-scrapers}
+  %\VignetteIndexEntry{Scraping hockey-reference.com}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
