@@ -66,12 +66,21 @@ calculate_individual <- function(pbp, type = c("R","P"), game_strength = "all"){
       dplyr::filter(strength_state %in% game_strength)
   }
 
-  goals <- pbp %>%
-    dplyr::filter(event_type %in% c("GOAL","SHOT","MISSED_SHOT","BLOCKED_SHOT")) %>%
+  team_info <- pbp %>%
+    dplyr::filter(!is.na(event_player_1_name) & !is.na(event_player_1_id)) %>%
     dplyr::group_by(player_name = event_player_1_name, player_id = event_player_1_id) %>%
     dplyr::summarize(
       gp = length(unique(game_id)),
       team = dplyr::last(event_team),
+      .groups = "drop"
+    )
+
+  goals <- pbp %>%
+    dplyr::filter(event_type %in% c("GOAL","SHOT","MISSED_SHOT","BLOCKED_SHOT")) %>%
+    dplyr::group_by(player_name = event_player_1_name, player_id = event_player_1_id) %>%
+    dplyr::summarize(
+      #gp = length(unique(game_id)),
+      #team = dplyr::last(event_team),
       ixg = sum(xg, na.rm = TRUE),
       goals = sum(event_type == "GOAL"),
       gax = goals - ixg,
@@ -98,9 +107,16 @@ calculate_individual <- function(pbp, type = c("R","P"), game_strength = "all"){
       .groups = "drop"
     )
 
-  ind_stats <- goals %>%
+  ind_stats <- team_info %>%
+    dplyr::full_join(goals, by = c("player_name", "player_id")) %>%
     dplyr::full_join(a1, by = c("player_name", "player_id")) %>%
     dplyr::full_join(a2, by = c("player_name", "player_id")) %>%
+    dplyr::mutate(
+      dplyr::across(
+        .cols = dplyr::everything(),
+        ~replace(.x, is.na(.x), 0)
+        )
+    ) %>%
     dplyr::mutate(
       goals = ifelse(is.na(goals), 0, goals),
       assists_primary = ifelse(is.na(assists_primary), 0, assists_primary),
@@ -129,7 +145,8 @@ calculate_individual <- function(pbp, type = c("R","P"), game_strength = "all"){
           ~ .x / toi_minutes * 60,
           .names =  "{.col}_per60"
         )
-      )
+      ) %>%
+      dplyr::filter(!is.na(toi))
   }
 
   return(ind_stats)

@@ -1,3 +1,7 @@
+# hockeyR (development version)
+
+* fixed `calculate_individual` to ensure players with 0 shot events recorded still show up in final stats data (affects individual game stats mostly)
+
 # hockeyR 1.2.0
 
 ## New functions added
