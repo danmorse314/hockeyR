@@ -1,6 +1,10 @@
-# hockeyR (development version)
+# hockeyR 1.3.0
 
 * fixed `calculate_individual` to ensure players with 0 shot events recorded still show up in final stats data (affects individual game stats mostly)
+* removed `polite` dependency, shifted to entirely `rvest` scraping
+* added checks to fix failing [hockey-reference](https://www.hockey-reference.com) scrapers
+* removed lingering native pipe from readme and `scrape_game`
+* fixed incorrect color code in `team_logos_colors` ([#6](https://github.com/danmorse314/hockeyR/issues/6))
 
 # hockeyR 1.2.0
 
