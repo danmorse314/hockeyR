@@ -26,7 +26,6 @@ Imports:
     jsonlite,
     magrittr,
     lubridate,
-    polite,
     purrr,
     rvest,
     stringr,

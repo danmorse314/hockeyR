@@ -28,13 +28,15 @@ get_jersey_players <- function(jersey){
       next
     }
 
+  # load basic site
+    session <- rvest::session("http://www.hockey-reference.com")
+
     num_url <- glue::glue("https://www.hockey-reference.com/friv/numbers.cgi?number={i}")
 
-    session <- polite::bow(num_url)
+    session <- rvest::session_jump_to(session, num_url)
 
     # get the data
     num_list <- session %>%
-      polite::scrape() %>%
       rvest::html_table()
 
     num_table <- num_list[[1]] %>%

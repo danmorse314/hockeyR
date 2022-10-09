@@ -44,70 +44,67 @@ get_rosters <- function(
       dplyr::pull(team_abbr)
   }
 
-  session <- polite::bow("https://www.hockey-reference.com/teams/")
+  session <- rvest::session("https://www.hockey-reference.com/teams/")
   rosters <- NULL
 
   for(i in to_pull){
 
     team_url <- glue::glue("https://www.hockey-reference.com/teams/{i}/{season}.html")
-    session <- polite::nod(session, team_url)
+    session <- rvest::session_jump_to(session, team_url)
 
     team_roster <- session %>%
-      polite::scrape() %>%
       rvest::html_element("#roster")
 
-    suppressWarnings({
-      urls <- team_roster %>%
-        rvest::html_elements("a[href^='/players/']") %>%
-        stringr::str_extract_all("/players/.+.html") %>%
-        unlist() %>%
-        dplyr::as_tibble() %>%
-        dplyr::mutate(
-          link = glue::glue("https://www.hockey-reference.com{value}")
-        ) %>%
-        dplyr::select(link)
-    })
-
-    team_roster <- team_roster %>%
-      rvest::html_table() %>%
-      janitor::clean_names() %>%
-      tidyr::separate(s_c, into = c("shoots","catches"), sep = "/", remove = TRUE) %>%
-      tidyr::separate(ht, into = c("ft","inches"), sep = "-", remove = FALSE) %>%
+    urls <- team_roster %>%
+      rvest::html_elements("a") %>%
+      rvest::html_attr("href") %>%
+      dplyr::as_tibble() %>%
       dplyr::mutate(
-        height_ft = as.numeric(ft) + (as.numeric(inches)/12),
-        height_cm = height_ft * 30.48,
-        team_abbr = i,
-        season_short = season,
-        exp = ifelse(exp == "R", 0, exp),
-        exp = as.numeric(exp)
-        ) %>%
-      dplyr::rename(
-        number = no,
-        nationality = flag,
-        position = pos,
-        height = ht,
-        weight = wt,
-        experience = exp
+        link = glue::glue("https://www.hockey-reference.com{value}")
       ) %>%
-      dplyr::bind_cols(urls) %>%
-      dplyr::select(-ft, -inches) %>%
-      dplyr::left_join(team_abbr_yearly, by = c("team_abbr", "season_short")) %>%
-      dplyr::select(number, player, team_name, team_abbr, season, position,
-                    everything())
+      dplyr::select(link)
+
+    suppressWarnings({
+      team_roster <- team_roster %>%
+        rvest::html_table() %>%
+        janitor::clean_names() %>%
+        tidyr::separate(s_c, into = c("shoots","catches"), sep = "/", remove = TRUE) %>%
+        tidyr::separate(ht, into = c("ft","inches"), sep = "-", remove = FALSE) %>%
+        dplyr::mutate(
+          height_ft = as.numeric(ft) + (as.numeric(inches)/12),
+          height_cm = height_ft * 30.48,
+          team_abbr = i,
+          season_short = season,
+          exp = ifelse(exp == "R", 0, exp),
+          exp = as.numeric(exp)
+        ) %>%
+        dplyr::rename(
+          number = no,
+          nationality = flag,
+          position = pos,
+          height = ht,
+          weight = wt,
+          experience = exp
+        ) %>%
+        dplyr::bind_cols(urls) %>%
+        dplyr::select(-ft, -inches) %>%
+        dplyr::left_join(team_abbr_yearly, by = c("team_abbr", "season_short")) %>%
+        dplyr::select(number, player, team_name, team_abbr, season, position,
+                      everything())
+    })
 
     team_roster$player <- stringr::str_remove_all(team_roster$player, "\\s\\(C\\)")
     team_roster$player <- stringr::str_remove_all(team_roster$player, "\\s\\(A\\)")
 
     if(include_stats == TRUE){
 
-      test <- polite::scrape(session) %>%
+      test <- session %>%
         rvest::html_element("#skaters")
 
       if(length(test) == 0){
         message(glue::glue("Stats not available for {season} yet, check back later"))
       } else {
         skater_stats <- session %>%
-          polite::scrape() %>%
           rvest::html_element("#skaters") %>%
           rvest::html_table() %>%
           janitor::clean_names() %>%
@@ -123,7 +120,6 @@ get_rosters <- function(
           dplyr::filter(player != "Team Total" & pos != "G")
 
         goalie_stats <- session %>%
-          polite::scrape() %>%
           rvest::html_element("#goalies") %>%
           rvest::html_table() %>%
           janitor::clean_names() %>%

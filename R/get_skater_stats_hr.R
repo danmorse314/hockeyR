@@ -23,8 +23,11 @@ get_skater_stats_hr <- function(season = as.numeric(format(Sys.Date()+81, "%Y"))
 
   url <- paste0("https://www.hockey-reference.com/leagues/NHL_",season,"_skaters.html")
 
+  # load base site
+  session <- rvest::session("http://www.hockey-reference.com/")
+
   site <- tryCatch(
-    rvest::read_html(url),
+    rvest::session_jump_to(session, url),
     warning = function(cond){
       message(paste0("Problem fetching skater stats\n\n",cond))
       return(NULL)

@@ -38,16 +38,15 @@ get_team_records <- function(season = as.numeric(format(Sys.Date()+184, "%Y")), 
 
   team_list <- NULL
 
-  session <- polite::bow("https://www.hockey-reference.com/")
+  session <- rvest::session("https://www.hockey-reference.com/")
 
   for(yr in season){
 
     hr_url <- glue::glue("https://www.hockey-reference.com/leagues/{league}_{yr}_standings.html")
 
-    session <- polite::nod(session, hr_url)
+    session <- rvest::session_jump_to(session, hr_url)
 
     records <- session %>%
-      polite::scrape() %>%
       rvest::html_element("#team_vs_team") %>%
       rvest::html_table()
 
@@ -65,16 +64,15 @@ get_team_records <- function(season = as.numeric(format(Sys.Date()+184, "%Y")), 
 
   if(include_records == TRUE){
 
-    session <- polite::bow("https://www.hockey-reference.com/")
+    session <- rvest::session("https://www.hockey-reference.com/")
 
     for(yr in season){
 
       hr_url <- glue::glue("https://www.hockey-reference.com/leagues/{league}_{yr}_standings.html")
 
-      session <- polite::nod(session, hr_url)
+      session <- rvest::session_jump_to(session, hr_url)
 
       records <- session %>%
-        polite::scrape() %>%
         rvest::html_element("#expanded_standings") %>%
         rvest::html_table() %>%
         janitor::clean_names()

@@ -34,22 +34,18 @@ get_player_stats_hr <- function(player_name, season = "career", league = "NHL"){
     dplyr::distinct()
 
   stats <- NULL
-  session <- polite::bow("https://www.hockey-reference.com/players/")
+  session <- rvest::session("https://www.hockey-reference.com/players/")
 
   for(i in 1:nrow(links)){
 
-    session <- polite::nod(session, links$link[i])
-
-    # pull player stats table
-    player <- session %>%
-      polite::scrape()
+    session <- rvest::session_jump_to(session, links$link[i])
 
     # skip failed links
-    if(is.null(player)){
+    if(is.null(session)){
       next
     }
 
-    player <- player %>%
+    player <- session %>%
       rvest::html_element("table")
 
     # skip players with no stats
@@ -58,7 +54,7 @@ get_player_stats_hr <- function(player_name, season = "career", league = "NHL"){
       next
     }
 
-    player <- player%>%
+    player <- player %>%
       rvest::html_table() %>%
       janitor::clean_names()
 
