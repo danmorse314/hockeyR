@@ -864,7 +864,7 @@ scrape_game <- function(game_id){
   }
 
   # add event_id
-  pbp_full <- pbp_full |>
+  pbp_full <- pbp_full %>%
     dplyr::mutate(
       event_idx = stringr::str_pad(event_idx, width = 4, side = "left", pad = 0),
       event_id = as.numeric(paste0(game_id,event_idx)),
@@ -875,7 +875,10 @@ scrape_game <- function(game_id){
       )
     )
   # add xg
-  pbp_full <- calculate_xg(pbp_full)
+  # depends on strenght state, needs shift data to be there
+  if("home_skaters" %in% names(pbp_full)){
+    pbp_full <- calculate_xg(pbp_full)
+  }
 
   return(pbp_full)
 
