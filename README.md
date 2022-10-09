@@ -114,8 +114,8 @@ pbp %>%
     xg = round(sum(xg, na.rm = TRUE),1),
     gax = goals - xg,
     .groups = "drop"
-  ) |>
-  arrange(-xg) |>
+  ) %>%
+  arrange(-xg) %>%
   slice(1:10)
 #> # A tibble: 10 x 7
 #>    player                 id season   team  goals    xg    gax
@@ -213,11 +213,11 @@ rosters %>%
 #>   player           jersey_number posit~1 team_~2 playe~3 posit~4 team_id full_~5
 #>   <chr>                    <int> <chr>   <chr>     <int> <chr>     <int> <chr>  
 #> 1 Jonathan Bernier            45 G       NJD     8473541 G             1 New Je~
-#> 2 Brendan Smith                2 D       NJD     8474090 D             1 New Je~
-#> 3 Tomas Tatar                 90 LW      NJD     8475193 F             1 New Je~
-#> 4 Erik Haula                  56 LW      NJD     8475287 F             1 New Je~
-#> 5 Ondrej Palat                18 LW      NJD     8476292 F             1 New Je~
-#> 6 Robbie Russo                39 D       NJD     8476418 D             1 New Je~
+#> 2 Reilly Walsh                 8 D       NJD     8480054 D             1 New Je~
+#> 3 Brendan Smith                2 D       NJD     8474090 D             1 New Je~
+#> 4 Tomas Tatar                 90 LW      NJD     8475193 F             1 New Je~
+#> 5 Erik Haula                  56 LW      NJD     8475287 F             1 New Je~
+#> 6 Ondrej Palat                18 LW      NJD     8476292 F             1 New Je~
 #> # ... with abbreviated variable names 1: position, 2: team_abbr, 3: player_id,
 #> #   4: position_type, 5: full_team_name
 ```

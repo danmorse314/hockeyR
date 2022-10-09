@@ -85,8 +85,8 @@ pbp %>%
     xg = round(sum(xg, na.rm = TRUE),1),
     gax = goals - xg,
     .groups = "drop"
-  ) |>
-  arrange(-xg) |>
+  ) %>%
+  arrange(-xg) %>%
   slice(1:10)
 ```
 
