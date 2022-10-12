@@ -2,8 +2,8 @@
 
 This is a minor release.
 
-* adds four new functions
-* fixes output of get_draft_class function
+* fixes errors present in the hockey-ref-scrapers vignette
+* removes one dependecy (polite)
 
 ## RCMD Check Results
 
