@@ -33,7 +33,7 @@ get_team_records <- function(season = as.numeric(format(Sys.Date()+184, "%Y")), 
   } else if (league == "NHL" & season > as.numeric(format(Sys.Date()+184, "%Y"))) {
     stop(glue::glue("Data not available for {season} yet, please check back closer to the start of the {season-1}-{season} season"))
   } else if (league == "NHL" & season == 2005) {
-    stop(glue::glue("Can't get data for 2005; season cancelled due to lockout"))
+    stop(glue::glue("Can't get data for 2005; season cancelled by Gary Bettman"))
   }
 
   team_list <- NULL
@@ -44,22 +44,40 @@ get_team_records <- function(season = as.numeric(format(Sys.Date()+184, "%Y")), 
 
     hr_url <- glue::glue("https://www.hockey-reference.com/leagues/{league}_{yr}_standings.html")
 
-    session <- rvest::session_jump_to(session, hr_url)
-
-    records <- session %>%
-      rvest::html_element("#team_vs_team") %>%
-      rvest::html_table()
-
-    colnames(records) <- c("rk","team_name",names(records)[3:length(records)])
-
-    teams <- dplyr::tibble(
-      team_name = records$team_name,
-      team_abbr = names(records %>% dplyr::select(-team_name, -rk)),
-      season_short = yr,
-      season = glue::glue("{yr-1}-{substr(season_short,3,4)}") %>% as.character()
+    session <- tryCatch(
+      rvest::session_jump_to(session, hr_url),
+      warning = function(cond){
+        message(paste0("There was a problem fetching the records for ",yr,
+                       "\nHere's the original error message:\n",
+                       cond))
+        return(NULL)
+      },
+      error = function(cond){
+        message(paste0("There was a problem fetching the records for ",yr,
+                       "\nHere's the original error message:\n",
+                       cond))
+        return(NULL)
+      }
     )
 
-    team_list <- dplyr::bind_rows(team_list, teams)
+    if(!is.null(session)){
+
+      records <- session %>%
+        rvest::html_element("#team_vs_team") %>%
+        rvest::html_table()
+
+      colnames(records) <- c("rk","team_name",names(records)[3:length(records)])
+
+      teams <- dplyr::tibble(
+        team_name = records$team_name,
+        team_abbr = names(records %>% dplyr::select(-team_name, -rk)),
+        season_short = yr,
+        season = glue::glue("{yr-1}-{substr(season_short,3,4)}") %>% as.character()
+      )
+
+      team_list <- dplyr::bind_rows(team_list, teams)
+
+    }
   }
 
   if(include_records == TRUE){
@@ -70,28 +88,48 @@ get_team_records <- function(season = as.numeric(format(Sys.Date()+184, "%Y")), 
 
       hr_url <- glue::glue("https://www.hockey-reference.com/leagues/{league}_{yr}_standings.html")
 
-      session <- rvest::session_jump_to(session, hr_url)
+      session <- tryCatch(
+        rvest::session_jump_to(session, hr_url),
+        warning = function(cond){
+          message(paste0("There was a problem fetching the records for ",yr,
+                         "\nHere's the original error message:\n",
+                         cond))
+          return(NULL)
+        },
+        error = function(cond){
+          message(paste0("There was a problem fetching the records for ",yr,
+                         "\nHere's the original error message:\n",
+                         cond))
+          return(NULL)
+        }
+      )
 
-      records <- session %>%
-        rvest::html_element("#expanded_standings") %>%
-        rvest::html_table() %>%
-        janitor::clean_names()
+      if(!is.null(session)){
 
-      colnames(records) <- c("rk","team_name",names(records)[3:length(records)])
+        records <- session %>%
+          rvest::html_element("#expanded_standings") %>%
+          rvest::html_table() %>%
+          janitor::clean_names()
 
-      records <- records %>%
-        dplyr::select(team_name:overtime) %>%
-        tidyr::separate(overall, into = c("w","l","otl"), remove = FALSE) %>%
-        utils::type.convert(as.is = TRUE) %>%
-        dplyr::mutate(
-          st_points = (2*w)+otl,
-          season_short = yr
-        )
+        colnames(records) <- c("rk","team_name",names(records)[3:length(records)])
 
-      team_list <- team_list %>%
-        dplyr::left_join(
-          records, by = c("team_name", "season_short")
-        )
+        records <- records %>%
+          dplyr::select(team_name:overtime) %>%
+          tidyr::separate(overall, into = c("w","l","otl"), remove = FALSE) %>%
+          utils::type.convert(as.is = TRUE) %>%
+          dplyr::mutate(
+            st_points = (2*w)+otl,
+            season_short = yr
+          )
+
+        team_list <- team_list %>%
+          dplyr::left_join(
+            records, by = c("team_name", "season_short")
+          )
+
+      }
+
+
     }
 
     return(team_list)
