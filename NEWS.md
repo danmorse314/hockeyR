@@ -1,3 +1,7 @@
+# hockeyR 1.3.1
+
+* fixed issue in `get_game_ids` which defaulted to wrong season-end date and missed out on final games
+
 # hockeyR 1.3.0
 
 * fixed `calculate_individual` to ensure players with 0 shot events recorded still show up in final stats data (affects individual game stats mostly)
