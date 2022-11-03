@@ -1,6 +1,7 @@
 # hockeyR 1.3.1
 
 * fixed issue in `get_game_ids` which defaulted to wrong season-end date and missed out on final games
+* fixed `get_game_shifts` function to show message when no shift data present instead of erroring out
 
 # hockeyR 1.3.0
 
