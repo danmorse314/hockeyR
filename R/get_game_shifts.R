@@ -31,11 +31,10 @@ get_game_shifts <- function(game_id){
   )
 
   if(is.null(site)){
-    stop(paste("Could not get shift data for game ID",game_id))
-  }
-
-  if(length(site$data) < 10){
-    message(paste("No shift data found for game ID",game_id))
+    message(paste("There was a problem getting shift data from the NHL for game ID",game_id,", please try again later."))
+    return(NULL)
+  } else if(length(site$data) < 10){
+    message(paste0("No shift data recorded for game ID ",game_id,", play-by-play data will be returned without on-ice skaters."))
     shifts <- NULL
   } else {
 
