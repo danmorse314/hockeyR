@@ -20,9 +20,11 @@
 #' @export
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
+#' try({
 #' get_game_ids(season = 2020)
 #' get_game_ids(day = "2015-03-12")
+#' })
 #' }
 get_game_ids <- function(season = NULL, day = as.Date(Sys.Date(), "%Y-%m-%d")){
 
