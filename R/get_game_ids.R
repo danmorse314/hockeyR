@@ -28,6 +28,9 @@
 #' }
 get_game_ids <- function(season = NULL, day = as.Date(Sys.Date(), "%Y-%m-%d")){
 
+  # load team abbreviations
+  team_info <- team_logos_colors
+
   if(is.null(season)){
 
     # scrape day's games
@@ -51,50 +54,60 @@ get_game_ids <- function(season = NULL, day = as.Date(Sys.Date(), "%Y-%m-%d")){
       stop()
     } else if(site$gameWeek[[1]]$numberOfGames == 0){
       stop(glue::glue("No NHL games found on {day}"))
+    } else {
+      game_id_list <- site$gameWeek[[1]]$games %>%
+        dplyr::tibble()
     }
 
   } else {
 
     # scrape season's games
 
-    if(season == 2020){
-      # searching the nhl api for games between Sep 1 2019 & Sep 30th 2020
-      # what a stupid season
-      url <- glue::glue("https://statsapi.web.nhl.com/api/v1/schedule?startDate={season-1}-09-01&endDate={season}-09-30")
-    } else {
-      # searching the nhl api for games between Sep 1 & July 5
-      url <- glue::glue("https://statsapi.web.nhl.com/api/v1/schedule?startDate={season-1}-09-01&endDate={season}-07-15")
-    }
+    game_id_list <- NULL
+    for(i in unique(team_info$team_abbr)){
+      url <- glue::glue("https://api-web.nhle.com/v1/club-schedule-season/{i}/{season-1}{season}")
 
-    site <- tryCatch(
-      jsonlite::read_json(url),
-      warning = function(cond){
-        message(paste0("There was a problem fetching games:\n\n",cond))
-        return(NULL)
-      },
-      error = function(cond){
-        message(paste0("There was a problem fetching games:\n\n",cond))
-        return(NULL)
+      site <- tryCatch(
+        jsonlite::read_json(url),
+        warning = function(cond){
+          message(paste0("There was a problem fetching games:\n\n",cond))
+          return(NULL)
+        },
+        error = function(cond){
+          message(paste0("There was a problem fetching games:\n\n",cond))
+          return(NULL)
+        }
+      )
+
+      if(!is.null(site)){
+        team_game_list <- site$games %>%
+          dplyr::tibble()
+        game_id_list <- dplyr::bind_rows(game_id_list, team_game_list)
+      } else {
+        next()
       }
-    )
+    }
 
   }
 
-  if(is.null(site)){
-    stop("check the season or day argument and try again")
-  } else if(site$gameWeek[[1]]$numberOfGames == 0) {
-    game_id_list <- NULL
-  } else {
-    game_id_list <- site$gameWeek[[1]]$games %>%
-      dplyr::tibble() %>%
+  # check for days with no games
+  if(is.null(season)){
+    if(site$gameWeek[[1]]$numberOfGames == 0) {
+      game_id_list <- NULL
+    }
+  }
+
+  if(!is.null(game_id_list)){
+    game_id_list <- game_id_list %>%
       tidyr::unnest_wider(1) %>%
       dplyr::mutate(
         gameDate = lubridate::with_tz(lubridate::ymd_hms(startTimeUTC),"US/Eastern"),
-        game_time = format(gameDate, "%I:%M %p")
+        game_time = format(gameDate, "%I:%M %p"),
+        date = lubridate::date(gameDate)
       ) %>%
       dplyr::select(
         game_id = id, season_full = season, game_time, gameType,
-        homeTeam, awayTeam
+        homeTeam, awayTeam, date
       )
 
     # check if game has a score attached to the teams
@@ -102,33 +115,49 @@ get_game_ids <- function(season = NULL, day = as.Date(Sys.Date(), "%Y-%m-%d")){
       # game either over or in progress with scores
       game_id_list <- game_id_list %>%
         tidyr::unnest_wider(homeTeam) %>%
-        dplyr::select(game_id:gameType, home_abbr = abbrev, home_final_score = score, awayTeam) %>%
+        dplyr::select(game_id:gameType, date, home_abbr = abbrev, home_final_score = score, awayTeam) %>%
         tidyr::unnest_wider(awayTeam) %>%
-        dplyr::select(game_id:home_final_score,
+        dplyr::select(game_id:home_final_score, date,
                       away_abbr = abbrev, away_final_score = score)
     } else {
       game_id_list <- game_id_list %>%
         tidyr::unnest_wider(homeTeam) %>%
-        dplyr::select(game_id:gameType, home_abbr = abbrev, awayTeam) %>%
+        dplyr::select(game_id:gameType, date, home_abbr = abbrev, awayTeam) %>%
         tidyr::unnest_wider(awayTeam) %>%
-        dplyr::select(game_id:home_abbr,
+        dplyr::select(game_id:home_abbr, date,
                       away_abbr = abbrev) %>%
         dplyr::mutate(home_final_score = NA_integer_,
                       away_final_score = NA_integer_)
     }
 
     game_id_list <- game_id_list  %>%
-      dplyr::mutate(date = site$gameWeek[[1]]$date) %>%
       dplyr::select(game_id, season_full, date, game_time,
                     home_abbr, away_abbr,
                     game_type = gameType,
                     home_final_score, away_final_score) %>%
-      dplyr::mutate(game_type = dplyr::case_when(
-        game_type == 1 ~ "PRE",
-        game_type == 2 ~ "REG",
-        game_type == 3 ~ "POST",
-        game_type == 4 ~ "ALLSTAR"
-      ))
+      dplyr::mutate(
+        game_type = dplyr::case_when(
+          game_type == 1 ~ "PRE",
+          game_type == 2 ~ "REG",
+          game_type == 3 ~ "POST",
+          game_type == 4 ~ "ALLSTAR"
+        )
+      ) %>%
+      # add team names because that's what it used to pull from old API
+      dplyr::left_join(
+        team_info %>%
+          dplyr::select(home_abbr = team_abbr, home_name = full_team_name),
+        by = c("home_abbr")
+      ) %>%
+      dplyr::left_join(
+        team_info %>%
+          dplyr::select(away_abbr = team_abbr, away_name = full_team_name),
+        by = "away_abbr"
+      ) %>%
+      dplyr::select(
+        game_id, season_full, game_type, date, game_time, home_abbr, away_abbr,
+        home_name, away_name, home_final_score, away_final_score
+      )
 
     game_id_list <- dplyr::filter(game_id_list,
                                   game_type == "REG" | game_type == "POST")
@@ -139,10 +168,10 @@ get_game_ids <- function(season = NULL, day = as.Date(Sys.Date(), "%Y-%m-%d")){
     if(!is.null(season)) {
       game_id_list <- game_id_list %>%
         dplyr::filter(
-          substr(game_id, 1, 4) == (as.numeric(substr(season_full,1,4)))
-        )
+          substr(game_id, 1, 4) == (as.numeric(season)-1)
+        ) %>%
+        dplyr::arrange(date)
     }
-
   }
 
   return(game_id_list)
