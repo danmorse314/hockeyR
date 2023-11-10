@@ -14,6 +14,22 @@ status](https://www.r-pkg.org/badges/version/hockeyR)](https://CRAN.R-project.or
 [![](https://img.shields.io/twitter/follow/danmorse_.svg?style=social)](https://twitter.com/danmorse_)
 <!-- badges: end -->
 
+## ATTENTION
+
+The NHL implemented a new API for the 2023-24 season and the old one no
+longer appears to be active. Therefore, all scraping functions in here
+(excluding the Hockey Reference scrapers) do not currently work.
+
+I would like to get them up and running again (I’ve already found the
+new endpoints at least) but it will take time, as this is still just a
+passion project. In the meantime, prior seasons still live in the
+[hockeyR-data](https://github.com/danmorse314/hockeyR-data) repository
+and can still be pulled using the `load_pbp` function.
+
+Please be sure to send any and all complaints to <gbettman@nhl.com>.
+
+------------------------------------------------------------------------
+
 This package contains various functions to scrape and clean play-by-play
 data from NHL.com. Season play-by-play data scraped with these functions
 can be found in the
@@ -24,14 +40,7 @@ standings, player stats, and jersey number history.
 
 ## Installation
 
-Install the released version of hockeyR from
-[CRAN](https://CRAN.R-project.org) with:
-
-``` r
-install.packages("hockeyR")
-```
-
-Alternatively, you can install the development version of `hockeyR` from
+Install the development version of `hockeyR` from
 [GitHub](https://github.com/) with:
 
 ``` r
@@ -78,10 +87,10 @@ play-by-play prior to that.
 All variables available in the raw play-by-play data are included, along
 with a few extras added on including:
 
--   shot_distance
--   shot_angle
--   x_fixed
--   y_fixed
+- shot_distance
+- shot_angle
+- x_fixed
+- y_fixed
 
 The `shot_distance` and `shot_angle` are measured in feet and degrees,
 respectively. The variables `x_fixed` and `y_fixed` are transformations
@@ -203,23 +212,14 @@ function. This pulls the rosters directly from the NHL at the time you
 run the function, and will provide the most up-to-date info on team
 rosters, including player positions, jersey numbers, and player IDs.
 
-``` r
-rosters <- get_current_rosters()
+***currently broken***
 
-rosters %>%
-  select(player, jersey_number, position, team_abbr, everything()) %>%
-  head()
-#> # A tibble: 6 x 8
-#>   player           jersey_number posit~1 team_~2 playe~3 posit~4 team_id full_~5
-#>   <chr>                    <int> <chr>   <chr>     <int> <chr>     <int> <chr>  
-#> 1 Jonathan Bernier            45 G       NJD     8473541 G             1 New Je~
-#> 2 Reilly Walsh                 8 D       NJD     8480054 D             1 New Je~
-#> 3 Brendan Smith                2 D       NJD     8474090 D             1 New Je~
-#> 4 Tomas Tatar                 90 LW      NJD     8475193 F             1 New Je~
-#> 5 Erik Haula                  56 LW      NJD     8475287 F             1 New Je~
-#> 6 Ondrej Palat                18 LW      NJD     8476292 F             1 New Je~
-#> # ... with abbreviated variable names 1: position, 2: team_abbr, 3: player_id,
-#> #   4: position_type, 5: full_team_name
+``` r
+#rosters <- get_current_rosters()
+
+#rosters %>%
+#  select(player, jersey_number, position, team_abbr, everything()) %>%
+#  head()
 ```
 
 It’s also possible to access the draft selections and order of
@@ -230,28 +230,14 @@ player IDs – it runs much faster this way. For more details, including
 player heights, weights, birthplaces, and amateur teams, set the
 `player_details` argument to `TRUE`.
 
-``` r
-draft <- get_draft_class(draft_year = 2022, player_details = TRUE)
+***currently broken***
 
-draft %>%
-  select(draft_year, round, pick_overall, full_team_name, player, everything()) %>%
-  head()
-#> # A tibble: 6 x 24
-#>   draft_y~1 round pick_~2 full_~3 player pick_~4 prosp~5 playe~6 first~7 last_~8
-#>       <int> <chr>   <int> <chr>   <chr>    <int>   <int> <chr>   <chr>   <chr>  
-#> 1      2022 1           1 Montré~ Juraj~       1   85964 /api/v~ Juraj   Slafko~
-#> 2      2022 1           2 New Je~ Simon~       2   87097 /api/v~ Simon   Nemec  
-#> 3      2022 1           3 Arizon~ Logan~       3   84987 /api/v~ Logan   Cooley 
-#> 4      2022 1           4 Seattl~ Shane~       4   85859 /api/v~ Shane   Wright 
-#> 5      2022 1           5 Philad~ Cutte~       5   90175 /api/v~ Cutter  Gauthi~
-#> 6      2022 1           6 Columb~ David~       6   86009 /api/v~ David   Jiricek
-#> # ... with 14 more variables: birth_date <chr>, birth_city <chr>,
-#> #   birth_country <chr>, height <chr>, weight <int>, shoots_catches <chr>,
-#> #   position <chr>, player_id <int>, draft_status <chr>,
-#> #   prospect_category <chr>, amateur_team <chr>, amateur_league <chr>,
-#> #   position_type <chr>, birth_state_province <chr>, and abbreviated variable
-#> #   names 1: draft_year, 2: pick_overall, 3: full_team_name, 4: pick_in_round,
-#> #   5: prospect_id, 6: player_link, 7: first_name, 8: last_name
+``` r
+#draft <- get_draft_class(draft_year = 2022, player_details = TRUE)
+
+#draft %>%
+#  select(draft_year, round, pick_overall, full_team_name, player, everything()) %>%
+#  head()
 ```
 
 There are also several scrapers designed to pull statistics from
@@ -273,15 +259,14 @@ for the 2022-23 season.
 
 ## Acknowledgments
 
--   Everyone involved in making the
-    [nflverse](https://github.com/nflverse), the premier data source for
-    NFL stats that inspired this whole project
--   The [Evolving Wild](https://twitter.com/EvolvingWild) twins, whose
-    old NHL scraper helped enormously in getting player on-ice data
-    joined to the raw play-by-play data in here.
--   [Tan Ho](https://twitter.com/_TanHo), whose twitch streams on [web
-    scraping](https://www.youtube.com/watch?v=z8yT3E4pz54&t=26s) and
-    [JSON
-    wrangling](https://www.youtube.com/watch?v=fpw4G2-0R-o&t=1195s)
-    quite literally took me from 0 web scraping knowledge to building
-    this package
+- Everyone involved in making the
+  [nflverse](https://github.com/nflverse), the premier data source for
+  NFL stats that inspired this whole project
+- The [Evolving Wild](https://twitter.com/EvolvingWild) twins, whose old
+  NHL scraper helped enormously in getting player on-ice data joined to
+  the raw play-by-play data in here.
+- [Tan Ho](https://twitter.com/_TanHo), whose twitch streams on [web
+  scraping](https://www.youtube.com/watch?v=z8yT3E4pz54&t=26s) and [JSON
+  wrangling](https://www.youtube.com/watch?v=fpw4G2-0R-o&t=1195s) quite
+  literally took me from 0 web scraping knowledge to building this
+  package

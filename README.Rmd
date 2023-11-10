@@ -25,18 +25,21 @@ knitr::opts_chunk$set(
 [![](https://img.shields.io/twitter/follow/danmorse_.svg?style=social)](https://twitter.com/danmorse_)
 <!-- badges: end -->
 
+## ATTENTION
+
+The NHL implemented a new API for the 2023-24 season and the old one no longer appears to be active. Therefore, all scraping functions in here (excluding the Hockey Reference scrapers) do not currently work.
+
+I would like to get them up and running again (I've already found the new endpoints at least) but it will take time, as this is still just a passion project. In the meantime, prior seasons still live in the [hockeyR-data](https://github.com/danmorse314/hockeyR-data) repository and can still be pulled using the `load_pbp` function.
+
+Please be sure to send any and all complaints to gbettman@nhl.com.
+
+------------------------------------------------------------
+
 This package contains various functions to scrape and clean play-by-play data from NHL.com. Season play-by-play data scraped with these functions can be found in the [hockeyR-data](https://github.com/danmorse314/hockeyR-data) repository. It also contains functions to scrape data from [hockey-reference.com](https://www.hockey-reference.com/), including standings, player stats, and jersey number history.
 
 ## Installation
 
-
-Install the released version of hockeyR from [CRAN](https://CRAN.R-project.org) with:
-  
-  ``` r
-install.packages("hockeyR")
-```
-
-Alternatively, you can install the development version of `hockeyR` from [GitHub](https://github.com/) with:
+Install the development version of `hockeyR` from [GitHub](https://github.com/) with:
 
 ``` r
 # install.packages("devtools")
@@ -151,22 +154,26 @@ geom_hockey("nhl") +
 
 In addition to the play-by-play data, `hockeyR` also provides access to a few other endpoints in the NHL's API. You can scrape the current official rosters for all NHL teams using the `get_current_rosters` function. This pulls the rosters directly from the NHL at the time you run the function, and will provide the most up-to-date info on team rosters, including player positions, jersey numbers, and player IDs.
 
-```{r roster-example}
-rosters <- get_current_rosters()
+***currently broken***
 
-rosters %>%
-  select(player, jersey_number, position, team_abbr, everything()) %>%
-  head()
+```{r roster-example}
+#rosters <- get_current_rosters()
+
+#rosters %>%
+#  select(player, jersey_number, position, team_abbr, everything()) %>%
+#  head()
 ```
 
 It's also possible to access the draft selections and order of selections for every NHL Entry Draft back to 1963 (the first year the NHL held an Entry Draft). By default, this function returns only information on the pick number, the team, and the players' names and player IDs -- it runs much faster this way. For more details, including player heights, weights, birthplaces, and amateur teams, set the `player_details` argument to `TRUE`.
 
-```{r draft-example}
-draft <- get_draft_class(draft_year = 2022, player_details = TRUE)
+***currently broken***
 
-draft %>%
-  select(draft_year, round, pick_overall, full_team_name, player, everything()) %>%
-  head()
+```{r draft-example}
+#draft <- get_draft_class(draft_year = 2022, player_details = TRUE)
+
+#draft %>%
+#  select(draft_year, round, pick_overall, full_team_name, player, everything()) %>%
+#  head()
 ```
 There are also several scrapers designed to pull statistics from [hockey-reference.com](https://www.hockey-reference.com/). For more information on these scrapers and what they can do, please see the [Scraping hockey-reference.com](https://hockeyr.netlify.app/articles/hockey-ref-scrapers.html) vignette.
 
