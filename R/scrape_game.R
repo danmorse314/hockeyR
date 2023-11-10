@@ -152,8 +152,34 @@ scrape_game <- function(game_id){
   plays <- site$plays %>%
     dplyr::tibble() %>%
     tidyr::unnest_wider(1) %>%
-    dplyr::select(-c(typeCode)) %>%
+    dplyr::select(-c(typeCode, periodDescriptor)) %>%
     tidyr::unnest_wider(details)
+
+  # select column names
+  pbp_full <- plays %>%
+    dplyr::mutate(
+      event_type = toupper(typeDescKey),
+      secondary_type = case_when(
+        !is.na(shotType) ~ shotType,
+        !is.na(descKey) ~ descKey,
+        TRUE ~ NA_character_
+      )
+    ) %>%
+    dplyr::select(
+      event_id = eventId, event_type, event = typeDescKey, secondary_type,
+      # need to check/fix columns below this line
+      event_team, event_team_type, # eventOwnerTeamId
+      description, period, period_seconds, period_seconds_remaining,
+      game_seconds, game_seconds_remaining, home_score, away_score,
+      event_player_1_name, event_player_1_type, event_player_2_name,
+      event_player_2_type, event_player_3_name, event_player_3_type,
+      event_goalie_name, strength_state, strength_code:event_idx,
+      num_on, players_on, num_off, players_off, extra_attacker,
+      x, y, x_fixed, y_fixed, shot_distance, shot_angle,
+      home_skaters, away_skaters, home_on_1:away_on_7,
+      home_goalie, away_goalie, game_id, event_idx,
+      tidyselect::everything()
+    )
 
   if("strength" %in% names(plays)){
     plays <- plays %>%
