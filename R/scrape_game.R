@@ -121,7 +121,8 @@
 scrape_game <- function(game_id){
 
   # get game url
-  url <- glue::glue("http://statsapi.web.nhl.com/api/v1/game/{game_id}/feed/live")
+  #url <- glue::glue("http://statsapi.web.nhl.com/api/v1/game/{game_id}/feed/live")
+  url <- glue::glue("https://api-web.nhle.com/v1/gamecenter/{game_id}/play-by-play")
 
   # get raw json pbp data
   site <- tryCatch(
@@ -148,11 +149,11 @@ scrape_game <- function(game_id){
   fenwick_events <- c("MISSED_SHOT","SHOT","GOAL")
 
   # unnest game plays
-  plays <- site$liveData$plays$allPlays %>%
+  plays <- site$plays %>%
     dplyr::tibble() %>%
     tidyr::unnest_wider(1) %>%
-    dplyr::select(-players) %>%
-    tidyr::unnest_wider(result)
+    dplyr::select(-c(typeCode)) %>%
+    tidyr::unnest_wider(details)
 
   if("strength" %in% names(plays)){
     plays <- plays %>%
