@@ -143,10 +143,19 @@ scrape_game <- function(game_id){
 
   game_info <- get_game_info(game_id)
 
+  teams <- game_info %>%
+    dplyr::select(event_team = home_abbr, event_team_id = home_id) %>%
+    dplyr::mutate(team_type = "home") %>%
+    dplyr::bind_rows(
+      game_info %>%
+        dplyr::select(event_team = away_abbr, event_team_id = away_id) %>%
+        dplyr::mutate(team_type = "away")
+    )
+
   rosters <- get_game_rosters(game_id)
 
-  corsi_events <- c("MISSED_SHOT","SHOT","GOAL","BLOCKED_SHOT")
-  fenwick_events <- c("MISSED_SHOT","SHOT","GOAL")
+  corsi_events <- c("MISSED-SHOT","SHOT-ON-GOAL","GOAL","BLOCKED-SHOT")
+  fenwick_events <- c("MISSED-SHOT","SHOT-ON-GOAL","GOAL")
 
   # unnest game plays
   plays <- site$plays %>%
@@ -155,28 +164,215 @@ scrape_game <- function(game_id){
     dplyr::select(-c(typeCode, periodDescriptor)) %>%
     tidyr::unnest_wider(details)
 
-  # select column names
+  # need to add a check here for missing columns, ie 'servedByPlayerId` not always there
+
+
+  # clean it up
   pbp_full <- plays %>%
+    dplyr::bind_cols(game_info) %>%
     dplyr::mutate(
+      # change event team on blocked shots to shooting team
+      eventOwnerTeamId = dplyr::case_when(
+        typeDescKey == "blocked-shot" & eventOwnerTeamId == home_id ~ away_id,
+        typeDescKey == "blocked-shot" & eventOwnerTeamId == away_id ~ home_id,
+        TRUE ~ eventOwnerTeamId
+      ),
       event_type = toupper(typeDescKey),
-      secondary_type = case_when(
+      secondary_type = dplyr::case_when(
         !is.na(shotType) ~ shotType,
         !is.na(descKey) ~ descKey,
         TRUE ~ NA_character_
+      ),
+      # event team
+      event_team_id = eventOwnerTeamId,
+      event_team_type = dplyr::case_when(
+        event_team_id == game_info$home_id ~ "home",
+        event_team_id == game_info$away_id ~ "away",
+        TRUE ~ NA_character_
+      ),
+      # clean up the times
+      period_seconds = lubridate::period_to_seconds(lubridate::ms(timeInPeriod)),
+      game_seconds = period_seconds + (1200 * (period-1)),
+      period_seconds_remaining = lubridate::period_to_seconds(lubridate::ms(timeRemaining)),
+      game_seconds_remaining = ifelse(
+        period < 4,
+        ((3-period) * 1200) + period_seconds_remaining,
+        0 - period_seconds
+      ),
+      # final scores
+      home_final = dplyr::last(homeScore, na_rm = TRUE),
+      away_final = dplyr::last(awayScore, na_rm = TRUE),
+      # event players
+      event_player_1_id = dplyr::coalesce(
+        scoringPlayerId, #  scorer
+        shootingPlayerId, # shooter
+        hittingPlayerId, #  hitter
+        winningPlayerId, #  faceoff winner
+        committedByPlayerId, # penalty on
+        playerId #          takeaway/giveaway player
+      ),
+      event_player_2_id = dplyr::coalesce(
+        assist1PlayerId, #  primary assist
+        blockingPlayerId, # shot blocker
+        goalieInNetId, #    goalie for shot
+        hitteePlayerId, #   got hit
+        losingPlayerId, #   faceoff loser
+        drawnByPlayerId #   penalty drawer
+      ),
+      event_player_3_id = dplyr::case_when(
+        # assign as secondary assist player or goalie on goals
+        # served by on bench minors
+        #   NA otherwise
+        !is.na(assist1PlayerId) & is.na(assist2PlayerId) ~ goalieInNetId,
+        typeDescKey == "penalty" & is.na(committedByPlayerId) ~ servedByPlayerId,
+        TRUE ~ assist2PlayerId
+      ),
+      event_player_4_id = ifelse(
+        # goalie for goals with 2 assists
+        !is.na(assist2PlayerId),
+        goalieInNetId,
+        NA_integer_
+      ),
+      event_player_1_type = dplyr::case_when(
+        typeDescKey == "goal" ~ "Scorer",
+        typeDescKey %in% c("shot-on-goal","missed-shot","blocked-shot") ~ "Shooter",
+        typeDescKey == "faceoff" ~ "Winner",
+        typeDescKey == "hit" ~ "Hitter",
+        typeDescKey == "penalty" ~ "PenaltyOn",
+        TRUE ~ NA_character_
+      ),
+      event_player_2_type = dplyr::case_when(
+        typeDescKey == "goal" & !is.na(assist1PlayerId) ~ "Assist",
+        typeDescKey %in% c("shot-on-goal","missed-shot") ~ "Goalie",
+        typeDescKey == "blocked-shot" ~ "Blocker",
+        typeDescKey == "faceoff" ~ "Loser",
+        typeDescKey == "hit" ~ "Hittee",
+        typeDescKey == "penalty" ~ "DrewBy",
+        TRUE ~ NA_character_
+      ),
+      event_player_3_type = dplyr::case_when(
+        typeDescKey == "goal" & !is.na(assist2PlayerId) ~ "Assist",
+        typeDescKey == "goal" & is.na(assist2PlayerId) & !is.na(assist1PlayerId) ~ "Goalie",
+        typeDescKey == "penalty" & is.na(committedByPlayerId) ~ "ServedBy",
+        TRUE ~ NA_character_
+      ),
+      event_player_4_type = ifelse(!is.na(event_player_4_id), "Goalie", NA_character_),
+      # event goalie column
+      event_goalie_id = dplyr::case_when(
+        event_player_2_type == "Goalie" ~ event_player_2_id,
+        event_player_3_type == "Goalie" ~ event_player_3_id,
+        event_player_4_type == "Goalie" ~ event_player_4_id,
+        TRUE ~ NA_integer_
+      ),
+      # fixed coordinates so home team always shoots right
+      x_fixed = dplyr::case_when(
+        event_team_type == "home" & homeTeamDefendingSide == "right" ~ 0 - xCoord,
+        event_team_type == "away" & homeTeamDefendingSide == "right" ~ 0 - xCoord,
+        TRUE ~ xCoord
+      ),
+      y_fixed = dplyr::case_when(
+        event_team_type == "home" & homeTeamDefendingSide == "right" ~ 0 - yCoord,
+        event_team_type == "away" & homeTeamDefendingSide == "right" ~ 0 - yCoord,
+        TRUE ~ yCoord
+      ),
+      # add shot distance/angle
+      shot_distance = dplyr::case_when(
+        event_team_type == "home" & event_type %in% fenwick_events ~
+          round(abs(sqrt((x_fixed - 89)^2 + (y_fixed)^2)),1),
+        event_team_type == "away" & event_type %in% fenwick_events ~
+          round(abs(sqrt((x_fixed - (-89))^2 + (y_fixed)^2)),1),
+        TRUE ~ NA_real_
+      ),
+      shot_angle = dplyr::case_when(
+        event_team_type == "home" & event_type %in% fenwick_events ~
+          round(abs(atan((0-y_fixed) / (89-x_fixed)) * (180 / pi)),1),
+        event_team_type == "away" & event_type %in% fenwick_events ~
+          round(abs(atan((0-y_fixed) / (-89-x_fixed)) * (180 / pi)),1),
+        TRUE ~ NA_real_
+      ),
+      # fix behind the net angles
+      shot_angle = ifelse(
+        (event_team_type == "home" & x_fixed > 89) |
+          (event_team_type == "away" & x_fixed < -89),
+        180 - shot_angle,
+        shot_angle
+      ),
+      home_skaters = substr(situationCode, 3, 3),
+      away_skaters = substr(situationCode, 2, 2),
+      home_goalie_in = substr(situationCode, 4, 4),
+      away_goalie_in = substr(situationCode, 1, 1),
+      # does event team have their goalie pulled?
+      extra_attacker = dplyr::case_when(
+        event_team_id == home_id & home_goalie_in == 0 ~ TRUE,
+        event_team_id == away_id & away_goalie_in == 0 ~ TRUE,
+        TRUE ~ FALSE
+      ),
+      # is the shooting team shooting at an empty net?
+      empty_net = dplyr::case_when(
+        event_team_id == home_id & away_goalie_in == 0 & event_type %in% corsi_events ~ TRUE,
+        event_team_id == away_id & home_goalie_in == 0 & event_type %in% corsi_events ~ TRUE,
+        TRUE ~ FALSE
       )
+    ) %>%
+    # add event team abbreviation
+    dplyr::left_join(
+      teams %>%
+        dplyr::select(event_team_abbr = event_team,
+                      event_team_id),
+      by = "event_team_id"
+    ) %>%
+    # add event team name
+    dplyr::left_join(
+      team_logos_colors %>%
+        dplyr::select(event_team = full_team_name,
+                      event_team_abbr = team_abbr),
+      by = "event_team_abbr"
+    ) %>%
+    # add event player names
+    dplyr::left_join(
+      rosters %>%
+        dplyr::select(event_player_1_id = player_id, event_player_1_name = player_name),
+      by = "event_player_1_id"
+    ) %>%
+    dplyr::left_join(
+      rosters %>%
+        dplyr::select(event_player_2_id = player_id, event_player_2_name = player_name),
+      by = "event_player_2_id"
+    ) %>%
+    dplyr::left_join(
+      rosters %>%
+        dplyr::select(event_player_3_id = player_id, event_player_3_name = player_name),
+      by = "event_player_3_id"
+    ) %>%
+    dplyr::left_join(
+      rosters %>%
+        dplyr::select(event_player_4_id = player_id, event_player_4_name = player_name),
+      by = "event_player_4_id"
+    ) %>%
+    dplyr::left_join(
+      rosters %>%
+        dplyr::select(event_goalie_id = player_id, event_goalie_name = player_name),
+      by = "event_goalie_id"
     ) %>%
     dplyr::select(
       event_id = eventId, event_type, event = typeDescKey, secondary_type,
-      # need to check/fix columns below this line
-      event_team, event_team_type, # eventOwnerTeamId
-      description, period, period_seconds, period_seconds_remaining,
-      game_seconds, game_seconds_remaining, home_score, away_score,
+      event_team, event_team_type, period, period_seconds, period_seconds_remaining,
+      game_seconds, game_seconds_remaining,
+      home_score = homeScore, away_score = awayScore,
       event_player_1_name, event_player_1_type, event_player_2_name,
       event_player_2_type, event_player_3_name, event_player_3_type,
-      event_goalie_name, strength_state, strength_code:event_idx,
-      num_on, players_on, num_off, players_off, extra_attacker,
-      x, y, x_fixed, y_fixed, shot_distance, shot_angle,
-      home_skaters, away_skaters, home_on_1:away_on_7,
+      event_goalie_name,
+      x = xCoord, y = yCoord, x_fixed, y_fixed,
+      shot_distance, shot_angle,
+      home_skaters, away_skaters, extra_attacker,
+      dplyr::everything()
+    )
+    c(  # need to check/fix columns below this line
+      # situationCode = ROAD G / ROAD SK / HOME SK / HOME G = 1551
+      description,
+      strength_state, strength_code:event_idx,
+      num_on, players_on, num_off, players_off,
+      home_on_1:away_on_7,
       home_goalie, away_goalie, game_id, event_idx,
       tidyselect::everything()
     )
