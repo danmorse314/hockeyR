@@ -120,8 +120,10 @@
 #' }
 scrape_game <- function(game_id){
 
+  # load team abbreviations
+  team_info <- team_logos_colors
+
   # get game url
-  #url <- glue::glue("http://statsapi.web.nhl.com/api/v1/game/{game_id}/feed/live")
   url <- glue::glue("https://api-web.nhle.com/v1/gamecenter/{game_id}/play-by-play")
 
   # get raw json pbp data
@@ -349,7 +351,8 @@ scrape_game <- function(game_id){
         event_team_id == home_id & away_goalie_in == 0 & event_type %in% corsi_events ~ TRUE,
         event_team_id == away_id & home_goalie_in == 0 & event_type %in% corsi_events ~ TRUE,
         TRUE ~ FALSE
-      )
+      ),
+      penalty_minutes = duration
     ) %>%
     # add event team abbreviation
     dplyr::left_join(
@@ -399,6 +402,7 @@ scrape_game <- function(game_id){
       event_player_1_name, event_player_1_type, event_player_2_name,
       event_player_2_type, event_player_3_name, event_player_3_type,
       event_goalie_name,
+      penalty_severity, penalty_minutes,
       x = xCoord, y = yCoord, x_fixed, y_fixed,
       shot_distance, shot_angle,
       home_skaters, away_skaters, extra_attacker,
@@ -902,7 +906,17 @@ scrape_game <- function(game_id){
           event_type %in% c("SHOT","MISSED_SHOT","GOAL"),
         "Penalty Shot", secondary_type
       )
+    ) %>%
+    #add home and away names
+    dplyr::left_join(
+      dplyr::select(team_info, home_name = full_team_name, home_abbr = team_abbr),
+      by = "home_abbr"
+    ) %>%
+    dplyr::left_join(
+      dplyr::select(team_info, away_name = full_team_name, away_abbr = team_abbr),
+      by = "away_abbr"
     )
+
   # add xg
   # depends on strength state, needs shift data to be there
   pbp_return <- tryCatch(
