@@ -33,6 +33,7 @@ get_game_info <- function(game_id){
 
   game_info <- dplyr::tibble(
     game_id = site$id,
+    season = site$season,
     season_type = site$gameType,
     game_date = site$gameDate,
     game_start = site$startTimeUTC %>%
