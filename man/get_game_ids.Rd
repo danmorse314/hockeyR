@@ -30,8 +30,10 @@ A tibble containing game IDs and basic info for specified time frame
 Fetch game IDs for a single day or a full season
 }
 \examples{
-\dontrun{
+\donttest{
+try({
 get_game_ids(season = 2020)
 get_game_ids(day = "2015-03-12")
+})
 }
 }

@@ -115,8 +115,10 @@
 #' @export
 #'
 #' @examples
-#' \dontrun{
-#' pbp <- scrape_game(2020020420)
+#' \donttest{
+#' try({
+#' pbp <- scrape_game(game_id = 2023020201)
+#' })
 #' }
 scrape_game <- function(game_id){
 

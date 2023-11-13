@@ -11,8 +11,10 @@
 #' @export
 #'
 #' @examples
-#' \dontrun{
-#' get_game_shifts(2020020561)
+#' \donttest{
+#' try({
+#' get_game_shifts(game_id = 2023020201)
+#' })
 #' }
 get_game_shifts <- function(game_id){
 
