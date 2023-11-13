@@ -27,9 +27,9 @@ knitr::opts_chunk$set(
 
 ## ATTENTION
 
-The NHL implemented a new API for the 2023-24 season and the old one no longer appears to be active. Therefore, all scraping functions in here (excluding the Hockey Reference scrapers) do not currently work.
+The NHL implemented a new API for the 2023-24 season and the old one no longer appears to be active. As of 2023-11-12, I've implemented a few changes that (hopefully) will allow the core play-by-play scraper to work and continue to update the data repo.
 
-I would like to get them up and running again (I've already found the new endpoints at least) but it will take time, as this is still just a passion project. In the meantime, prior seasons still live in the [hockeyR-data](https://github.com/danmorse314/hockeyR-data) repository and can still be pulled using the `load_pbp` function.
+Prior seasons still live in the [hockeyR-data](https://github.com/danmorse314/hockeyR-data) repository and can still be pulled using the `load_pbp` function. The current season will hopefully be updated each night, but is still very new and should be checked during use.
 
 Please be sure to send any and all complaints to gbettman@nhl.com.
 
