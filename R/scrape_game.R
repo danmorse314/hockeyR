@@ -604,6 +604,76 @@ scrape_game <- function(game_id){
         away_on_6 = ifelse(away_on_6 == away_goalie & !is.na(away_goalie), NA, away_on_6),
         away_on_7 = ifelse(away_on_7 == away_goalie & !is.na(away_goalie), NA, away_on_7)
       ) %>%
+      # rename to remark that we're using IDs there not names
+      dplyr::rename_with(
+        .cols = c(dplyr::starts_with("home_on"),dplyr::starts_with("away_on"),home_goalie,away_goalie),
+        ~paste0(.x,"_id")
+      ) %>%
+      # add player names to on ice columns
+      dplyr::left_join(
+        dplyr::select(rosters, home_on_1 = player_name, home_on_1_id = player_id),
+        by = "home_on_1_id"
+      ) %>%
+      dplyr::left_join(
+        dplyr::select(rosters, home_on_2 = player_name, home_on_2_id = player_id),
+        by = "home_on_2_id"
+      ) %>%
+      dplyr::left_join(
+        dplyr::select(rosters, home_on_3 = player_name, home_on_3_id = player_id),
+        by = "home_on_3_id"
+      ) %>%
+      dplyr::left_join(
+        dplyr::select(rosters, home_on_4 = player_name, home_on_4_id = player_id),
+        by = "home_on_4_id"
+      ) %>%
+      dplyr::left_join(
+        dplyr::select(rosters, home_on_5 = player_name, home_on_5_id = player_id),
+        by = "home_on_5_id"
+      ) %>%
+      dplyr::left_join(
+        dplyr::select(rosters, home_on_6 = player_name, home_on_6_id = player_id),
+        by = "home_on_6_id"
+      ) %>%
+      dplyr::left_join(
+        dplyr::select(rosters, home_on_7 = player_name, home_on_7_id = player_id),
+        by = "home_on_7_id"
+      ) %>%
+      dplyr::left_join(
+        dplyr::select(rosters, away_on_1 = player_name, away_on_1_id = player_id),
+        by = "away_on_1_id"
+      ) %>%
+      dplyr::left_join(
+        dplyr::select(rosters, away_on_2 = player_name, away_on_2_id = player_id),
+        by = "away_on_2_id"
+      ) %>%
+      dplyr::left_join(
+        dplyr::select(rosters, away_on_3 = player_name, away_on_3_id = player_id),
+        by = "away_on_3_id"
+      ) %>%
+      dplyr::left_join(
+        dplyr::select(rosters, away_on_4 = player_name, away_on_4_id = player_id),
+        by = "away_on_4_id"
+      ) %>%
+      dplyr::left_join(
+        dplyr::select(rosters, away_on_5 = player_name, away_on_5_id = player_id),
+        by = "away_on_5_id"
+      ) %>%
+      dplyr::left_join(
+        dplyr::select(rosters, away_on_6 = player_name, away_on_6_id = player_id),
+        by = "away_on_6_id"
+      ) %>%
+      dplyr::left_join(
+        dplyr::select(rosters, away_on_7 = player_name, away_on_7_id = player_id),
+        by = "away_on_7_id"
+      ) %>%
+      dplyr::left_join(
+        dplyr::select(rosters, home_goalie = player_name, home_goalie_id = player_id),
+        by = "home_goalie_id"
+      ) %>%
+      dplyr::left_join(
+        dplyr::select(rosters, away_goalie = player_name, away_goalie_id = player_id),
+        by = "away_goalie_id"
+      ) %>%
       tidyr::fill(
         c(home_skaters, away_skaters), .direction = "updown"
       ) %>%
