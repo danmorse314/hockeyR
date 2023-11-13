@@ -11,7 +11,7 @@
 get_game_info <- function(game_id){
 
   # get game url
-  url <- glue::glue("http://statsapi.web.nhl.com/api/v1/game/{game_id}/feed/live")
+  url <- glue::glue("https://api-web.nhle.com/v1/gamecenter/{game_id}/play-by-play")
 
   # get raw json pbp data
 
@@ -31,66 +31,20 @@ get_game_info <- function(game_id){
     stop(paste("Could not get game info for game ID",game_id))
   }
 
-  gd <- site$gameData
-
-  game <- gd$game %>%
-    dplyr::bind_rows() %>%
-    dplyr::rename(
-      game_id = pk,
-      season_type = type
-    )
-
-  datetime <- gd$datetime %>%
-    dplyr::bind_rows()
-
-  # older seasons don't include end time of game
-
-  if("endDateTime" %in% names(datetime)){
-    datetime <- datetime %>%
-      dplyr::mutate(
-        game_start = dateTime %>%
-          lubridate::parse_date_time("ymd_HMS") %>%
-          lubridate::with_tz("US/Eastern"),
-        game_end = endDateTime %>%
-          lubridate::parse_date_time("ymd_HMS") %>%
-          lubridate::with_tz("US/Eastern"),
-        game_date = lubridate::date(game_start),
-        game_length = lubridate::as.period(game_end - game_start)
-      ) %>%
-      dplyr::select(game_date, game_start, game_end, game_length)
-  } else {
-    datetime <- datetime %>%
-      dplyr::mutate(
-        game_start = dateTime %>%
-          lubridate::parse_date_time("ymd_HMS") %>%
-          lubridate::with_tz("US/Eastern"),
-        game_date = lubridate::date(game_start),
-      ) %>%
-      dplyr::select(game_date, game_start)
-  }
-
-  status <- gd[["status"]] %>%
-    dplyr::bind_rows() %>%
-    dplyr::select(game_state = abstractGameState, detailed_state = detailedState)
-
-  venue <- gd[["venue"]] %>%
-    dplyr::bind_rows()
-
-  colnames(venue) <- glue::glue("venue_{names(venue)}")
-
-  team_names_keep <- c(
-    "home_name","home_abbreviation","home_division_name","home_conference_name","home_id",
-    "away_name","away_abbreviation","away_division_name","away_conference_name","away_id"
-  )
-
-  teams <- gd$teams %>%
-    unlist() %>%
-    dplyr::bind_rows() %>%
-    janitor::clean_names() %>%
-    dplyr::select(dplyr::matches(team_names_keep))
-
-  game_info <- dplyr::bind_cols(
-    game, datetime, status, venue, teams
+  game_info <- dplyr::tibble(
+    game_id = site$id,
+    season = site$season,
+    season_type = site$gameType,
+    game_date = site$gameDate,
+    game_start = site$startTimeUTC %>%
+      lubridate::parse_date_time("ymd_HMS") %>%
+      lubridate::with_tz("US/Eastern"),
+    game_state = site$gameState,
+    venue = site$venue$default,
+    home_abbr = site$homeTeam$abbrev,
+    away_abbr = site$awayTeam$abbrev,
+    home_id = site$homeTeam$id,
+    away_id = site$awayTeam$id
   )
 
   return(game_info)

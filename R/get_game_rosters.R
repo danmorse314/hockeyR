@@ -10,7 +10,7 @@
 get_game_rosters <- function(game_id){
 
   # get game url
-  url <- glue::glue("http://statsapi.web.nhl.com/api/v1/game/{game_id}/feed/live")
+  url <- glue::glue("https://api-web.nhle.com/v1/gamecenter/{game_id}/play-by-play")
 
   # get raw json pbp data
   site <- tryCatch(
@@ -29,20 +29,30 @@ get_game_rosters <- function(game_id){
     stop(paste("Could not get rosters for game ID",game_id))
   }
 
-  rosters <- site$gameData$players %>%
+  rosters <- site$rosterSpots %>%
     dplyr::tibble() %>%
     tidyr::unnest_wider(1) %>%
-    dplyr::select(id, fullName, primaryPosition) %>%
-    tidyr::unnest_wider(3) %>%
+    tidyr::unnest_wider(firstName) %>%
+    dplyr::select(teamId, playerId, first_name = default, lastName:positionCode) %>%
+    tidyr::unnest_wider(lastName) %>%
+    dplyr::mutate(player_name = paste(first_name, default)) %>%
     dplyr::mutate(
-      priority = ifelse(abbreviation == "G", 2, 1)
+      position = positionCode,
+      priority = ifelse(position == "G", 2, 1)
     ) %>%
     dplyr::arrange(priority) %>%
+    dplyr::mutate(
+      position = ifelse(position %in% c("L","R"), paste0(position,"W"), position),
+      position_type = dplyr::case_when(
+        position %in% c("LW","RW","C") ~ "F",
+        position %in% c("LD","RD","D") ~ "D",
+        position == "G" ~ "G",
+        TRUE ~ NA_character_
+      )
+    ) %>%
     dplyr::select(
-      "player_id" = id,
-      "player_name" = fullName,
-      "position_type" = type,
-      "position" = abbreviation
+      team_id = teamId, player_id = playerId,
+      player_name, position, position_type
     )
 
   return(rosters)

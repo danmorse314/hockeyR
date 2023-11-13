@@ -11,9 +11,10 @@
 #' @export
 #'
 #' @examples
-#' \dontrun{
-#' #' get_player_stats("Wayne Gretzky")
-#' get_player_stats_hr(c("Wayne Gretzky","Mario Lemieux"))
+#' \donttest{
+#' try({
+#' get_player_stats_hr("Connor Bedard")
+#' })
 #' }
 get_player_stats_hr <- function(player_name, season = "career", league = "NHL"){
 
@@ -46,7 +47,13 @@ get_player_stats_hr <- function(player_name, season = "career", league = "NHL"){
     }
 
     player <- session %>%
-      rvest::html_element("table")
+      rvest::html_element("#stats_basic_plus_nhl")
+
+    # check for missing table
+    if(length(player) == 0){
+      player <- session %>%
+        rvest::html_element("#stats_basic_nhl")
+    }
 
     # skip players with no stats
     # likely linking to wrong player

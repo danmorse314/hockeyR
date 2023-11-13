@@ -11,8 +11,10 @@
 #' @export
 #'
 #' @examples
-#' \dontrun{
-#' get_game_shifts(2020020561)
+#' \donttest{
+#' try({
+#' get_game_shifts(game_id = 2023020201)
+#' })
 #' }
 get_game_shifts <- function(game_id){
 
@@ -60,7 +62,7 @@ get_game_shifts <- function(game_id){
 
     shifts_on <- shifts_raw %>%
       dplyr::group_by(
-        team_name, period, start_time, start_seconds, start_game_seconds
+        event_team_abbr = team_abbrev, period, start_time, start_seconds, start_game_seconds
       ) %>%
       dplyr::summarize(
         num_on = dplyr::n(),
@@ -76,7 +78,7 @@ get_game_shifts <- function(game_id){
 
     shifts_off <- shifts_raw %>%
       dplyr::group_by(
-        team_name, period, end_time, end_seconds, end_game_seconds
+        event_team_abbr = team_abbrev, period, end_time, end_seconds, end_game_seconds
       ) %>%
       dplyr::summarize(
         num_off = dplyr::n(),
@@ -92,7 +94,7 @@ get_game_shifts <- function(game_id){
 
     shifts <- dplyr::full_join(
       shifts_on, shifts_off,
-      by = c("game_seconds", "team_name", "period", "period_time", "period_seconds")
+      by = c("game_seconds", "event_team_abbr", "period", "period_time", "period_seconds")
     ) %>%
       dplyr::arrange(game_seconds) %>%
       dplyr::mutate(
@@ -100,7 +102,6 @@ get_game_shifts <- function(game_id){
         event_type = "CHANGE",
         game_seconds_remaining = 3600 - game_seconds
       ) %>%
-      dplyr::rename(event_team = team_name) %>%
       # removing NA values at start and end of periods
       dplyr::mutate(
         players_on = ifelse(is.na(players_on), "None", players_on),

@@ -23,7 +23,7 @@ prepare_xg_data <- function(x){
     # remove shift change events, which were excluded from model
     dplyr::filter(event_type != "CHANGE") %>%
     # add model feature variables
-    dplyr::group_by(game_id) %>%
+    dplyr::group_by(game_id, period) %>%
     dplyr::mutate(
       last_event_type = dplyr::lag(event_type),
       last_event_team = dplyr::lag(event_team),
@@ -33,10 +33,10 @@ prepare_xg_data <- function(x){
       distance_from_last = round(sqrt(((y - last_y)^2) + ((x - last_x)^2)),1),
       event_zone = dplyr::case_when(
         x >= -25 & x <= 25 ~ "NZ",
-        (x_fixed < -25 & event_team == home_name) |
-          (x_fixed > 25 & event_team == away_name) ~ "DZ",
-        (x_fixed > 25 & event_team == home_name) |
-          (x_fixed < -25 & event_team == away_name) ~ "OZ"
+        (x_fixed < -25 & event_team_abbr == home_abbr) |
+          (x_fixed > 25 & event_team_abbr == away_abbr) ~ "DZ",
+        (x_fixed > 25 & event_team_abbr == home_abbr) |
+          (x_fixed < -25 & event_team_abbr == away_abbr) ~ "OZ"
       ),
       last_event_zone = dplyr::lag(event_zone)
     ) %>%
@@ -69,8 +69,8 @@ prepare_xg_data <- function(x){
         as.numeric(season) > 20202021, 1, 0
       ),
       # these are only for the ST model
-      event_team_skaters = ifelse(event_team == home_name, home_skaters, away_skaters),
-      opponent_team_skaters = ifelse(event_team == home_name, away_skaters, home_skaters),
+      event_team_skaters = ifelse(event_team_abbr == home_abbr, home_skaters, away_skaters),
+      opponent_team_skaters = ifelse(event_team_abbr == home_abbr, away_skaters, home_skaters),
       total_skaters_on = event_team_skaters + opponent_team_skaters,
       event_team_advantage = event_team_skaters - opponent_team_skaters,
       # these are in 5v5 model
