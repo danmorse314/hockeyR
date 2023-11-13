@@ -1,3 +1,9 @@
+# hockeyR 1.4.0
+
+* updated the game scrapers to use the new NHL API
+* updated shift reports to use player IDs instead of names
+* included additional column names left identical to raw JSON data from new API
+
 # hockeyR 1.3.1
 
 * fixed issue in `get_game_ids` which defaulted to wrong season-end date and missed out on final games
