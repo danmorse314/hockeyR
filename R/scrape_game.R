@@ -123,7 +123,7 @@
 scrape_game <- function(game_id){
 
   # load team abbreviations
-  team_info <- team_logos_colors
+  team_info <- hockeyR::team_logos_colors
 
   # get game url
   url <- glue::glue("https://api-web.nhle.com/v1/gamecenter/{game_id}/play-by-play")
@@ -836,7 +836,7 @@ scrape_game <- function(game_id){
     # ie preseason
 
     pbp_full <- pbp %>%
-      dplyr::select(-event_id,-event_code) %>%
+      dplyr::select(-event_id) %>%
       # add fixed x & y coordinates so home team shoots right, away shoots left
       dplyr::group_by(event_team, period, game_id) %>%
       # find median x shot coordinate to tell us which side teams are shooting on
@@ -929,7 +929,7 @@ scrape_game <- function(game_id){
         #      "event_player_3_name","event_goalie_name"),
         #  ~stringr::str_replace_all(.x, c(" " = ".", "-" = "."))
         #) %>%
-        dplyr::select(-event_id,-event_code) %>%
+        dplyr::select(-event_id) %>%
         dplyr::mutate(
           event_team_type =  dplyr::case_when(
             event_team == home_name ~ "home",
@@ -950,7 +950,7 @@ scrape_game <- function(game_id){
         #      "event_goalie_name"),
         #  ~stringr::str_replace_all(.x, c(" " = ".", "-" = "."))
         #) %>%
-        dplyr::select(-event_id,-event_code) %>%
+        dplyr::select(-event_id) %>%
         dplyr::mutate(
           event_team_type =  dplyr::case_when(
             event_team == home_name ~ "home",

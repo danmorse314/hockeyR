@@ -45,7 +45,16 @@ get_game_info <- function(game_id){
     away_abbr = site$awayTeam$abbrev,
     home_id = site$homeTeam$id,
     away_id = site$awayTeam$id
-  )
+  ) %>%
+    dplyr::mutate(
+      season_type = dplyr::case_when(
+        season_type == 1 ~ "PRE",
+        season_type == 2 ~ "REG",
+        season_type == 3 ~ "POST",
+        season_type == 4 ~ "ALLSTAR",
+        TRUE ~ NA_character_
+      )
+    )
 
   return(game_info)
 
