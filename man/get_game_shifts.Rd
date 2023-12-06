@@ -19,7 +19,9 @@ Portions of this code are modified versions of code from the NHL scraper by
 Evolving-Hockey, which in turn were modified from the NHL scraper by Manny Perry.
 }
 \examples{
-\dontrun{
-get_game_shifts(2020020561)
+\donttest{
+try({
+get_game_shifts(game_id = 2023020201)
+})
 }
 }

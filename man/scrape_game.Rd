@@ -122,7 +122,9 @@ NHL game. The resulting data will have columns for:
 Scrapes play-by-play data for a specified game ID.
 }
 \examples{
-\dontrun{
-pbp <- scrape_game(2020020420)
+\donttest{
+try({
+pbp <- scrape_game(game_id = 2023020201)
+})
 }
 }

@@ -44,6 +44,13 @@ utils::globalVariables(
     "icf","iff","isog","ixg","mean_toi","mean_toi_minutes","on_ic","points",
     "points_primary","sh_perc","toi_minutes","toi_seconds","xg_against","xg_for",
     "xga","xgf","xgf_perc","on_ice","ids_on","ids_off","league","division",
-    "conference","teamRecords","streak","teamRecords_leagueRecord","teamRecords_team"
+    "conference","teamRecords","streak","teamRecords_leagueRecord","teamRecords_team",
+    "abbrev","assist1PlayerId","assist2PlayerId","awayScore","awayTeam","away_abbr",
+    "blockingPlayerId","committedByPlayerId","default","details","drawByPlayerId",
+    "event_team_id","firstName","gameType","goalieInNetId","hitteePlayerId",
+    "hittingPlayerId","homeScore","homeTeam","home_abbr","lastName","losingPlayerId",
+    "penalty_minutes","periodDescriptor","playerId","positionCode","position_type",
+    "scoringPlayerId","shootingPlayerId","situationCode","startTimeUTC","teamId",
+    "winningPlayerId","xCoord","yCoord"
     )
   )
