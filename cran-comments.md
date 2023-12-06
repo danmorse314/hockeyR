@@ -2,8 +2,7 @@
 
 This is a minor release.
 
-* fixes errors present in the hockey-ref-scrapers vignette
-* removes one dependecy (polite)
+* changes web scraping endpoint to use new API
 
 ## RCMD Check Results
 
