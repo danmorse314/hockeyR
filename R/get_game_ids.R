@@ -29,7 +29,7 @@
 get_game_ids <- function(season = NULL, day = as.Date(Sys.Date(), "%Y-%m-%d")){
 
   # load team abbreviations
-  team_info <- team_logos_colors
+  team_info <- hockeyR::team_logos_colors
 
   if(is.null(season)){
 
@@ -108,7 +108,8 @@ get_game_ids <- function(season = NULL, day = as.Date(Sys.Date(), "%Y-%m-%d")){
       dplyr::select(
         game_id = id, season_full = season, game_time, gameType,
         homeTeam, awayTeam, date
-      )
+      ) %>%
+      dplyr::distinct()
 
     # check if game has a score attached to the teams
     if("score" %in% names(dplyr::tibble(game_id_list$homeTeam)%>%tidyr::unnest_wider(1))){
