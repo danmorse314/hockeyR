@@ -1,3 +1,5 @@
+# hockeyR 1.4.1
+
 # hockeyR 1.4.0
 
 * updated the game scrapers to use the new NHL API
