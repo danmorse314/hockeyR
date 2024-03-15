@@ -165,7 +165,9 @@ scrape_game <- function(game_id){
   plays <- site$plays %>%
     dplyr::tibble() %>%
     tidyr::unnest_wider(1) %>%
-    dplyr::select(-c(typeCode, periodDescriptor)) %>%
+    dplyr::select(-typeCode) %>%
+    tidyr::unnest_wider(periodDescriptor) %>%
+    dplyr::rename(period = number) %>%
     tidyr::unnest_wider(details)
 
   # check for missing columns, ie 'servedByPlayerId` not always there
